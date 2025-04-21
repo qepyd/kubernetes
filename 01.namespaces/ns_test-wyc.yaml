@@ -5,3 +5,6 @@ metadata:
   name: test-wyc
   labels:
     env: test
+    proj: wyc
+---
+
