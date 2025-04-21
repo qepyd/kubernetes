@@ -1,0 +1,25 @@
+---
+# 创建一个 QoS 类为 Burstable 的 Pod 
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: pod-qosclass-to-bustable 
+  labels:
+    app: pod-qosclass-to-bustable
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    imagePullPolicy: Always
+    resources:
+      limits:
+        memory: "200Mi"
+  - name: myapp02
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31 
+    imagePullPolicy: Always
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"

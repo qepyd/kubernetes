@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: DaemonSet 
+metadata:
+  namespace: lili
+  name: myapp01-cordon
+  labels:
+    ds: myapp01-cordon
+spec:
+  selector:
+    matchLabels:
+      app: myapp01-cordon
+  template:
+    metadata:
+      labels:
+        app: myapp01-cordon
+    spec:
+      ## Pod级别
+
+      # 没有使用"指定节点"的使用方法
+      # 没有容忍"任何的污点"
+      
+      volumes:
+      - emptyDir: 
+        name: empytdir-to-disk
+
+      ## 容器级别之主容器
+      containers:
+      - name: myapp01
+        image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+        ports:
+        - name: http-80
+          containerPort: 80
+        volumeMounts:
+        - name: empytdir-to-disk
+          mountPath: /data
+          readOnly: false
+ 

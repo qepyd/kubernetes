@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: myapp01-nodeselector
+spec:
+  #### Pod级别
+
+  ## 通过匹配worker node上的label
+  #  选择相应的worker node.
+  nodeSelector:
+    project: wyc
+
+  #### 容器级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    ports:
+    - name: http-80
+      containerPort: 80

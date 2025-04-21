@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: myapp01-nodename
+spec:
+  #### Pod级别
+
+  ## 指定 node01这个worker node
+  #  只能指定一个worker node
+  nodeName: "node01"
+
+  #### 容器级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    ports:
+    - name: http-80
+      containerPort: 80
+

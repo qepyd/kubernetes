@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: required-single-matchexpressions-single-expre
+spec:
+  ## Pod级别
+  
+  # 亲和
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        # 单条件
+        - matchExpressions:
+          # 里面的表达式需完全满足,条件才为真
+          - key: project
+            operator: In
+            values:
+            - wyc
+            - prod
+
+  ## Container级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    ports:
+    - name: http-80
+      containerPort: 80

@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: directly-tolerate-all-taint-01
+spec:
+  #### Pod级别
+
+  ## 污点容忍
+  #  需要容忍worker node上所有的污点
+  tolerations:
+    # 常规方法
+    # 容忍度中的operator为Equal时：
+    #   容忍度中的value是必须的,key、effect是"必须的(常规方法的嘛)"
+    #   注意：这种容忍度只能针对Key=Value:Effect格式的污点。
+    # 容忍度中的operator为Exists时：
+    #   容忍度中的value不是必须的,key、effect是"必须的(常规方法的嘛)"
+    #   注意：这种容忍度可以针对Key=Value:Effect和Key:Effect两种格式的污点。
+    - key: "cl01"
+      operator: "Equal"
+      value: "lili01"
+      effect: "NoSchedule"
+    - key: "cl02"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "cl03"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  #### 容器级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    ports:
+    - name: http-80
+      containerPort: 80

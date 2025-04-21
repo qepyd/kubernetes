@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: nginx-daemon
+  labels:
+    app: nginx-daemon
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    imagePullPolicy: Always
+    #
+    # 其image运行成容器时的命令是由CMD指令指定
+    # 其为CMD ["nginx", "-g", "daemon off;"]
+    # 其指令会让nginx以守护进程运行。
+    # 
+    # 以下使用command和args对其进行"覆盖"
+    #   跟原有的一模一样
+    #   不会影响其nginx启动
+    #
+    command:
+    - "nginx"
+    args:
+    - "-g"
+    - "daemon off;"

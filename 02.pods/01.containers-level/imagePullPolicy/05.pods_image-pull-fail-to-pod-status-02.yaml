@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: image-pull-fail-to-pod-status-02 
+  labels:
+    app: image-pull-fail-to-pod-status-02
+spec:
+  containers:
+  - name: myapp01
+    # 我故决指错其image的version(不存在)
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:lili
+    imagePullPolicy: Never
+
+    # 把镜像指定错误（用于模拟拉取镜像不失败），拉取策略为Never时
+    # 其容器的状态为Waiting，原因为ErrImageNeverPull，Pod状态为ErrImageNeverPull。

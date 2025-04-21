@@ -1,0 +1,43 @@
+---
+# 创建一个 QoS 类为 Guaranteed 的 Pod:
+#    Pod中的每个容器都必须指定memory限制(limits)和memory请求(requests)。
+#    对于Pod中的每个容器,内存限制(limits)必须等于memory请求(requests)。
+#    Pod中的每个容器都必须指定CPU限制(limits)和CPU请求(requests)。
+#    对于Pod中的每个容器,CPU限制(limits)必须等于CPU请求(requests)。
+#    注意：
+#      当所有容器中没有requests时,只有limits时,会自动将limits中的作为requests中的
+#
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: pod-qosclass-to-guaranteed-1 
+  labels:
+    app: pod-qosclass-to-guaranteed-1
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    imagePullPolicy: Always
+    resources:
+      requests:
+        cpu:    "100m"
+        memory: "200Mi"
+      limits:
+        cpu:    "100m"
+        memory: "200Mi"
+  - name: myapp02
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31 
+    imagePullPolicy: Always
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "100Mi"
+      limits:
+        cpu: "50m"
+        memory: "100Mi"

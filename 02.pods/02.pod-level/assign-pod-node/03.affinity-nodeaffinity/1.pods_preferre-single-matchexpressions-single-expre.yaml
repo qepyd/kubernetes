@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: preferre-single-matchexpressions-single-expre
+spec:
+  ## Pod级别
+  
+  # 亲和
+  affinity:
+    nodeAffinity:
+      # 软亲和
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 10
+        preference:
+          # 有两种条件方法,每种只能存在一个
+          matchExpressions:
+          - key: project
+            operator: In
+            values:
+            - jmsco
+            - prod
+
+  ## Container级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    ports:
+    - name: http-80
+      containerPort: 80

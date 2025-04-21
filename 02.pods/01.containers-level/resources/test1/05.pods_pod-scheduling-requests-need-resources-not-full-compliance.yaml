@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: pod-scheduling-requests-need-resources-not-full-compliance 
+  labels:
+    app: pod-scheduling-requests-need-resources-not-full-compliance 
+spec:
+  # 此Pod在调度时,会把满足以下条件worker node挑选出来
+  #  CPU：可用20m
+  #  内存：20M
+  #  临时存储：1000G  
+  #     # 我的各worker node其kubelet的root-dir(/var/lib/kubelet)
+  #     # 所在磁盘其可用空间没有1000G
+  #
+  # 我的各worker node不满足以上所有的条件
+  #
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    imagePullPolicy: Always
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 100000"
+    resources:
+      requests:
+        cpu: "10m"
+        memory: "10Mi"
+        ephemeral-storage: "500Gi"
+        
+  - name: myapp02
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    imagePullPolicy: Always
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 100000"
+    resources:
+      requests:
+        cpu: "10m"
+        memory: "10Mi"
+        ephemeral-storage: "500Gi"

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: imagepullpolicy-default-always 
+  labels:
+    app: imagepullpolicy-default-always
+spec:
+  containers:
+  - name: myapp01
+    # 此镜像存在且公开(pull时不需要认证) 
+    #image: swr.cn-north-1.myhuaweicloud.com/library/nginx
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:latest
+
+    # 若image的version不指定或指定为latest,image的默认imagePullPolicy为always
+    #imagePullPolicy: always

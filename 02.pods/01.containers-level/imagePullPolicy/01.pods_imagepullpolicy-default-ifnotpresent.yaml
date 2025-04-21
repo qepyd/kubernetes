@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: imagepullpolicy-default-ifnotpresent 
+  labels:
+    app: imagepullpolicy-default-ifnotpresent
+spec:
+  containers:
+  - name: myapp01
+    # 此镜像存在且公开(pull时不需要认证)
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+
+    # 若image的version有指定(非latest),image的默认imagePullPolicy为IfNotPresent
+    #imagePullPolicy: IfNotPresent

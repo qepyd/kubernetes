@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: busybox-daemon
+  labels:
+    app: busybox-daemon
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    imagePullPolicy: Always
+    #
+    # 其image运行成容器时的命令是由CMD指令指定,其为
+    #   CMD ['sh']
+    # 此启动命令无法令容器前台运行
+    #
+    # 以下使用command和args对其进行覆盖。
+    #   让其能够前台运行
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 100000000"

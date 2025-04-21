@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: nodename-nodeselector
+spec:
+  selector:
+    matchLabels:
+      app: nodename-nodeselector
+  replicas: 6
+  template:
+    metadata:
+      labels:
+        app: nodename-nodeselector 
+    spec:
+      ## Pod级别
+      # 会冲突
+      nodeName: node03
+      nodeSelector:
+        project: wyc
+      
+      ## Container级别之主容器
+      containers:
+      - name: myapp01
+        image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+        ports:
+        - name: http-80
+          containerPort: 80
+

@@ -1,0 +1,57 @@
+---
+#
+# 有requests,但没有limits,Pod调度时得满足requests。
+#   Pod在调度时,会将满足"所有容器中其requests”的worker
+#   node选择出来再根据评分,选择评分最高的worker node作为调度节点。
+# 
+#   容器1：
+#      resources.requests.cpu 10m
+#      resources.requests.memory: 10Mi 
+#      resources.requests.ephemeral-storage: 512Gi
+#      没有limits。
+#   容器2：
+#      resources.requests.cpu 10m
+#      resources.requests.memory: 10Mi 
+#      resources.requests.ephemeral-storage: 512Gi
+#      没有limits。
+#
+#   此Pod在调度时,需要cpu 20m、memory 20Mi ephemeral-storage: 1024Gi
+#   我的kubernetes上没有任何worker node可以完全满足,即不满足ephemeral-storage: 1024Gi
+#   所以此Pod不会被调度，会处于Pending状态。 
+#
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: have-requests-no-limits-but-requests-affected-pod-scheduler 
+  labels:
+    app: have-requests-no-limits-but-requests-affected-pod-scheduler 
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    imagePullPolicy: Always
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 100000"
+    resources:
+      requests:
+        cpu: "10m"
+        memory: "10Mi"
+        ephemeral-storage: "512Gi"
+  - name: myapp02
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    imagePullPolicy: Always
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 100000"
+    resources:
+      requests:
+        cpu: "10m"
+        memory: "10Mi"
+        ephemeral-storage: "512Gi"
+

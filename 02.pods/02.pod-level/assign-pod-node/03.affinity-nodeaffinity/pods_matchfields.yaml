@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: matchfields
+spec:
+  ## Pod级别
+  # 亲和
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        # 单条件
+        - matchFields:
+          # 里面的表达式需完全满足,条件才为真
+          - key: metadata.labels
+            operator: In
+            values:
+            - "project: wyc"
+
+  ## Container级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    ports:
+    - name: http-80
+      containerPort: 80

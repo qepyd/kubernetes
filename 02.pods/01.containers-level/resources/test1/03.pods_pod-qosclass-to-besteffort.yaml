@@ -1,0 +1,19 @@
+---
+# 创建一个 QoS 类为 BestEffort 的 Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: pod-qosclass-to-besteffort 
+  labels:
+    app: pod-qosclass-to-besteffort 
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    imagePullPolicy: Always
+    resources:
+      requests:
+        ephemeral-storage: 10Gi
+      limits:
+        ephemeral-storage: 10Gi

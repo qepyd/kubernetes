@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: resources-requests-affect-pod-scheduling 
+  labels:
+    app: resources-requests-affect-pod-scheduling
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    imagePullPolicy: Always
+    resources:
+      requests:
+        memory: "100Ti"
+      # 我这个容器requests至少需要100TG的内存
+      # Pod在被调度时,没有任何的worker node满足
+      # 通过其结果,可验证它有影响其Pod的调度。

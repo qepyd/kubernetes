@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: matchexpressions-matchfields
+spec:
+  selector:
+    matchLabels:
+      app: matchexpressions-matchfields
+  replicas: 6
+  template:
+    metadata:
+      labels:
+        app: matchexpressions-matchfields
+    spec:
+      ## Pod级别
+
+      # 亲和
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            # 多种类型的条件,以matchFields最终的结果为准
+            - matchExpressions:
+              - key: project
+                operator: In
+                values:
+                - wyc
+            - matchFields:
+              - key: metadata.name
+                operator: In
+                values:
+                - node03
+      
+      ## Container级别之主容器
+      containers:
+      - name: myapp01
+        image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+        ports:
+        - name: http-80
+          containerPort: 80

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: directly-tolerate-all-taint-04
+spec:
+  #### Pod级别
+
+  ## 污点容忍
+  #  需要容忍worker node上所有的污点
+  tolerations:
+    # 特殊方法3：
+    #  容忍度中的key不为空,且operator为Exists,effect为空
+    #  即：相当于匹配污点的key
+    - key: "cl01"
+      operator: "Exists"
+    - key: "cl02"
+      operator: "Exists"
+    - key: "cl03"
+      operator: "Exists"
+
+  #### 容器级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    ports:
+    - name: http-80
+      containerPort: 80
