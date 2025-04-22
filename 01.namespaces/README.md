@@ -25,7 +25,7 @@ kubernetes中的所有resources(标准的、使用operater扩展kubernetes时所
   # 因为在创建任何资源对象时,我们应该使用manifests
   #
 
-kubectl create namespace uat-wyc --dry-run=client -o yaml >/ns_uat-wyc.yaml
+kubectl create namespace uat-wyc --dry-run=client -o yaml >./ns_uat-wyc.yaml
   #
   # 命令行快速生成ns资源对象的manifests,并保存于一个文件中。
   # 命令行无法指定ns/uat-wyc对象的相应label(不是必须的,可命令行添加)。
