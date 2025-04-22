@@ -1,0 +1,99 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: lili
+  name: myapp
+  labels:
+    deploy: myapp
+spec:
+  ## svc资源对象的name,此字段是必须的(不可在线更新)。
+  #  A:svc得我们人为去创建,其name得和
+  #    这的保持一至。即 svc/myapp 对象
+  #  B:svc资源对象得是Headless Service,
+  #    即不具备CLUSTER-IP。
+  #  C:那么svc的type只能是ClusterIP,因为
+  #    NodePort、LoadBalancer类型必须具备
+  #    CLUSTER-IP。而ExternalName类型它的
+  #    后端端点不能是Pod(虽然可指定selector,
+  #    但没有任何作用的)。
+  #  PS:此字段不可在线更新,你可以去改相应svc资源对象的name
+  #    有时可能需要销毁重建,因为svc资源对象在同一namespace中
+  #    是不能重名的
+  serviceName: myapp
+
+  ## Pod副本数
+  #  默认为1
+  #  可在线更新
+  #  支持设置为0
+  #
+  replicas: 2
+
+  ## Pod副本的管理策略
+  #  OrderedReady(默认)
+  #    创建时：正向,串行
+  #      先拉起第一个Pod副本(myapp-0),待其就绪。
+  #      再拉起第二个Pod副本(myapp-1),待其就绪。
+  #    销毁时：反向,串行,
+  #      先销毁myapp-1
+  #      再销毁myapp-0
+  #  Parallel
+  #    创建时：非串行,即并行(不会管谁是否就绪)
+  #      myapp-0
+  #      myapp-1
+  #    销毁时：非串行,即并行
+  #
+  podManagementPolicy: OrderedReady
+
+  ## 标签选择器
+  # A:匹配template中Pod的标签,若无
+  #   一匹配,sts资源对象将不允许被创建。
+  # B:另外,标签选择器不可在线更新
+  #
+  selector:
+    matchLabels:
+      app: myapp
+
+  ## 模板
+  #  用于定义Pod的期望状态
+  template:
+    metadata:
+      # 必须得有标签,因为sts的标签选择器要来匹配
+      labels:
+        app: myapp
+    spec:
+      # 我没有指定worker node
+      # 也没有容忍Taints
+      containers:
+        - name: myapp
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          ports:
+            - name: http-80
+              containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: lili
+  ## 其name得和sts资源对象中的spec.serviceName保持一致。
+  # 因为这个svc是要配合我做如下事件的：
+  #   Pod副本Name.<svcName>.<Namespace>.svc.<k8s集群DNS的zone>
+  #   myapp-0.myapp.lili.svc.cluster.local
+  #     得到 myapp-0这个Pod副本的IP
+  #   myapp-1.myapp.lili.svc.cluster.local
+  #     得到 myapp-1这个Pod副本的IP
+  name: myapp
+  labels:
+    svc: myapp
+spec:
+  selector:
+    app: myapp
+  type: ClusterIP
+  clusterIP: "None"
+  ports:
+    - name: http-80
+      port: 80
+      protocol: TCP
+      targetPort: http-80
+      appProtocol: http

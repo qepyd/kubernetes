@@ -1,0 +1,95 @@
+---
+## 通过svc资源对象的name来说明 
+# c-ep-is-pod-clusterip-externalip-annotations-disabled 
+#   c
+#     人类可读,表示ClusterIP类型
+#   ep-is-pod
+#     表示后端端点是Pod,那么svc资源对象必须要有标签选择器(selector)
+#   clusterip-externalip-annotations-disabled
+#     表示此svc具备CLUSTER-IP和EXTERNAL-IP
+#     但EXTERNAL-IP不手动指定,在svc的metadata.annotations中到某地方获取,
+#     结果是失败的,也就不会有EXTERNAL-IP,所以是EXTERNAL-IP是disabled
+#
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: my-app06
+  labels:
+    deploy: my-app06
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app06
+  template:
+    metadata:
+      labels:
+        app: my-app06
+    spec:
+      containers:
+        - name: my-app06
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          ports:
+            - name: http-80
+              containerPort: 80
+
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: lili
+  name: c-ep-is-pod-clusterip-externalip-annotations-disabled 
+  labels:
+    svc: c-ep-is-pod-clusterip-externalip-annotations-disabled 
+  annotations:
+    lb.kubesphere.io/v1alpha1: openelb
+    # 指定非namespaces级别的eips资源对象,从里面自动获取一个地址
+    eip.openelb.kubesphere.io/v1alpha2: eip-sample-pool
+
+spec:
+  ## 标签选择器,只能匹配此资源对象所在namespace中Pod上的标签
+  selector:
+    app: my-app06
+
+  ## 类型,不指定时默认就为ClusterIP类型。
+  type: ClusterIP
+
+  ## ClusterIP类型的svc其CLUSTER-IP,让其自动获得
+  clusterIP: ""
+
+  ## ClusterIP类型的svc其EXTERNAL-IP,需要人为指定
+  #externalIPs:
+  #  - IP地址(只能手动指定)
+
+  ## 内部流量策略,默认为Cluster
+  internalTrafficPolicy: Cluster
+  #internalTrafficPolicy: Local
+    # 
+    # 此ClusterIP的svc最终只有CLUSTER-IP,没有EXTERNAL-IP(虽然在metadata.annotations处
+    # 有指定从哪里获得,但获得不到,所以ClusterIP类型的svc其External只能手动指定)
+    # 
+  
+  ## 端口定义
+  ports:
+    - name: http-80
+      ## 此字段是必须的，svc资源对象中的端口。因为没有CLUSTER-IP
+      ##   A：此svc资源对象的规则在各worker node的内核中是没有的
+      ##      补充：跟internalPolicy没有关系
+      ##   B：集群内的Client(Pod)访问此svc资源对象的name(FQDN).targetPort
+      port: 81  # 这里应该和targetPort其具体的值(端口)保持一致,但这为了学习
+
+      ## svc作代理时使用的协议,只支持TCP、UDP、SCP,默认TCP
+      protocol: TCP
+
+      ## Pod中某容器里面应用的端口,你应该知道的,或者Pod的manifests中
+      ## 有显示说明(例如：pods.spec.containers.ports.containerPort)
+      ## 也可指定显示说明中某列表的name(pods.spec.container.ports.name)
+      #targetPort: 80
+      targetPort: http-80
+
+      ## 其tagetPort端口的应用协议
+      appProtocol: http
+

@@ -1,0 +1,80 @@
+---
+## 通过svc资源对象的name来说明
+# c-ep-not-pod-notanyip-internaltrafficpolicy-any
+#   c
+#     人类可读,表示ClusterIP类型
+#   ep-not-pod
+#     表示此svc的后端端点不是Pod,那么就用不到标签选择器(selector)
+#   notanyip
+#     表示没有CLUSTER-IP和EXTERNAL-IP
+#     没有CLUSTER-IP就表示是headless service,kube-proxy不会介入
+#     虽然可以指定EXTERNAL-IP,但因没有CLUSTER-IP的存在,kube-proxy不会介入
+#   internaltrafficpolicy-any
+#     表示内部流量调度策略可以为Cluster或Local，因为没有CLUSTER-IP,其kube-proxy
+#     不会介入。
+
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  namespace: lili
+  name: c-ep-not-pod-notanyip-internaltrafficpolicy-any
+  labels:
+    ep: c-ep-not-pod-notanyip-internaltrafficpolicy-any
+subsets:
+  # 指定相应端点的IP(我这是我k8s其各master的IP)，且address.ip还是改选字段
+  # 如果后端端点是Pod副本呢,IP地址是随机的,这里就无法指定。
+  #   那么也不会自行创建ep资源对象,再结合无selector的svc资源对象。
+  - addresses:
+      - ip: "172.31.7.201"
+      - ip: "172.31.7.202"
+      - ip: "172.31.7.203"
+    ports:
+      - name: kube-apiserver
+        port: 6443
+        protocol: TCP
+        appProtocol: https
+
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: lili
+  # 其名字得和ep/c-ep-not-pod-notanyip-internaltrafficpolicy-any对象一样
+  name: c-ep-not-pod-notanyip-internaltrafficpolicy-any 
+  labels:
+    svc: c-ep-not-pod-notanyip-internaltrafficpolicy-any
+spec:
+  # 此svc的后端端点不是Pod,所以需要标签选择器
+  # selector:
+  #   app: my-app01
+
+  # 类型,不指定时默认就为ClusterIP类型。
+  type: ClusterIP
+
+  ## CLUSTER-IP
+  # 不指定或指定为""时，自动获取CLUSTER-IP，
+  # 也可人为指定CLUSTER-IP，不这样做，
+  # 当指定为None时,是不会获得CLUSTER-IP的。
+  clusterIP: "None"
+
+  ## EXTERNAL-IP
+  #externalIPs
+  #  - IP地址(只能手动指定,在些场景,指定了的话,冗余了)
+  
+  ## 内部流量调度策略
+  #internalTrafficPolicy: Cluster
+  #internalTrafficPolicy: Local
+
+  ## 端口定义
+  ports:
+    - name: kube-apiserver
+      # svc资源对象中的端口
+      port: 6443
+      # svc作代理时使用的协议,只支持TCP、UDP、SCP
+      protocol: TCP
+      # Pod中某容器里面应用的端口
+      # 或者是pods.spec.containers.ports字段中某列表的name
+      targetPort: 6443
+      # 其tagetPort端口的应用协议
+      appProtocol: https

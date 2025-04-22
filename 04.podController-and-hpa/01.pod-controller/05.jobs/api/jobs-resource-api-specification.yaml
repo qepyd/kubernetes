@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: <string>
+  name: <string>
+  labels: <map[string]string>
+spec:
+  ## 是否挂起当前当前Job的执行
+  #  默认为false
+  suspend: <boolean>
+
+  ## 作业启动后可处于活动状态的时长
+  #  单位：秒
+  activeDeadlineSeconds: <integer>
+  
+  ## 追踪Pod的完成模式
+  #  支持Indexed和NonIndexed(默认)两种
+  completionMode: <string>
+
+  ## 指定作业Pod最终需要启动多少个Pod(相当于Pod副本)
+  #  它并不是一下全启动起来,而是看并行度(parallelism)
+  #  来决定先启动多少个作业Pod,再启动多少个作业Pod。
+  completions: <integer>
+    # 指定作业最终需要几个Pod来完成
+    # 
+  parallelism: <integer>
+    # 并行度,
+    # 默认为1,当completions设置多个Pod时,各作业Pod串行执行
+    # 
+
+  ## 将作业标记为"Failed"之前的重试次数
+  #  默认为6
+  backoffLimit: <integer>
+
+  ## 设置终止状态的作业Pod是否自动被删除,或等多长时间再删除。
+  #  终止状态要么是成功、要么是失败。 
+  #  如果设置了此字段:
+  #    将有资格删终止状态的作业Pod。
+  #    如果设置为0,则作业Pod在终止状态后,立即被删除。
+  #    如果设置非0,则作业Pod在终止状态后,达到时长再被删除。
+  #  如果未设置此字段：
+  #    将没有资格删除终止状态的作业Pod。
+  ttlSecondsAfterFinished: <integer>
+
+  ## 标签选择器,匹配template中Pod的标签
+  #  不是必须的,因为Job控制器会自动给
+  #  template中的Pod添加job-name=JOB_NAME
+  #  和controller-uid=UID标签,并在标签选择器
+  #  中完成对controller-uid的关联。
+  selector: <Object>
+
+  ## Pod模板,其相关字段与pods资源的字段一样
+  # 注意：其Pod的RestartPolicy的取值只能是Never
+  # 或OnFailure，不能是Always。不然就违背了作业的运行特征。
+  template: <Object> -required-
+
+
+

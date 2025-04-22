@@ -1,0 +1,108 @@
+#
+# 可用kubectl的如下命令一步步的获取
+#  explain --api-version='autoscaling/v2' hpa
+#  explain --api-version='autoscaling/v2' hpa.metadata
+#  
+
+apiVersion: autoscaling/v2 
+kind: HorizontalPodAutoscaler
+metadata:
+  # hpa资源是"namespace"级别的资源
+  # 用kubectl api-resources | grep hpa 可看
+  namespace: <string>
+  name: <string>
+
+spec:
+  # <== 刮取的目标,hpa资源对象所在名称空间中找 
+  scaleTargetRef: <Object> -required-
+    apiVersion: <string> # 例如：apps/v1
+    kind: <string>       # 例如：Deployment
+    name: <string>       # 例如：deploy资源对象的name
+
+  # <== 指定,k8s集群需提前部署metrics-server
+  metrics: <[]Object>
+    # 指定度量的类型,支持Resource、Pods、ContainerResource, Object, External,
+    - type: <string> -required-  
+
+      # 当type指定的是Resource时,才用此字段
+      resource: <Object>
+        # 例如：cpu、memory
+        name: <string> -required-
+        # 指定性能的目标阀值
+        target: <Object> -required-
+          # 可设置Utilization(利用率),Value(具体值),AverageValue(平均值)
+          type: <string> -required-
+          # 当同级的type为Utilization时,指定此字段
+          averageUtilization: <integer>
+          # 当同级的type为AverageValue时,指定此字段
+          averageValue: <string>
+          # 当同级的type为Value时,指定此字段
+          value: <string>
+
+
+      # 当type指定的是Pods时,才用此字段
+      pods: <Object>
+        metric: <Object> -required-
+          name: <string> -required-
+          selector: <Object>
+            matchExpressions: <[]Object>
+            matchLabels: <map[string]string>
+        target: <Object> -required-
+          # 可设置Utilization(利用率),Value(具体值),AverageValue(平均值)
+          type: <string> -required-
+          # 当同级的type为Utilization时,指定此字段
+          averageUtilization: <integer>
+          # 当同级的type为AverageValue时,指定此字段
+          averageValue: <string>
+          # 当同级的type为Value时,指定此字段
+          value: <string>
+
+
+
+      # 当type指定的是ContainerResource时,才用此字段
+      containerResource: <Object>
+        name: <string> -required-
+        container: <string> -required-
+        target: <Object> -required-
+          # 可设置Utilization(利用率),Value(具体值),AverageValue(平均值)
+          type: <string> -required-
+          # 当同级的type为Utilization时,指定此字段
+          averageUtilization: <integer>
+          # 当同级的type为AverageValue时,指定此字段
+          averageValue: <string>
+          # 当同级的type为Value时,指定此字段
+          value: <string>
+          
+
+      # 当type指定的是Object时,才用此字段
+      external: <Object> 
+        metric: <Object> -required-
+          name: <string> -required-
+          selector: <Object>
+            matchExpressions: <[]Object>
+            matchLabels: <map[string]string>
+        target: <Object> -required-
+          # 可设置Utilization(利用率),Value(具体值),AverageValue(平均值)
+          type: <string> -required-
+          # 当同级的type为Utilization时,指定此字段
+          averageUtilization: <integer>
+          # 当同级的type为AverageValue时,指定此字段
+          averageValue: <string>
+          # 当同级的type为Value时,指定此字段
+
+
+  # <== Pod的最小副本数,默认为1,最低只能为1
+  #     当你的工作负载(例如deploy/xxx)中最开始
+  #     定义的副本数为2，而这里定义的是1.在一定
+  #     时间内你的工作负载没有超过性能阀值,hpa会
+  #     将其缩至1.
+  minReplicas:	<integer>
+
+
+  # <== Pod的最大副本数,必须指定此字段,数量你定
+  #     当你的工作负载(例如deploy/xxx)中其性能
+  #     在一定时间内始终超过其设置的目标阀值,那么
+  #     在这定时间内扩大副本时,其副本的最大数。
+  maxReplicas: <integer> -required-
+
+  

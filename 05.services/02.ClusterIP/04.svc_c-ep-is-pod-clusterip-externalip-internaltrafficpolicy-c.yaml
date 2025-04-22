@@ -1,0 +1,102 @@
+---
+## 通过svc资源对象的name来说明 
+# c-ep-is-pod-clusterip-externalip-internaltrafficpolicy-c 
+#   c
+#     人类可读,表示ClusterIP类型
+#   ep-is-pod
+#     表示后端端点是Pod,那么svc资源对象必须要有标签选择器(selector)
+#   clusterip-externalip
+#     表示此svc具备CLUSTER-IP和EXTERNAL-IP
+#   internaltrafficpolicy-c
+#     表示内部流量策略为Cluster
+#
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: my-app04
+  labels:
+    deploy: my-app04
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app04
+  template:
+    metadata:
+      labels:
+        app: my-app04
+    spec:
+      containers:
+        - name: my-app04
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          ports:
+            - name: http-80
+              containerPort: 80
+
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: lili
+  name: c-ep-is-pod-clusterip-externalip-internaltrafficpolicy-c 
+  labels:
+    svc: c-ep-is-pod-clusterip-externalip-internaltrafficpolicy-c 
+spec:
+  ## 标签选择器,只能匹配此资源对象所在namespace中Pod上的标签
+  selector:
+    app: my-app04
+
+  ## 类型,不指定时默认就为ClusterIP类型。
+  type: ClusterIP
+
+  ## ClusterIP类型的svc其CLUSTER-IP,让其自动获得
+  clusterIP: ""
+
+  ## ClusterIP类型的svc其EXTERNAL-IP,需要人为指定
+  #  只能人为手动指定,因为是ClusterIP类型的,
+  #  无法到svc的metadata.annotations指定从哪获取
+  externalIPs:
+    - 172.31.111.11
+
+  ## 内部流量策略,默认为Cluster
+  internalTrafficPolicy: Cluster
+    # 
+    # 此ClusterIP类型的svc具备了CLUSTER-IP和EXTERNAL-IP，
+    # 那么这里的内部流量策略为Cluster，其大意如下
+    #
+    # CLUSTER-IP
+    #    各worker node上均有 < Protocol  CLUSTER-IP:Port 调度策略>
+    #    各worker node上其 < Protocol  CLUSTER-IP:Port 调度策略> 
+    #       后端的端点数是一样的。
+    #
+    # EXTERNAL-IP
+    #    各worker node上均有 < Protocol  EXTERNAL-IP:Port 调度策略>
+    #    各worker node上其 < Protocol  EXTERNAL-IP:Port 调度策略> 
+    #       后端的端点数是一样的。
+    #    PS：它不受内部流量策略的影响，ClusterIP类型的svc不支持外部流量策略
+    # 
+  
+  ## 端口定义
+  ports:
+    - name: http-80
+      ## 此字段是必须的，svc资源对象中的端口。因为没有CLUSTER-IP
+      ##   A：此svc资源对象的规则在各worker node的内核中是没有的
+      ##      补充：跟internalPolicy没有关系
+      ##   B：集群内的Client(Pod)访问此svc资源对象的name(FQDN).targetPort
+      port: 81  # 这里应该和targetPort其具体的值(端口)保持一致,但这为了学习
+
+      ## svc作代理时使用的协议,只支持TCP、UDP、SCP,默认TCP
+      protocol: TCP
+
+      ## Pod中某容器里面应用的端口,你应该知道的,或者Pod的manifests中
+      ## 有显示说明(例如：pods.spec.containers.ports.containerPort)
+      ## 也可指定显示说明中某列表的name(pods.spec.container.ports.name)
+      #targetPort: 80
+      targetPort: http-80
+
+      ## 其tagetPort端口的应用协议
+      appProtocol: http
+

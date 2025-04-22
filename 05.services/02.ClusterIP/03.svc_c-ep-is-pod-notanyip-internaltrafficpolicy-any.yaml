@@ -1,0 +1,94 @@
+---
+## 通过svc资源对象的name来说明 
+# c-ep-is-pod-notanyip-internaltrafficpolicy-any 
+#   c
+#     人类可读,表示ClusterIP类型
+#   ep-is-pod
+#     表示后端端点是Pod,那么svc资源对象必须要有标签选择器(selector)。
+#     会自动创建一个与svc同名的ep资源对象。
+#     同时svc只会将就绪后的Pod作为后端端点。
+#   notanyip
+#     表示svc资源对象没有CLUSTER-IP和EXTERNAL-IP。
+#     因为没有CLUSTER-IP,k8s的kube-proxy不会介入,所以此时
+#     不用关心内部流量调度策略。
+#   internaltrafficpolicy-any
+#     表示内部流量策略可以是Cluster或local,
+#
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: my-app03
+  labels:
+    deploy: my-app03
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app03
+  template:
+    metadata:
+      labels:
+        app: my-app03
+    spec:
+      containers:
+        - name: my-app03
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          ports:
+            - name: http-80
+              containerPort: 80
+
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: lili
+  name: c-ep-is-pod-notanyip-internaltrafficpolicy-any 
+  labels:
+    svc: c-ep-is-pod-notanyip-internaltrafficpolicy-any 
+spec:
+  ## 因后端端点是Pod,得有标签选择器(只能匹配svc资源对象所在namespace中Pod上的标签） 
+  selector:
+    app: my-app03
+
+  ## 类型,不指定时默认就为ClusterIP类型。
+  type: ClusterIP
+
+  ## CLUSTER-IP,不让其自动获得
+  clusterIP: "None"
+
+  ## EXTERNAL-IP,需要人为指定,我这里不指定
+  #externalIPs:
+  #  - IP地址(只能手动指定)
+
+  ## 内部流量策略,默认为Cluster
+  #internalTrafficPolicy: Cluster
+  #internalTrafficPolicy: Local
+    # 
+    # 此ClusterIP类型的svc,没有CLUSTER-IP和EXTERNAL-IP,
+    # 因没有CLUSTER-IP,k8s的kube-proxy组件不会介入,所以不用关心内部流量策略。
+    #
+  
+  ## 端口定义
+  ports:
+    - name: http-80
+      ## 此字段是必须的，svc资源对象中的端口。因为没有CLUSTER-IP
+      ##   A：此svc资源对象的规则在各worker node的内核中是没有的
+      ##      补充：跟internalPolicy没有关系
+      ##   B：集群内的Client(Pod)访问此svc资源对象的name(FQDN).targetPort
+      port: 81  # 这里应该和targetPort其具体的值(端口)保持一致,但这为了学习
+
+      ## svc作代理时使用的协议,只支持TCP、UDP、SCP,默认TCP
+      protocol: TCP
+
+      ## Pod中某容器里面应用的端口,你应该知道的,或者Pod的manifests中
+      ## 有显示说明(例如：pods.spec.containers.ports.containerPort)
+      ## 也可指定显示说明中某列表的name(pods.spec.container.ports.name)
+      #targetPort: 80
+      targetPort: http-80
+
+      ## 其tagetPort端口的应用协议
+      appProtocol: http
+

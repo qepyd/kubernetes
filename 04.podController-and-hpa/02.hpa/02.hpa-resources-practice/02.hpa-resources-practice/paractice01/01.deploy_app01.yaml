@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: wyc
+  name: app01
+  labels:
+    deploy: app01
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app01
+  template:
+    metadata:
+      labels:
+        app: app01
+    spec:
+      containers:
+        - name: app01
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16 
+          imagePullPolicy: Always
+          # 资源限制,一定得有(不仅仅是针对HPA)
+          # 最大可使用cpu为1核,最大可使用内存为512M
+          resources:
+            requests:
+              cpu: "0.5"  # 等于 500m
+              memory: "100Mi"
+            limits:
+              cpu: "1"    # 等于 1000m
+              memory: "512Mi"
+
+

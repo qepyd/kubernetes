@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: lili
+  name: job-completions-4-parallelism-2-completionmode-indexed
+  labels:
+    job: job-completions-4-parallelism-2-completionmode-indexed
+spec:
+
+  ## 完成作业的Pod数,及Pod数间的并行度
+  completions: 4
+  parallelism: 2
+
+  ## 追踪Pod的模式,默认为NonIndexed
+  completionMode: Indexed
+
+  ## 标签选择器,不是必须的
+  #  那么template中的metadata字段
+  #  也可以没有
+  #selector:
+  #  matchLabels:
+  #    job: job-completions-4-parallelism-2-completionmode-indexed 
+
+  ## Pod模板
+  template:
+    #metadata:
+    #  labels:
+    #    job: job-completions-4-parallelism-2-completionmode-indexed 
+    spec:
+      # Pod的重启策略不能是Always
+      restartPolicy: Never
+
+      # 容器中定义作业的代码
+      containers:
+        - name: myapp01
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          command:
+          - "/bin/sh"
+          args:
+          - "-c"
+          - "sleep 30"
+

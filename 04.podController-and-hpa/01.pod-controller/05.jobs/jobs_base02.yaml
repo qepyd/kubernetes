@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: lili
+  name: job-sleep-30
+  labels:
+    job: job-sleep-30
+spec:
+
+
+
+
+  # ttlSecondsAfterFinished: 0
+  ttlSecondsAfterFinished: 10
+
+  ## 标签选择器,不是必须的
+  #  那么template中的metadata字段也可以没有
+  #selector:
+  #  matchLabels:
+  #    job: job-sleep-30
+
+  ## Pod模板
+  template:
+    #metadata:
+    #  labels:
+    #    job: job-sleep-30
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: myapp01
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          command:
+          - "/bin/sh"
+          args:
+          - "-c"
+          - "sleep 30"
+

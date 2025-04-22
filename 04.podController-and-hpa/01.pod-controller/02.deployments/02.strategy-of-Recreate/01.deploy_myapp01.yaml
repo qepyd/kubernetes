@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: myapp01
+  labels:
+    deploy: myapp01
+spec:
+  # 副本数,默认为1
+  replicas: 4
+
+  # 匹配选择器匹配template中Pod的标签
+  selector:
+    matchLabels:
+      app: myapp01
+
+  # 更新策略
+  strategy:
+    type: RollingUpdate   # 默认策略
+    rollingUpdate:
+      maxSurge: 25%       # 默认25%
+      maxUnavailable: 25% # 默认25%
+
+  # 模板中对Pod进行期望状态定义,
+  # 就看你对pods资源的API规划有多熟练了。
+  template:
+    metadata:
+      # 这里就不用指明namespace和name了
+      labels:
+        app: myapp01
+    spec:
+      # 我没有指定worker node
+      # 也没有容忍Taints
+      containers:
+        - name: myapp01
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          ports:
+            - name: http-80
+              containerPort: 80
+          readinessProbe:
+             initialDelaySeconds: 120         # 初次进行探测的等待/延后时长,默认为10秒。
+             timeoutSeconds: 1               # 超时时长,默认为1秒。
+             failureThreshold: 3             # 失败多少次就认为探测失败，默认为3次。
+             successThreshold: 1             # 成功多少次就认为探测成功，默认为1次。
+             periodSeconds: 10               # 请求的间隔周期(成功或失败后,等待多长时间
+             exec: 
+              command:
+              - '/bin/bash'
+              - '-c'
+              - '[ $(/bin/echo  "OK") == "OK" ]'

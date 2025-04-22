@@ -1,0 +1,97 @@
+---
+## 通过svc资源对象的name来说明
+# c-haveselector-haveclusterip-internaltrafficpolicycluster 
+#   c
+#     表示ClusterIP类型
+#   haveselector-haveclusterip-internaltrafficpolicycluster
+#     haveselector(有标签选择器)
+#       那么其svc的后端端点只能是自身所在namespace中的Pod
+#     haveclusterip(有clusterip)
+#       不会人为干预让其不拥有clusterip
+#       那么此svc资源对象是head service，相对于headless service来说
+#     internaltrafficpolicycluster
+#       表示内置流量策略为cluster,默认值是cluster
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: my-app001
+  labels:
+    deploy: my-app001
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app001
+  template:
+    metadata:
+      labels:
+        app: my-app001
+    spec:
+      containers:
+        - name: my-app001
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          ports:
+            - name: http-80
+              containerPort: 80
+
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: lili
+  name: l-haveselector-haveclusterip-internaltrafficpolicycluster 
+  labels:
+    svc: l-haveselector-haveclusterip-internaltrafficpolicycluster
+  #annotations:
+    # lb.kubesphere.io/v1alpha1: openelb
+    # 指定非namespaces级别的eips资源对象,从里面自动获取一个地址
+    # eip.openelb.kubesphere.io/v1alpha2: eip-sample-pool
+    # 自动指定EIP地址。 
+    # eip.openelb.kubesphere.io/v1alpha1: "172.31.110.1"
+spec:
+  ## 类型,不指定时默认就为ClusterIP类型。
+  type: LoadBalancer
+
+  ## 不指定或指定为""时，自动获取CLUSTER-IP，
+  ## 也可人为指定CLUSTER-IP，不这样做，
+  ## 当指定为None时,是不会获取CLUSTER-IP。
+  clusterIP: ""
+
+  ## EXTERNAL-IP
+  externalIPs:
+    - 172.31.110.1
+
+  ## 内部流量策略,默认就是Cluster
+  #internalTrafficPolicy: Cluster
+
+  ## 标签选择器
+  selector:
+    app: my-app001
+  
+  ## svc资源对象的端口列表
+  ports:
+    - name: http-80
+      ## 此字段是必须的，svc资源对象中的端口。因为有CLUSTER-IP：
+      ##   A：此svc资源对象的规则在各worker node的内核中有CLUSTER-IP:81
+      ##      补充：internalPolicy我没有指定,默认就是Cluster
+      ##   B：集群内的Client(Pod)访问此svc资源对象的name(FQDN).port
+      port: 81  # 这里应该和targetPort其具体的值(端口)保持一致,但这为了学习
+
+      ## svc作代理时使用的协议,只支持TCP、UDP、SCP.默认为TCP
+      protocol: TCP
+
+      ## Pod中某容器里面应用的端口,你应该知道的,或者Pod的manifests中
+      ## 有显示说明(例如：pods.spec.containers.ports.containerPort)
+      ## 也可指定显示说明中某列表的name(pods.spec.container.ports.name)
+      #targetPort: 80
+      targetPort: http-80
+
+      ## 其tagetPort端口的应用协议
+      appProtocol: http
+
+
+  ## k8s集群外面的LB的地址 
+  #loadBalancerIP: 172.31.110.120

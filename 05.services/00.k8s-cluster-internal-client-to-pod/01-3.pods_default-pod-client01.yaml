@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: default
+  name: pod-client01
+  labels:
+    app: pod-client01
+spec:
+  ## 卷
+  volumes:
+    - name: ubuntu1804-apt-source
+      configMap: 
+        # 只有一个key为sources.list
+        name: ubuntu1804-apt-source
+
+  ## 主容器
+  containers:
+    - name: pod-client01
+      # 镜像的版本号不要改,因为引用的apt源跟版本号有关
+      image: swr.cn-north-1.myhuaweicloud.com/library/ubuntu:18.04
+      # 挂载Pod级别的卷到容器的文件系统
+      volumeMounts:
+        - name: ubuntu1804-apt-source
+          mountPath: /etc/apt/sources.list
+          subPath: sources.list
+          readOnly: true
+      # 启动命令
+      command:
+        - "/bin/sh"
+      args:
+        - "-c"
+        - "apt update && apt install -y dnsutils curl host && sleep 100000000"

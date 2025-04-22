@@ -1,0 +1,34 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  namespace: wyc
+  name: app01
+spec:
+  # <== 指定其缩放的目标
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: app01
+
+  # <== 指定相应的指标 
+  metrics:
+    - type: "Resource"
+      resource: 
+        name: "cpu"
+        target:
+          # 度量类型,untilization表示利用率,AverageValue表示平均值
+          type: "Utilization"
+          # 此字段只适用于同级其type字段为Utilization的时候
+          # 表示当平均利用率的目标,当达到此目标会就会扩容
+          averageUtilization: 80
+    - type: "Resource"
+      resource:
+        name: "memory"
+        target:
+          type: "Utilization"
+          averageUtilization: 90
+
+  # <== 指定缩时的最小副本(只能是1)及最扩时的最大副本 
+  minReplicas: 1
+  maxReplicas: 4
+

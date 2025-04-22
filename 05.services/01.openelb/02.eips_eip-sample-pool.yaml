@@ -1,0 +1,22 @@
+apiVersion: network.kubesphere.io/v1alpha2
+kind: Eip
+metadata:
+    name: eip-sample-pool
+    annotations:
+      # 当前Eip对象是否为默认Eip对象,其值可以是false或true
+      eip.openelb.kubesphere.io/is-default-eip: "true"
+spec:
+    # kubernetes其Node网络中未被使用的地址范围
+    address: 172.31.110.1-172.31.110.254
+
+    # 通过命名空间的名称指定哪些命名空间可以使用此 Eip 进行自动 IP 地址分配
+    # 我就就给其注释掉
+    #namespaces:
+    #  - test
+    #  - default
+    #namespaceSelector:
+    #  kubesphere.io/workspace: workspace
+
+    disable: false
+    protocol: layer2
+    interface: eth0

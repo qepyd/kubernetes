@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  namespace: lili
+  name: myapp01
+  labels:
+    rs: myapp01
+spec:
+  ## Pod副本数
+  #  默认为1
+  #  可在线调整
+  #  支持设置为0
+  replicas: 1 
+
+  ## 标签选择器
+  #  匹配template中Pod的Label
+  #  不可在线更新
+  #  创建之前若无法匹配,rs资源对象不被允许创建
+  selector:
+    matchLabels:
+      app: myapp01
+  ## Pod模板
+  template:
+    metadata:
+      labels:
+        app: myapp01
+    spec:
+      containers:
+        - name: myapp01
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          ports:
+            - name: http-80
+              containerPort: 80
