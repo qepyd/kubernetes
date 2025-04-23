@@ -33,7 +33,7 @@ node02     Ready    <none>          208d   v1.24.3   172.31.7.205   <none>      
 node03     Ready    <none>          208d   v1.24.3   172.31.7.206   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   docker://20.10.24
 ```
 
-# 3.假设jmsco项目场景的worker node为node03
+# 3.假设jmsco项目专属的worker node为node03
 ```
 给node03打上相应的标签
 

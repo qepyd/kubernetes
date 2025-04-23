@@ -34,7 +34,7 @@ node03     Ready    <none>          208d   v1.24.3   172.31.7.206   <none>      
 
 ```
 
-# 3.假设wyc项目场景的worker node为node01、node02
+# 3.假设wyc项目专属的worker node为node01、node02
 ```
 给node01、node02打上相应的标签
 
