@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: dev-jmsco
+  name: app03
+  labels:
+    deploy: app03
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app03
+  template:
+    metadata:
+      namespace: dev-jmsco
+      labels:
+        app: app03
+    spec:
+      nodeSelector:
+        project: wyc
+      containers:
+        - name: app03
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          imagePullPolicy: IfNotPresent
+          command:
+            - "/bin/sh"
+          args:
+            - "-c"
+            - "mkdir /usr/share/nginx/html/app03/ && echo wyc project app03 >/usr/share/nginx/html/index.html && mv /usr/share/nginx/html/index.html /usr/share/nginx/html/app03/ &&  nginx -g 'daemon off;'"
+          ports:
+            - name: http-80
+              containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dev-jmsco
+  name: app03
+  labels:
+    svc: app03
+spec:
+  selector:
+    app: app03
+  type: ClusterIP
+  ports:
+    - appProtocol: http
+      name: http-80
+      port: 81
+      targetPort: http-80 
+

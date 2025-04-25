@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: dev-wyc
+  name: app02
+  labels:
+    ing: app02
+  annotations:
+    # <== 当kubernetes版本小于1.19时,
+    #     可用此方法和spec.ingressClassName两种方法来指定ingressclass资源对象
+    #kubernetes.io/ingress.class: "wyc-ingress-nginx"
+spec:
+  # <== 当kubernetes版本大于等于1.19时，只能用
+  #     此方法来指定某ingress-controller配套ingressclass资源对象
+  ingressClassName: wyc-nginx 
+
+  # <== 配置规则及启下
+  rules:
+  - host: "dev-app02.qepyd.com"
+    http:
+      paths:
+      - path: "/"
+        pathType: "Prefix"
+        backend:
+          service: 
+            name: "app02"
+            port: 
+              number: 80

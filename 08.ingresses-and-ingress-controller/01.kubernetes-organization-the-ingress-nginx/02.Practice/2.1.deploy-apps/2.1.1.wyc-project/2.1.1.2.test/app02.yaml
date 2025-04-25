@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: test-wyc
+  name: app02
+  labels:
+    deploy: app02
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app02
+  template:
+    metadata:
+      namespace: test-wyc
+      labels:
+        app: app02
+    spec:
+      nodeSelector:
+        project: wyc
+      containers:
+        - name: app02
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          imagePullPolicy: IfNotPresent
+          command:
+            - "/bin/sh"
+          args:
+            - "-c"
+            - "echo wyc project app02, test env >/usr/share/nginx/html/index.html && nginx -g 'daemon off;'"
+          ports:
+            - name: http-80
+              containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: test-wyc
+  name: app02
+  labels:
+    svc: app02
+spec:
+  selector:
+    app: app02
+  type: ClusterIP
+  ports:
+    - appProtocol: http
+      name: http-80
+      port: 80
+      targetPort: http-80 
+

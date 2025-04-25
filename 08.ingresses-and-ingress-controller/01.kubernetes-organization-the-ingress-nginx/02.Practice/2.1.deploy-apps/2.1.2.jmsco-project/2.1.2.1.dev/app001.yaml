@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: dev-jmsco
+  name: app001
+  labels:
+    deploy: app001
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app001
+  template:
+    metadata:
+      namespace: dev-jmsco
+      labels:
+        app: app001
+    spec:
+      nodeSelector:
+        project: jmsco
+      containers:
+        - name: app001
+          image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+          imagePullPolicy: IfNotPresent
+          command:
+            - "/bin/sh"
+          args:
+            - "-c"
+            - "echo jmsco project app001, dev env >/usr/share/nginx/html/index.html && nginx -g 'daemon off;'"
+          ports:
+            - name: http-80
+              containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dev-jmsco
+  name: app001
+  labels:
+    svc: app001
+spec:
+  selector:
+    app: app001
+  type: ClusterIP
+  ports:
+    - appProtocol: http
+      name: http-80
+      port: 80
+      targetPort: http-80 
+
