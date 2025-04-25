@@ -53,7 +53,7 @@
        # server  外部IP之私网IP:443;
    }
 
-## 配置server，以dev-app01.qepyd.com为例
+## 配置server，以 http://dev-app01.qepyd.com 为例
   root@lb01:~# cat /etc/nginx/conf.d/dev-app01.qepyd.com.conf 
   server {
     listen 80;
