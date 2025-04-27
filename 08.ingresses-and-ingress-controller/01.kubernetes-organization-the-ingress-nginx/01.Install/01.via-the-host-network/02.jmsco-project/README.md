@@ -111,6 +111,9 @@ kubectl apply -f ./01.ns_jmsco-ingress-controller.yaml
       修改 --ingress-class=nginx 成 --ingress-class=jmsco-nginx  
          关联修改IngressClass/nginx对象
              将其修改成 IngressClass/jmsco-nginx
+      修改 --controller-class=k8s.io/ingress-nginx 为 --controller-class=k8s.io/jmsco-ingress-nginx
+         关联修改 IngressClass/jmsco-nginx 对象
+             将其spec.controller字段的值修改成 k8s.io/jmsco-ingress-nginx
       注释 --publish-service=$(POD_NAMESPACE)/ingress-nginx-controller 如果有的放 
          关联修改Service/ingress-nginx-controller对象
              将其完全注释掉

@@ -436,10 +436,13 @@ spec:
       - args:
         - /nginx-ingress-controller
         - --election-id=ingress-nginx-leader
-        - --controller-class=k8s.io/ingress-nginx
         # 将 --ingress-class=nginx 修改成 --ingress-class=jmsco-nginx
         # 其 IngressClass/nginx 对象得修改成 IngressClass/jmsco-nginx
         - --ingress-class=jmsco-nginx
+        # 将 --controller-class=k8s.io/ingress-nginx 改成 --controller-class=k8s.io/jmsco-ingress-nginx
+        # 其 IngressClass/jmsco-nginx 对象的spec.controller 得保持和这儿的一样
+        - --controller-class=k8s.io/jmsco-ingress-nginx
+        # 
         - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
         - --validating-webhook=:8443
         - --validating-webhook-certificate=/usr/local/certificates/cert
@@ -629,7 +632,10 @@ metadata:
   #     --ingress-class参数的值一致
   name: jmsco-nginx
 spec:
-  controller: k8s.io/ingress-nginx
+  # <== 得和Deployment/ingress-nginx-controller对象
+  #     的spec.template.spec.containers.args中
+  #     --controller-class参数的值一致
+  controller: k8s.io/jmsco-ingress-nginx
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
