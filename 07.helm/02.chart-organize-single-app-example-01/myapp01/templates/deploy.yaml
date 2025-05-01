@@ -18,9 +18,9 @@ spec:
         app: {{ .Values.podLabels.app }}
     spec:
       containers:
-      - name: {{ .Chart.Name }} 
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}" 
-        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+      - name: "{{ .Values.image.containres.applicationContainer.image }}" 
+        image: "{{ .Values.image.containres.applicationContainer.repository }}/{{ .Values.image.containres.applicationContainer.image }}:{{ .Values.image.containres.applicationContainer.tag }}" 
+        imagePullPolicy: "{{ .Values.image.containres.pullPolicy }}"
         command:
         - "/bin/sh"
         args:
@@ -29,3 +29,11 @@ spec:
         ports:
         - name: http
           containerPort: {{ .Values.service.port }} 
+      - name: "{{ .Values.image.containres.sidecarContainer01.image }}"
+        image: "{{ .Values.image.containres.sidecarContainer01.repository }}/{{ .Values.image.containres.sidecarContainer01.image }}:{{ .Values.image.containres.sidecarContainer01.tag }}"
+        imagePullPolicy: "{{ .Values.image.containres.sidecarContainer01.pullPolicy }}"
+        command:
+        - "/bin/bash"
+        args:
+        - "-c"
+        - "sleep 500000000"

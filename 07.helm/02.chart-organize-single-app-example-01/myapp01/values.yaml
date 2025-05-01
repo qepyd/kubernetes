@@ -2,12 +2,20 @@
 replicaCount: 2
 
 image:
-  repository: swr.cn-north-1.myhuaweicloud.com/library/nginx
-  tag: 1.16
-  pullPolicy: IfNotPresent
+  containres:
+    applicationContainer:
+       repository: swr.cn-north-1.myhuaweicloud.com/library
+       image: nginx
+       tag: 1.16
+       pullPolicy: IfNotPresent
+    sidecarContainer01:
+       repository: swr.cn-north-1.myhuaweicloud.com/chenliang
+       image: admin-box
+       tag: v1.2
+       pullPolicy: IfNotPresent
 
 podLabels:
-  env: dev 
+  env: prod 
   app: myapp01
 
 service:
