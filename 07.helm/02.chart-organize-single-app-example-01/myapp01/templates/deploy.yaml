@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    deploy: {{ .Values.podLabels.app }}
+    #env: {{ .Values.podLabels.env }}
+spec:
+  replicas: {{ .Values.replicaCount }} 
+  selector:
+    matchLabels:
+      env: {{ .Values.podLabels.env }}
+      app: {{ .Values.podLabels.app }}
+  template:
+    metadata:
+      labels:
+        env: {{ .Values.podLabels.env }}
+        app: {{ .Values.podLabels.app }}
+    spec:
+      containers:
+      - name: myapp01 
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}" 
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        command:
+        - "/bin/sh"
+        args:
+        - "-c"
+        - "echo myapp01 >/usr/share/nginx/html/index.html && nginx -g 'daemon off;'"
+        ports:
+        - name: http
+          containerPort: {{ .Values.service.port }} 

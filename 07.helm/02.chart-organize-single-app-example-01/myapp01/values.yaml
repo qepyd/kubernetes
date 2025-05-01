@@ -1,0 +1,16 @@
+
+replicaCount: 2
+
+image:
+  repository: swr.cn-north-1.myhuaweicloud.com/library/nginx
+  tag: 1.16
+  pullPolicy: IfNotPresent
+
+podLabels:
+  env: dev 
+  app: myapp01
+
+service:
+  type: ClusterIP
+  protocol: TCP
+  port: 80

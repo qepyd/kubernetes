@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }} 
+  labels:
+    svc: {{ .Values.podLabels.app }}
+    #env: {{ .Values.podLabels.env }}
+spec:
+  selector:
+    env: {{ .Values.podLabels.env }}
+    app: {{ .Values.podLabels.app }}
+  type: "{{ .Values.service.ClusterIP }}"
+  ports:
+  - name: http
+    port: {{ .Values.service.port }}
+    protocol: "{{ .Values.service.protocol }}"
+    targetPort: http 
+    appProtocol: http
