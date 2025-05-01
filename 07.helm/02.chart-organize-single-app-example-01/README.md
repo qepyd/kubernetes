@@ -1,6 +1,6 @@
 # 1.部署到dev环境
 ```
-## helm工具安装
+## 使用helm工具进行安装
 helm -n dev-lili install myapp01 ./myapp01/  --set-string=podLabels.env=dev
 
 ## 查看Release
@@ -52,7 +52,7 @@ root@master01:~#
 
 # 2.部署到test环境
 ```
-## helm工具部署
+## 使用helm工具进行安装 
 helm -n test-lili install myapp01 ./myapp01/  --set-string=podLabels.env=test
 
 ## 列出Release
