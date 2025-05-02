@@ -1,5 +1,14 @@
 # 1.部署到dev环境
 ```
+## 检查chart的语法格式
+helm lint ./myapp01/
+
+## 使用helm工具进行安装前进行模拟安装(--dry-run)
+helm -n dev-lili install myapp01 ./myapp01/  --set-string=podLabels.env=dev --dry-run=client 
+  #
+  # 会展示出相关的状态、各manifests(最终)
+  #
+
 ## 使用helm工具进行安装
 helm -n dev-lili install myapp01 ./myapp01/  --set-string=podLabels.env=dev
 
@@ -52,6 +61,15 @@ root@master01:~#
 
 # 2.部署到test环境
 ```
+## 检查chart的语法格式
+helm lint ./myapp01/
+
+## 使用helm工具进行安装前进行模拟安装(--dry-run)
+helm -n test-lili install myapp01 ./myapp01/  --set-string=podLabels.env=test --dry-run=client
+  #
+  # 会展示出相关的状态、各manifests(最终)
+  #
+
 ## 使用helm工具进行安装 
 helm -n test-lili install myapp01 ./myapp01/  --set-string=podLabels.env=test
 
