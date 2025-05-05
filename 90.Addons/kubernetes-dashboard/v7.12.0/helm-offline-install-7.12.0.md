@@ -37,10 +37,6 @@ kubectl get   -f ./ns_kubernetes-dashboard.yaml
   tar xf ./kubernetes-dashboard-7.12.0.tgz -C ./
   ls -ld ./kubernetes-dashboard
 
-## 这里其dashboard的暴露方式采用nodePort方式
- 将svc/kubernetes-dashboard-web修改成NodePort类型(端口使用30000)
- kubernetes外部LB--->代理至相关的worker node上
-
 ## 使用helm工具进行安装(模拟安装)
 helm -n kubernetes-dashboard  install  kubernetes-dashboard   \
   --set app.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key='node-role.kubernetes.io/control-plane',  \
