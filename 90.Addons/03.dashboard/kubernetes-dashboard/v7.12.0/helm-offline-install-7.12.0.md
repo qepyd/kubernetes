@@ -23,9 +23,7 @@ kubernetes的dashboard通过ingress-controller进行暴露
 
 # 2.创建ns/kubernetes-dashboard对象
 ```
-kubectl apply -f ./ns_kubernetes-dashboard.yaml --dry-run=client
-kubectl apply -f ./ns_kubernetes-dashboard.yaml
-kubectl get   -f ./ns_kubernetes-dashboard.yaml
+返回上一级目录，应用 ns_kubernetes-dashboard.yaml 文件
 ```
 
 # 3.使用helm工具安装
