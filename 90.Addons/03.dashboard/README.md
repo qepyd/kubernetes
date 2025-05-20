@@ -8,7 +8,7 @@
 # 2.我的kubernetes学习环境
 ```
 ## k8s外部LB的vip为
-  172.31.7.114    
+  172.31.7.114   # 此vip只要能够与k8s各node的INTERNAL-IP通信即可
 
 ## k8s的相关nodes
 root@master01:~# kubectl get nodes  -o wide
