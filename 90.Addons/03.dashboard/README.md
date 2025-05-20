@@ -8,8 +8,7 @@
 # 2.我的kubernetes学习环境
 ```
 ## k8s外部LB的vip为
-  172.31.7.110
-  172.31.7.120
+  172.31.7.114    
 
 ## k8s的相关nodes
 root@master01:~# kubectl get nodes  -o wide
@@ -23,7 +22,4 @@ node03     Ready    <none>          38h   v1.24.3   172.31.7.206   <none>       
 
 ## k8s的各master安装有worker node相关组件
 ContainerRuntime、kubelet、kube-proxy、CNI
-
-## k8s中kube-apiserver组件各实例的server证书允许了"k8s外部LB的vip"
-openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text  | grep -A 1 "X509v3 Subject Alternative Name"
 ```
