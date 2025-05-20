@@ -166,22 +166,19 @@ kubectl get -f recommended.yaml
 
 # 6.访问测试一下
 ```
-## 访问地址
 https://172.31.7.201:30000
 https://任何一个node的NodeIP:30000
-
-## 使用现有kubeconfig(/etc/kubernetes/admin.conf)去登录
-会报错：Internal error (500): Not enough data to create auth info structure.
-因  为：因为这个kubeconfig文件中其帐户非"服务帐户"，即k8s中没有,它是在client证书中承载的
 ```
 
-# 7.创建相关sa帐户、创建角色、角色绑定、制定kubeconfig
+# 7.将其暴露出k8s集群
+```
+## k8s外部代理之nginx的配置
+参考 ./k8s-external-lb-the-nginx-expose/ 目录 
+
+## 访问测试
+https://k8s01-dashboard.qepyd.com
+```
+
+# 8.创建相关sa帐户、创建角色、角色绑定、制定kubeconfig
 ```
 参考 ./create-sa-test-login/ 目录下的
-```
-
-# 8.k8s外部lb配置7层代理
-```
-参考./k8s-external-lb-expose目录
-```
-
