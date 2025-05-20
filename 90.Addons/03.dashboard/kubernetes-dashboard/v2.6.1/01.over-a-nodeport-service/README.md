@@ -74,11 +74,14 @@ root@master01:/qepyd/kubernetes/90.Addons/03.dashboard/kubernetes-dashboard/v2.6
     namespace: kubernetes-dashboard
   namespace: kubernetes-dashboard
 
-## 是否包含ns/kubernetes-dashboard的manifests,结果是包含的
+## 是否包含ns/kubernetes-dashboard的manifests, 结果是包含的
 root@master01:/qepyd/kubernetes/90.Addons/03.dashboard/kubernetes-dashboard/v2.6.1# grep -A 3 "^kind: Namespace" recommended.yaml 
 kind: Namespace
 metadata:
   name: kubernetes-dashboard
+
+## 将ns/kubernetes-dashboard对象的manifests给注释掉
+为了安全考滤,ns资源对象的manifests应该存在于一个单独的文件中
 
 ## 所用到的image
 root@master01:/qepyd/kubernetes/90.Addons/03.dashboard/kubernetes-dashboard/v2.6.1# grep image: recommended.yaml 
