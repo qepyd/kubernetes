@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: magedu
+  name: magedu-user
+  labels:
+    sa: magedu-user
+secrets:
+  - name: magedu-user-token 
