@@ -117,5 +117,5 @@ https://任何一个node的NodeIP:30000
 # 6.k8s外部LB的配置
 ```
 ## Nginx
-参考 ./k8s-external-lb-the-nginx-expose/ 目录 
+参考 ./k8s-external-lb-the-nginx-proxy/ 目录 
 ```

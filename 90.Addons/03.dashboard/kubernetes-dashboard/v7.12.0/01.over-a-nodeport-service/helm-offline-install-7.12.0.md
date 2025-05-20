@@ -90,5 +90,5 @@ kubectl                         get clusterrole,clusterrolebinding | grep kubern
 # 3.k8s外部代理的配置
 ```
 ## nginx
-参考 ./k8s-external-lb-the-nginx-expose/ 目录
+参考 ./k8s-external-lb-the-nginx-proxy/ 目录
 ```
