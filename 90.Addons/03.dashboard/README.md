@@ -20,6 +20,6 @@ node01     Ready    <none>          38h   v1.24.3   172.31.7.204   <none>       
 node02     Ready    <none>          38h   v1.24.3   172.31.7.205   <none>        Ubuntu 20.04.4 LTS   5.4.0-215-generic   docker://28.1.1
 node03     Ready    <none>          38h   v1.24.3   172.31.7.206   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   docker://28.1.1
 
-## k8s的各master安装有worker node相关组件
+## k8s的各master安装有worker node相关组件、插件
 ContainerRuntime、kubelet、kube-proxy、CNI
 ```
