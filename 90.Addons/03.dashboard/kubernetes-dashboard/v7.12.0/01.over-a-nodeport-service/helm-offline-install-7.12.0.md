@@ -104,3 +104,8 @@ https://任何一个node的NodeIP:30000
 ## Nginx
 参考 ./k8s-external-lb-the-nginx-proxy/ 目录
 ```
+
+# 5.测试登录
+```
+参考 ./test-login/ 目录
+```
