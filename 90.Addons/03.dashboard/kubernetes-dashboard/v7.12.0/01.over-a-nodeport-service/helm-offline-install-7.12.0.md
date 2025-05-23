@@ -44,12 +44,14 @@ helm -n kubernetes-dashboard  install  kubernetes-dashboard   \
   --set auth.image.tag='1.2.4'                                                                                                                                          \
   --set web.image.repository='swr.cn-north-1.myhuaweicloud.com/qepyd/k8s-dashboard-web'                                                                                 \
   --set web.image.tag='1.6.2'                                                                                                                                           \
-  --set web.service.type='NodePort'                                                                                                                                     \
   --set metricsScraper.image.repository='swr.cn-north-1.myhuaweicloud.com/qepyd/k8s-dashboard-metrics-scraper'                                                          \
   --set metricsScraper.image.tag='1.2.2'                                                                                                                                \
-  --set kong.enabled='false'                                                                                                                                            \
+  --set kong.enabled='true'                                                                                                                                             \
+  --set kong.proxy.type='NodePort'                                                                                                                                      \
+  --set kong.image.repository='swr.cn-north-1.myhuaweicloud.com/qepyd/kong'                                                                                             \
+  --set kong.image.tag='3.8'                                                                                                                                            \
   ./kubernetes-dashboard/  --dry-run
-   
+
 ## 使用helm工具进行安装
 helm -n kubernetes-dashboard  install  kubernetes-dashboard   \
   --set app.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key='node-role.kubernetes.io/control-plane',  \
@@ -64,16 +66,20 @@ helm -n kubernetes-dashboard  install  kubernetes-dashboard   \
   --set auth.image.tag='1.2.4'                                                                                                                                          \
   --set web.image.repository='swr.cn-north-1.myhuaweicloud.com/qepyd/k8s-dashboard-web'                                                                                 \
   --set web.image.tag='1.6.2'                                                                                                                                           \
-  --set web.service.type='NodePort'                                                                                                                                     \
   --set metricsScraper.image.repository='swr.cn-north-1.myhuaweicloud.com/qepyd/k8s-dashboard-metrics-scraper'                                                          \
   --set metricsScraper.image.tag='1.2.2'                                                                                                                                \
-  --set kong.enabled='false'                                                                                                                                            \
+  --set kong.enabled='true'                                                                                                                                             \
+  --set kong.proxy.type='NodePort'                                                                                                                                      \
+  --set kong.image.repository='swr.cn-north-1.myhuaweicloud.com/qepyd/kong'                                                                                             \
+  --set kong.image.tag='3.8'                                                                                                                                            \
   ./kubernetes-dashboard/
 
+
 ## kubectl工具在线非交互式修改ns/kubernetes-dashboard中其svc/kubernetes-dashboard-web  spec.ports下为0列表中nodePort的端口为30000(我规划的)
-kubectl -n kubernetes-dashboard  get svc/kubernetes-dashboard-web
-kubectl -n kubernetes-dashboard  patch svc kubernetes-dashboard-web -p '[{"op": "replace", "path": "/spec/ports/0/nodePort", "value": 30000}]' --type='json'
-kubectl -n kubernetes-dashboard  get svc/kubernetes-dashboard-web
+kubectl -n kubernetes-dashboard  get svc/kubernetes-dashboard-kong-proxy
+kubectl -n kubernetes-dashboard  patch svc/kubernetes-dashboard-kong-proxy -p '[{"op": "replace", "path": "/spec/ports/0/nodePort", "value": 30000}]' --type='json'
+kubectl -n kubernetes-dashboard  get svc/kubernetes-dashboard-kong-proxy
+
 
 ## 列出相关的Release
 helm -n kubernetes-dashboard  list 
@@ -87,8 +93,14 @@ kubectl -n kubernetes-dashboard get sa,role,rolebinding,secrets,cm,deploy,svc
 kubectl                         get clusterrole,clusterrolebinding | grep kubernetes-dashboard
 ```
 
-# 3.k8s外部代理的配置
+# 3.访问测试一下
 ```
-## nginx
+https://172.31.7.201:30000
+https://任何一个node的NodeIP:30000
+```
+
+# 4.k8s外部代理的配置
+```
+## Nginx
 参考 ./k8s-external-lb-the-nginx-proxy/ 目录
 ```
