@@ -173,12 +173,12 @@ curl -H "Authorization: Bearer c9c080.830e9721227e8088"  \
      https://172.31.7.110:6443/api/v1/nodes  | jq '.items[] |{name: .metadata.name}'
     # 
     # jq命令在ubuntu下可用apt install jq -y进行安装
-    #
+    # 
 ```
-制作kubeconfig后,再结合kubectl工具去访问测试
+
+制作kubeconfig后
 ```
-## 制作kubeconfig文件
-# <== 设置kubeconfig文件的clusters字段
+## 设置kubeconfig文件的clusters字段
 kubectl --kubeconfig=/tmp/lili01.conf  config set-cluster      \
    k8s01                                                        \
   --server=https://172.31.7.110:6443                             \
@@ -188,7 +188,7 @@ kubectl --kubeconfig=/tmp/lili01.conf  config set-cluster      \
 kubectl --kubeconfig=/tmp/lili01.conf  config view --raw=false
 kubectl --kubeconfig=/tmp/lili01.conf  config view --raw=true 
 
-# <== 设置kubeconfig文件的users字段
+## 设置kubeconfig文件的users字段
 kubectl --kubeconfig=/tmp/lili01.conf  config  set-credentials \
   lili01                                                        \
   --token=c9c080.830e9721227e8088
@@ -196,7 +196,7 @@ kubectl --kubeconfig=/tmp/lili01.conf  config  set-credentials \
 kubectl --kubeconfig=/tmp/lili01.conf  config view --raw=false
 kubectl --kubeconfig=/tmp/lili01.conf  config view --raw=true 
 
-# <== 设置kubeconfig文件的contexts字段
+## 设置kubeconfig文件的contexts字段
 kubectl --kubeconfig=/tmp/lili01.conf  config set-context \
   lili01@k8s01                                              \
   --user=lili01                                             \
@@ -205,18 +205,22 @@ kubectl --kubeconfig=/tmp/lili01.conf  config set-context \
 kubectl --kubeconfig=/tmp/lili01.conf  config view --raw=false
 kubectl --kubeconfig=/tmp/lili01.conf  config view --raw=true
 
-# <== 设置kubeconfig文件的current-context字段
+## 设置kubeconfig文件的current-context字段
 kubectl --kubeconfig=/tmp/lili01.conf  config use-context \
   lili01@k8s01 
 
 kubectl --kubeconfig=/tmp/lili01.conf  config view --raw=false
 kubectl --kubeconfig=/tmp/lili01.conf  config view --raw=true
+```
 
-## kubectl工具结合kubeconfig文件进行访问测试
+kubectl工具使用制作好的kubeconfig去访问测试
+```
 kubectl --kubeconfig=/tmp/lili01.conf  get nodes
   #
   # 可列出k8s集群中所有的nodes资源对象的哈
+  # 注意：因为是只读操作,会绕过kube-apiserver访问控制的第三关之"准入控制"
   #
 ```
+
 
 
