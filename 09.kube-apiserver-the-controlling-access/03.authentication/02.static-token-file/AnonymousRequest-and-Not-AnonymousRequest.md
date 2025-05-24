@@ -1,8 +1,8 @@
 
-======================================= 非匿名请求 ============================================
+======================================= 匿名请求 和 非匿名请求 ============================
 # 1.准备static token file
 ```
-## 准备的static token file
+## 准备static token file
 root@master01:~# cat /tmp/static-token-file.csv 
 c9c080.830e9721227e8088,lili01,1001
 75ecb1.3c7c4204b1047d9f,lili02.1002,"t-admin"
@@ -53,7 +53,62 @@ mv /tmp/kube-apiserver.yaml   /etc/kubernetes/manifests/
 docker ps
 ```
 
-# 3.lili01用户的访问测试,及补充
+# 3.匿名请求
+生成token
+```
+root@master01:~# echo "$(openssl rand -hex 3).$(openssl rand -hex 8)"
+7ac43b.58266dbe587c6f5e
+```
+
+curl工具访问kube-apiserver进行测试
+```
+## 命令
+curl -H "Authorization: Bearer 7ac43b.58266dbe587c6f5e"  \
+     --cacert /etc/kubernetes/pki/ca.crt                  \
+     https://172.31.7.110:6443/api/v1/nodes
+
+## 结果
+{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {},
+  "status": "Failure",
+  "message": "Unauthorized",
+  "reason": "Unauthorized",
+  "code": 401
+}
+
+## 结果说明
+被kubernetes识别成了"匿名请求"，其过程为：
+A：所推荐的token是非法的(kube-apiserver通过它无法得到用户标识)
+B：那么用户标识将为：
+   用户名：system:anonymous
+   所属组：system:unauthenticated
+C：其权限由kubernetes中的以下对象控制着:
+   clusterrole/system:public-info-viewer
+   clusterrolebinding/system:public-info-viewer 
+D：注意：这里没有经过"准入控制"，因为我的操作命令是读(而读是会绕过"准入控制"的)。
+```
+
+kubectl工具访问kube-apiserver进行测试
+```
+ls -l $HOME/.kube/config
+mv $HOME/.kube/config  $HOME/.kube/config.bak
+ls -l $HOME/.kube/config.bak
+
+kubectl --server='https://172.31.7.110:6443'             \
+   --certificate-authority=/etc/kubernetes/pki/ca.crt     \
+   --token='7ac43b.58266dbe587c6f5e'                       \
+   get nodes
+   #
+   # 结果为：error: You must be logged in to the server (Unauthorized)
+   # 
+
+mv $HOME/.kube/config.bak  $HOME/.kube/config
+```
+
+
+# 4.lili01用户的访问测试,及补充
 curl工具访问
 ```
 ## 命令
