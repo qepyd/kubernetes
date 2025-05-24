@@ -144,7 +144,7 @@ kubernetes中进行相关的授权
 
 ## 创建角色绑定(我这就创建集群角色,subject类型为User)
 #<== 编写manifests
-cat >/tmp/clusterrolebind_lili01.yaml <<'EOF'
+cat >/tmp/clusterrolebinding_lili01.yaml <<'EOF'
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -160,8 +160,8 @@ subjects:
 EOF
 
 #<== 应用manifests
-kubectl apply -f /tmp/clusterrolebind_lili01.yaml --dry-run=client
-kubectl apply -f /tmp/clusterrolebind_lili01.yaml
+kubectl apply -f /tmp/clusterrolebinding_lili01.yaml --dry-run=client
+kubectl apply -f /tmp/clusterrolebinding_lili01.yaml
 kubectl get  clusterrolebinding lili01
 ```
 
@@ -277,7 +277,7 @@ kubernetes中授权
 
 ## 角色绑定(这里为了测试，就创建集群角色绑定)
 #<== 编写manifests
-cat >/tmp/clusterrolebind_ttadmin.yaml <<'EOF'
+cat >/tmp/clusterrolebinding_ttadmin.yaml <<'EOF'
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -295,8 +295,8 @@ subjects:
 EOF
 
 #<== 应用manifests
-kubectl apply -f /tmp/clusterrolebind_ttadmin.yaml --dry-run=client
-kubectl apply -f /tmp/clusterrolebind_ttadmin.yaml
+kubectl apply -f /tmp/clusterrolebinding_ttadmin.yaml --dry-run=client
+kubectl apply -f /tmp/clusterrolebinding_ttadmin.yaml
 kubectl get clusterrolebinding ttadmin
 ```
 
