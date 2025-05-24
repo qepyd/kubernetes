@@ -13,7 +13,7 @@ c9c080.830e9721227e8088,lili01,1001
    csv
 文件内容格式：
    TokenID.TokenSecret,用户名,用户ID,"Group1,Group2,..."
-   每行至少包含前三列(不然kube-apiserver组件排污管加载此文件后重启会失败)
+   每行至少包含前三列(不然kube-apiserver组件实例加载此文件后重启会失败)
    其Group是可选的
 ```
 
