@@ -5,8 +5,8 @@
 ## 准备static token file
 root@master01:~# cat /tmp/static-token-file.csv 
 c9c080.830e9721227e8088,lili01,1001
-75ecb1.3c7c4204b1047d9f,lili02.1002,"ttadmin"
-5c3b26.e724603c1fb0b702,lili03.1003,"ttadmin"
+75ecb1.3c7c4204b1047d9f,lili02,1002,"ttadmin"
+5c3b26.e724603c1fb0b702,lili03,1003,"ttadmin"
 
 ## 相关说明
 文件名的后缀：
@@ -238,7 +238,7 @@ curl -H "Authorization: Bearer 75ecb1.3c7c4204b1047d9f"  \
   "apiVersion": "v1",
   "metadata": {},
   "status": "Failure",
-  "message": "nodes is forbidden: User \"lili02.1002\" cannot list resource \"nodes\" in API group \"\" at the cluster scope",
+  "message": "nodes is forbidden: User \"lili02\" cannot list resource \"nodes\" in API group \"\" at the cluster scope",
   "reason": "Forbidden",
   "details": {
     "kind": "nodes"
@@ -259,7 +259,7 @@ curl -H "Authorization: Bearer 5c3b26.e724603c1fb0b702"  \
   "apiVersion": "v1",
   "metadata": {},
   "status": "Failure",
-  "message": "nodes is forbidden: User \"lili03.1003\" cannot list resource \"nodes\" in API group \"\" at the cluster scope",
+  "message": "nodes is forbidden: User \"lili03\" cannot list resource \"nodes\" in API group \"\" at the cluster scope",
   "reason": "Forbidden",
   "details": {
     "kind": "nodes"
@@ -298,25 +298,108 @@ kubectl apply -f /tmp/clusterrolebind_ttadmin.yaml
 kubectl get clusterrolebinding ttadmin
 ```
 
-kubectl工具再进行访问测试
+curl工具进行访问测试
 ```
-## kubectl拿着lili02用户的token、k8s集群的ca证书去访问
+## curl拿着lili02用户的token、k8s集群的ca证书去访问
 #<== 命令(可列出所有nodes资源对象)
-kubectl --server='https://172.31.7.110:6443'             \
-   --certificate-authority=/etc/kubernetes/pki/ca.crt     \
-   --token='75ecb1.3c7c4204b1047d9f'                       \
-   get nodes
+curl -H "Authorization: Bearer 75ecb1.3c7c4204b1047d9f"  \
+     --cacert /etc/kubernetes/pki/ca.crt                  \
+     https://172.31.7.110:6443/api/v1/nodes
 
-## kubectl拿着lili03用户的token、k8s集群的ca证书去访问
+curl -H "Authorization: Bearer 75ecb1.3c7c4204b1047d9f"  \
+     --cacert /etc/kubernetes/pki/ca.crt                  \
+     https://172.31.7.110:6443/api/v1/nodes  | jq '.items[] |{name: .metadata.name}'
+
+## curl拿着lili03用户的token、k8s集群的ca证书去访问
 #<== 命令(可列出所有nodes资源对象)
-kubectl --server='https://172.31.7.110:6443'             \
-   --certificate-authority=/etc/kubernetes/pki/ca.crt     \
-   --token='5c3b26.e724603c1fb0b702'                       \
-   get nodes
+curl -H "Authorization: Bearer 5c3b26.e724603c1fb0b702"  \
+     --cacert /etc/kubernetes/pki/ca.crt                  \
+     https://172.31.7.110:6443/api/v1/nodes
+
+curl -H "Authorization: Bearer 5c3b26.e724603c1fb0b702"  \
+     --cacert /etc/kubernetes/pki/ca.crt                  \
+     https://172.31.7.110:6443/api/v1/nodes  | jq '.items[] |{name: .metadata.name}'
 ```
 
+制作kubeconfig文件之lili02.conf
+```
+## 设置kubeconfig文件的clusters字段
+kubectl --kubeconfig=/tmp/lili02.conf  config set-cluster      \
+   k8s01                                                        \
+  --server=https://172.31.7.110:6443                             \
+  --certificate-authority=/etc/kubernetes/pki/ca.crt              \
+  --embed-certs=true
 
+kubectl --kubeconfig=/tmp/lili02.conf  config view --raw=false
+kubectl --kubeconfig=/tmp/lili02.conf  config view --raw=true 
 
+## 设置kubeconfig文件的users字段
+kubectl --kubeconfig=/tmp/lili02.conf  config  set-credentials \
+  lili02                                                        \
+  --token=75ecb1.3c7c4204b1047d9f
 
+kubectl --kubeconfig=/tmp/lili02.conf  config view --raw=false
+kubectl --kubeconfig=/tmp/lili02.conf  config view --raw=true 
+
+## 设置kubeconfig文件的contexts字段
+kubectl --kubeconfig=/tmp/lili02.conf  config set-context \
+  lili02@k8s01                                              \
+  --user=lili02                                             \
+  --cluster=k8s01
+
+kubectl --kubeconfig=/tmp/lili02.conf  config view --raw=false
+kubectl --kubeconfig=/tmp/lili02.conf  config view --raw=true
+
+## 设置kubeconfig文件的current-context字段
+kubectl --kubeconfig=/tmp/lili02.conf  config use-context \
+  lili02@k8s01 
+
+kubectl --kubeconfig=/tmp/lili02.conf  config view --raw=false
+kubectl --kubeconfig=/tmp/lili02.conf  config view --raw=true
+```
+
+制作kubeconfig文件之lili03.conf
+```
+## 设置kubeconfig文件的clusters字段
+kubectl --kubeconfig=/tmp/lili03.conf  config set-cluster      \
+   k8s01                                                        \
+  --server=https://172.31.7.110:6443                             \
+  --certificate-authority=/etc/kubernetes/pki/ca.crt              \
+  --embed-certs=true
+
+kubectl --kubeconfig=/tmp/lili03.conf  config view --raw=false
+kubectl --kubeconfig=/tmp/lili03.conf  config view --raw=true 
+
+## 设置kubeconfig文件的users字段
+kubectl --kubeconfig=/tmp/lili03.conf  config  set-credentials \
+  lili03                                                        \
+  --token=5c3b26.e724603c1fb0b702
+
+kubectl --kubeconfig=/tmp/lili03.conf  config view --raw=false
+kubectl --kubeconfig=/tmp/lili03.conf  config view --raw=true 
+
+## 设置kubeconfig文件的contexts字段
+kubectl --kubeconfig=/tmp/lili03.conf  config set-context \
+  lili03@k8s01                                              \
+  --user=lili03                                             \
+  --cluster=k8s01
+
+kubectl --kubeconfig=/tmp/lili03.conf  config view --raw=false
+kubectl --kubeconfig=/tmp/lili03.conf  config view --raw=true
+
+## 设置kubeconfig文件的current-context字段
+kubectl --kubeconfig=/tmp/lili03.conf  config use-context \
+  lili03@k8s01 
+
+kubectl --kubeconfig=/tmp/lili03.conf  config view --raw=false
+kubectl --kubeconfig=/tmp/lili03.conf  config view --raw=true
+```
+
+kubectl工具指定kubeconfig文件进行访问并执行操作
+```
+kubectl --kubeconfig=/tmp/lili02.conf get nodes
+
+kubectl --kubeconfig=/tmp/lili03.conf get nodes
+```
 
 
