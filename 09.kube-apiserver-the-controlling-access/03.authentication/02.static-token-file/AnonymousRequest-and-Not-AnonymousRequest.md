@@ -5,8 +5,8 @@
 ## 准备static token file
 root@master01:~# cat /tmp/static-token-file.csv 
 c9c080.830e9721227e8088,lili01,1001
-75ecb1.3c7c4204b1047d9f,lili02.1002,"t-admin"
-5c3b26.e724603c1fb0b702,lili03.1003,"t-admin"
+75ecb1.3c7c4204b1047d9f,lili02.1002,"ttadmin"
+5c3b26.e724603c1fb0b702,lili03.1003,"ttadmin"
 
 ## 相关说明
 文件名的后缀：
@@ -221,6 +221,102 @@ kubectl --kubeconfig=/tmp/lili01.conf  get nodes
   # 注意：因为是只读操作,会绕过kube-apiserver访问控制的第三关之"准入控制"
   #
 ```
+
+
+# 5.lili02、lili03用户的测试及授权
+curl工具进行访问测试
+```
+## curl拿着lili02用户的token、k8s集群的ca证书去访问
+#<== 命令
+curl -H "Authorization: Bearer 75ecb1.3c7c4204b1047d9f"  \
+     --cacert /etc/kubernetes/pki/ca.crt                  \
+     https://172.31.7.110:6443/api/v1/nodes
+
+#<== 结果 
+{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {},
+  "status": "Failure",
+  "message": "nodes is forbidden: User \"lili02.1002\" cannot list resource \"nodes\" in API group \"\" at the cluster scope",
+  "reason": "Forbidden",
+  "details": {
+    "kind": "nodes"
+  },
+  "code": 403
+}
+
+## curl拿着lili03用户的token、k8s集群的ca证书去访问
+#<== 命令
+curl -H "Authorization: Bearer 5c3b26.e724603c1fb0b702"  \
+     --cacert /etc/kubernetes/pki/ca.crt                  \
+     https://172.31.7.110:6443/api/v1/nodes
+
+
+#<== 结果
+{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {},
+  "status": "Failure",
+  "message": "nodes is forbidden: User \"lili03.1003\" cannot list resource \"nodes\" in API group \"\" at the cluster scope",
+  "reason": "Forbidden",
+  "details": {
+    "kind": "nodes"
+  },
+  "code": 403
+}
+```
+
+kubernetes中授权
+```
+## 角色
+我不太会,我知道有个clusterrole/cluster-admin对象，具备超级权限
+
+## 角色绑定(这里为了测试，就创建集群角色绑定)
+# <== 编写manifests
+cat >/tmp/clusterrolebind_ttadmin.yaml <<'EOF'
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ttadmin
+roleRef:
+  # <== 绑定clusterrole/cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  # <== 承载的是组，组名为ttadmin
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group 
+    name: ttadmin
+EOF
+
+## 应用manifests
+kubectl apply -f /tmp/clusterrolebind_ttadmin.yaml --dry-run=client
+kubectl apply -f /tmp/clusterrolebind_ttadmin.yaml
+kubectl get clusterrolebinding ttadmin
+```
+
+kubectl工具再进行访问测试
+```
+## kubectl拿着lili02用户的token、k8s集群的ca证书去访问
+#<== 命令(可列出所有nodes资源对象)
+kubectl --server='https://172.31.7.110:6443'             \
+   --certificate-authority=/etc/kubernetes/pki/ca.crt     \
+   --token='75ecb1.3c7c4204b1047d9f'                       \
+   get nodes
+
+## kubectl拿着lili03用户的token、k8s集群的ca证书去访问
+#<== 命令(可列出所有nodes资源对象)
+kubectl --server='https://172.31.7.110:6443'             \
+   --certificate-authority=/etc/kubernetes/pki/ca.crt     \
+   --token='5c3b26.e724603c1fb0b702'                       \
+   get nodes
+```
+
+
+
 
 
 
