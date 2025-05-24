@@ -13,7 +13,7 @@ c9c080.830e9721227e8088,lili01,1001
    csv
 文件内容格式：
    TokenID.TokenSecret,用户名,用户ID,"Group1,Group2,..."
-   至少包含前三列(不然kube-apiserver加载文件后启动会失败)
+   每行至少包含前三列(不然kube-apiserver组件排污管加载此文件后重启会失败)
    其Group是可选的
 ```
 
@@ -36,8 +36,9 @@ ls -l /tmp/kube-apiserver.yaml
 # <== spec.volumes字段中添加如下令牌：
 - name: static-token-file
   hostPath:
-	path: /etc/kubernetes/static-token-file.csv
-	type: File
+    path: /etc/kubernetes/static-token-file.csv
+    type: File
+
 # <== 主容器(containers)之kube-apiserver的volumeMounts下添加如下信息
 - name: static-token-file
   mountPath: /etc/kubernetes/static-token-file.csv
@@ -108,7 +109,7 @@ mv $HOME/.kube/config.bak  $HOME/.kube/config
 ```
 
 
-# 4.lili01用户的访问测试,及补充
+# 4.lili01用户的访问测试,及授权
 curl工具访问
 ```
 ## 命令
