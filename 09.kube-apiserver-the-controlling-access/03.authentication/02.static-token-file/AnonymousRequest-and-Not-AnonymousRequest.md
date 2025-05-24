@@ -10,11 +10,16 @@ c9c080.830e9721227e8088,lili01,1001
 ## 相关说明
 文件名的后缀：
    csv
+
 文件内容格式：
    TokenID.TokenSecret,用户名,用户ID,"Group1,Group2,..."
-  
    每行至少包含前三列(不然kube-apiserver组件实例加载此文件后重启会失败)
    其Group是可选的
+
+Token(TokenID.TokenSecret):
+   可用命令 echo "$(openssl rand -hex 3).$(openssl rand -hex 8)" 生成
+   各段只能由小写字母、数字的组合，长度没有限制
+   它是永久有效的
 ```
 
 # 2.让kube-apiserver组件各实例加载static token file
