@@ -1,4 +1,3 @@
-
 ======================================= 匿名请求 和 非匿名请求 ============================
 # 1.准备static token file
 ```
@@ -13,6 +12,7 @@ c9c080.830e9721227e8088,lili01,1001
    csv
 文件内容格式：
    TokenID.TokenSecret,用户名,用户ID,"Group1,Group2,..."
+  
    每行至少包含前三列(不然kube-apiserver组件实例加载此文件后重启会失败)
    其Group是可选的
 ```
@@ -138,7 +138,7 @@ kubernetes中进行相关的授权
 我还不太会,但我知道其clusterrole/cluster-admin具备超级权限
 
 ## 创建角色绑定(我这就创建集群角色,subject类型为User)
-# <== 编写manifests
+#<== 编写manifests
 cat >/tmp/clusterrolebind_lili01.yaml <<'EOF'
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -154,7 +154,7 @@ subjects:
     name: lili01
 EOF
 
-# <== 应用manifests
+#<== 应用manifests
 kubectl apply -f /tmp/clusterrolebind_lili01.yaml --dry-run=client
 kubectl apply -f /tmp/clusterrolebind_lili01.yaml
 kubectl get  clusterrolebinding lili01
@@ -162,21 +162,19 @@ kubectl get  clusterrolebinding lili01
 
 curl工具再次进行测试
 ```
-## 命令1(有结果)
 curl -s -H "Authorization: Bearer c9c080.830e9721227e8088"  \
-     --cacert /etc/kubernetes/pki/ca.crt                   \
+     --cacert /etc/kubernetes/pki/ca.crt                    \
      https://172.31.7.110:6443/api/v1/nodes
 
-## 命令2(有结果,取相关字段)
 curl -s -H "Authorization: Bearer c9c080.830e9721227e8088"  \
-     --cacert /etc/kubernetes/pki/ca.crt                   \
+     --cacert /etc/kubernetes/pki/ca.crt                    \
      https://172.31.7.110:6443/api/v1/nodes  | jq '.items[] |{name: .metadata.name}'
-    # 
-    # jq命令在ubuntu下可用apt install jq -y进行安装
-    # 
+     # 
+     # jq命令在ubuntu下可用apt install jq -y进行安装
+     # 
 ```
 
-制作kubeconfig后
+制作kubeconfig文件之lili01.conf
 ```
 ## 设置kubeconfig文件的clusters字段
 kubectl --kubeconfig=/tmp/lili01.conf  config set-cluster      \
@@ -221,7 +219,6 @@ kubectl --kubeconfig=/tmp/lili01.conf  get nodes
   # 注意：因为是只读操作,会绕过kube-apiserver访问控制的第三关之"准入控制"
   #
 ```
-
 
 # 5.lili02、lili03用户的测试及授权
 curl工具进行访问测试
@@ -274,7 +271,7 @@ kubernetes中授权
 我不太会,我知道有个clusterrole/cluster-admin对象，具备超级权限
 
 ## 角色绑定(这里为了测试，就创建集群角色绑定)
-# <== 编写manifests
+#<== 编写manifests
 cat >/tmp/clusterrolebind_ttadmin.yaml <<'EOF'
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -292,13 +289,13 @@ subjects:
     name: ttadmin
 EOF
 
-## 应用manifests
+#<== 应用manifests
 kubectl apply -f /tmp/clusterrolebind_ttadmin.yaml --dry-run=client
 kubectl apply -f /tmp/clusterrolebind_ttadmin.yaml
 kubectl get clusterrolebinding ttadmin
 ```
 
-curl工具进行访问测试
+curl工具再次进行访问测试
 ```
 ## curl拿着lili02用户的token、k8s集群的ca证书去访问
 #<== 命令(可列出所有nodes资源对象)
