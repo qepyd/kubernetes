@@ -113,7 +113,7 @@ mv $HOME/.kube/config.bak  $HOME/.kube/config
 curl工具访问
 ```
 ## 命令
-curl -H "Authorization: Bearer c9c080.830e9721227e8088"  \
+curl -s  -H "Authorization: Bearer c9c080.830e9721227e8088"  \
      --cacert /etc/kubernetes/pki/ca.crt                   \
      https://172.31.7.110:6443/api/v1/nodes
 
@@ -163,12 +163,12 @@ kubectl get  clusterrolebinding lili01
 curl工具再次进行测试
 ```
 ## 命令1(有结果)
-curl -H "Authorization: Bearer c9c080.830e9721227e8088"  \
+curl -s -H "Authorization: Bearer c9c080.830e9721227e8088"  \
      --cacert /etc/kubernetes/pki/ca.crt                   \
      https://172.31.7.110:6443/api/v1/nodes
 
 ## 命令2(有结果,取相关字段)
-curl -H "Authorization: Bearer c9c080.830e9721227e8088"  \
+curl -s -H "Authorization: Bearer c9c080.830e9721227e8088"  \
      --cacert /etc/kubernetes/pki/ca.crt                   \
      https://172.31.7.110:6443/api/v1/nodes  | jq '.items[] |{name: .metadata.name}'
     # 
