@@ -8,4 +8,4 @@ kubeadm
 ```
 https://landscape.cncf.io/guide#platform--certified-kubernetes-installer
 ```
-<img src="./picture/k8s-install-tools.jpg">
+<img src="./picture/k8s-install-tools.jpg" style="width: 100%; height: auto;">
