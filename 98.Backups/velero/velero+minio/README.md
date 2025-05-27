@@ -88,6 +88,25 @@ mc admin policy attach  myminio-root-user/  readwrite-to-k8s01-velero-backups-in
 mc admin user  info  myminio-root-user/  velero
 ```
 
+velero用户测试读写
+```
+## 以velero用户添加一个别名
+mc alias set myminio-velero-user/ http://172.31.7.200:9000 velero 12345678
+mc alias ls  myminio-velero-user/
+
+## 下载文件
+mc get  myminio-velero-user/k8s01-velero-backups/779336fde4b11164.png    /tmp/
+ls -l /tmp/779336fde4b11164.png
+
+## 删除文件
+mc rm  myminio-velero-user/k8s01-velero-backups/779336fde4b11164.png
+mc tree -f myminio-velero-user/k8s01-velero-backups
+
+## 上传文件
+mc put /tmp/779336fde4b11164.png myminio-velero-user/k8s01-velero-backups
+mc tree -f myminio-velero-user/k8s01-velero-backups
+```
+
 
 
 
