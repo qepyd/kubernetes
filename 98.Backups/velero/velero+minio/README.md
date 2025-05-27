@@ -1,8 +1,9 @@
-# 1.安装minio社区版本之单节点驱动器
+# 第1章 安装minio社区版本之章节驱动器并配置
+## 1.1 安装minio服务器
 ```
 ```
 
-# 2.安装minio的客户端工具mc
+## 1.2 安装minio的客户端工具mc
 ```
 wget https://dl.min.io/client/mc/release/linux-amd64/mc
 chmod +x mc
@@ -10,7 +11,7 @@ cp mc  /usr/local/bin/
 which mc
 ```
 
-# 3.利用客户端工具mc工具进行相关的配置
+## 1.3 利用客户端工具mc工具进行相关的配置
 mc工具添加别名(以超级用户身份)
 ```
 mc alias set myminio-root-user/ http://172.31.7.200:9000 root 12345678
