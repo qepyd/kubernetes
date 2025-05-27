@@ -4,6 +4,10 @@
 
 # 2.安装minio的客户端工具mc
 ```
+wget https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+cp mc  /usr/local/bin/
+which mc
 ```
 
 # 3.利用客户端工具mc工具进行相关的配置
@@ -31,10 +35,60 @@ wget https://img10.360buyimg.com/img/jfs/t1/253743/19/1794/9143/67654f2cFa801c17
 
 ## 将图片上传至 k8s01-velero-backups这个桶中
 mc put  779336fde4b11164.png  myminio-root-user/k8s01-velero-backups
-mc tree -f                   myminio-root-user/k8s01-velero-backups
+mc tree -f                    myminio-root-user/k8s01-velero-backups
 
 ## 浏览器访问
 http://172.31.7.200:9000/k8s01-velero-backups/779336fde4b11164.png
 ```
+
+为k8s01-velero-backups这个bucket创建策略
+```
+## 编写策略文件
+cat >/data/minio/conf/readwrite-to-k8s01-velero-backups-in-bucket.json<<'EOF'
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::k8s01-velero-backups/*"
+            ]
+        }
+    ]
+}
+EOF 
+
+## 创建策略
+mc admin policy create myminio-root-user  readwrite-to-k8s01-velero-backups-in-bucket  /data/minio/conf/readwrite-to-k8s01-velero-backups-in-bucket.json
+
+## 查看策略
+mc admin policy info   myminio-root-user  readwrite-to-k8s01-velero-backups-in-bucket
+```
+
+创建 velero 用户，并关联 readwrite-to-k8s01-velero-backups-in-bucket 策略
+```
+## 创建 velero 用户
+mc admin user add  myminio-root-user/
+  # 
+  # 交互式输入Enter Access Key，这里输入：lili
+  # 交互式输入Enter Secret Key，这里输入：12345678
+  # 
+mc admin user ls   myminio-root-user/
+  #
+  # 列出所有用户
+  #
+
+## 关联策略
+mc admin policy attach  myminio-root-user/  readwrite-to-k8s01-velero-backups-in-bucke  --user lili
+
+## 查看 velero的信息
+mc admin user  info  myminio-root-user/  lili
+```
+
+
+
 
 
