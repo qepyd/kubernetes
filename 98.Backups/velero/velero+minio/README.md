@@ -73,7 +73,7 @@ mc admin policy info   myminio-root-user  readwrite-to-k8s01-velero-backups-in-b
 ## 创建 velero 用户
 mc admin user add  myminio-root-user/
   # 
-  # 交互式输入Enter Access Key，这里输入：lili
+  # 交互式输入Enter Access Key，这里输入：velero
   # 交互式输入Enter Secret Key，这里输入：12345678
   # 
 mc admin user ls   myminio-root-user/
@@ -82,10 +82,10 @@ mc admin user ls   myminio-root-user/
   #
 
 ## 关联策略
-mc admin policy attach  myminio-root-user/  readwrite-to-k8s01-velero-backups-in-bucke  --user lili
+mc admin policy attach  myminio-root-user/  readwrite-to-k8s01-velero-backups-in-bucke  --user velero
 
 ## 查看 velero的信息
-mc admin user  info  myminio-root-user/  lili
+mc admin user  info  myminio-root-user/  velero
 ```
 
 
