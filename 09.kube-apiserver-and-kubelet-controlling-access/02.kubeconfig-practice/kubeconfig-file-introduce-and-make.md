@@ -6,7 +6,7 @@ https://kubernetes.io/zh-cn/docs/concepts/configuration/organize-cluster-access-
 ```
 基本介绍
 ```
-kubeconfig是遵循一定格式(内容)文件的统称。
+kubeconfig是遵循一定内容格式的文件统称。
 用来承载kube-apiserver组件各实例其client在连接时的一些信息。
 其信息肯定是要有：kube-apiserver的连接地址、client携带的所谓认证信息。
 ```
@@ -63,6 +63,8 @@ users: <[]Object>
       # x509客户端证书(证书、私钥)
       client-certificate-data: <String>
       client-key-data: <String>
+      # token
+      token: <String>
 contexts: <[]Object>
   - name: <String>        # 其users字段中某列表的name@其clusters字段中某列表的name
     context: <Object>
