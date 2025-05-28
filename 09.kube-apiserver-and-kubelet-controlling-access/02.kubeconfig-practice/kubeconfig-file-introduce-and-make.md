@@ -158,34 +158,31 @@ current-context: kubernetes-admin@kubernetes
 ```
 
 # 6.客户端工具kubectl制作kubeconfig
-利用kubectl工具其config命令的相关子命令来制作 
+利用kubectl工具其config命令的相关子命令的分类 
 ```
-## 注意1：
-在制作kubeconfig时,kubectl的全局参数之--kubeconfig表示指定其制作的kubeconfig所放的位置
-
-## kubectl config命令修改kubeconfig中clusters字段的相关子命令
+## kubectl config命令设定kubeconfig中clusters字段的相关子命令
 get-clusters    # <== 列出kubeconfig中clusters字段中相关列表，只展示各列表name。
 delete-cluster  # <== 删除kubeconfig中clusters字段中的某列表，根据其列表name。
 set-cluster     # <== 改变kubeconfig中clusters字段中的某列表，添加新列表、修改现有列表。
 
-## kubectl config命令修改kubeconfig中users字段的相关子命令
+## kubectl config命令设定kubeconfig中users字段的相关子命令
 get-users       # <== 列出kubeconfig中users字段中相关列表，只展示各列表name。
 delete-user     # <== 删除kubeconfig中users字段中的某列表，根据其列表name。
 set-credentials # <== 改变kubeconfig中users字段中的某列表，添加新列表、修改现有列表。
 
-## kubectl config命令修改kubeconfig中contexts字段的相关子命令
+## kubectl config命令设定kubeconfig中contexts字段的相关子命令
 get-contexts    # <== 列出kubeconfig中contexts字段中相关列表，只展示各列表name。
 delete-context  # <== 删除kubeconfig中contexts字段中的某列表，根据其列表name。
 set-context     # <== 改变kubeconfig中contexts字段中的某列表，添加新列表、修改现有列表。
 
-## kubectl config命令修改kubeconfig中current-context值段的相关子命令
+## kubectl config命令设定kubeconfig中current-context值段的相关子命令
 use-context     # <== 改变kubeconfig中current-context字段的值，
 rename-context  # <== 对其kubeconfig中current-context字段的值及值关联的contexts中的相关列表name进行修改
 
-## 注意2：
-kubectl config命令的子命令unset可以取消kubeconfig中某个一级字段的所有设定
+## 注意1：
+kubectl config命令其子命令unset可以取消kubeconfig中某一级字段的所有设定
 
-## 注意3：
+## 注意2：
 当kubectl工具在使用某kubeconfig时,可用全局参数--context选择kubeconfig中contexts字段中某列表,以忽略kubeconfig
 中的current-context字段的值。
 ```
@@ -355,6 +352,7 @@ users:
 
 kubectl工作指定kubeconfig之/tmp/make-kubernetes-admin.conf，并执行相关相关命令
 ```
+## kubectl使用全局参数--kubeconfig指定kubeconfig文件,并执行相关操作
 root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf   get nodes
 NAME       STATUS   ROLES           AGE   VERSION
 master01   Ready    control-plane   16d   v1.24.3
@@ -363,5 +361,32 @@ master03   Ready    control-plane   16d   v1.24.3
 node01     Ready    <none>          16d   v1.24.3
 node02     Ready    <none>          16d   v1.24.3
 node03     Ready    <none>          16d   v1.24.3
+
+## kubectl使用全局参数--kubeconfig指定kubeconfig文件,--context指定值(忽略kubeconfig中其current-context字段的值),并执行相关操作
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf   --context=binbin@k8s01   get nodes
+Error in configuration: context was not found for specified context: binbin@k8s01
+  # 
+  # 报错信息为：kubeconfig文件中其contexts字段下没有binbin@k8s01这个一个列表
+  # 
+```
+
+取消kubeconfig文件中某一级字段的所有设置,主要是了解kubeconfig config unset这个子命令
+```
+## 对kubeconfig文件/tmp/make-kubernetes-admin.conf做备份
+cp -a /tmp/make-kubernetes-admin.conf{,.bak}
+ls -l /tmp/make-kubernetes-admin.conf{,.bak}
+
+## 取消kubeconfig文件中某一级字段的所有设定
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  unset  current-context
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  view --raw=false
+
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  unset  contexts
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  view --raw=false
+
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  unset  users
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  view --raw=false
+
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  unset  clusters
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  view --raw=false
 ```
 
