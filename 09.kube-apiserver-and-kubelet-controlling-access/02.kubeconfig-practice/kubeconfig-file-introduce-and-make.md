@@ -18,25 +18,25 @@ kind: Config
 clusters: <[]Object>
   - name: <String>
     cluster: <Object>
-      # kube-apiserver组件实例的连接地址
+      # <== kube-apiserver组件实例的连接地址
       server: <String>
-      # kubernetes集群的ca证书(证书)或代理认证服务的地址
+      # <== kubernetes集群的ca证书(证书)或代理认证服务的地址
       proxy-url: <string>
       certificate-authority-data: <String>
 users: <[]Object>
   - name: <String>
     user: <Object>
-      # x509客户端证书(证书、私钥)
+      # <== x509客户端证书(证书、私钥)
       client-certificate-data: <String>
       client-key-data: <String>
-      # token
+      # <== token
       token: <String>
 contexts: <[]Object>
   - name: <String>        # 其users字段中某列表的name@其clusters字段中某列表的name
     context: <Object>
       user: <String>      # 其users字段中某列表的name
       cluster: <String>   # 其clusters字段中某列表的name
-current-context: <string> # 指contexts字段中某列表的name
+current-context: <string> # 其contexts字段中某列表的name
 ```
 
 # 2.客户端工具kubectl找寻kubeconfig的优先级
