@@ -236,7 +236,7 @@ ls -l /tmp/kubernetes-admin.key
 
 ## 设置kubeconfig文件的users字段
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  set-credentials  \
-   kubernetes-admin@kubernetes                                                     \
+   kubernetes-admin                                                                \
    --client-certificate=/tmp/kubernetes-admin.crt                                   \
    --client-key=/tmp/kubernetes-admin.key                                            \
    --embed-certs=true  # 让--client-certificate和--client-key的值为所指定文件的内容  
@@ -244,18 +244,18 @@ kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  set-credentials
 ## 列出kubeconfig文件有哪些users
 root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  get-users
 NAME
-kubernetes-admin@kubernetes
+kubernetes-admin
 
 ## 获取users字段中所有列表相关信息（不展示敏感信息）
 root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  view --raw=false | grep -A 10000 "users:"
 users:
-- name: kubernetes-admin@kubernetes
+- name: kubernetes-admin
   user:
     client-certificate-data: REDACTED
     client-key-data: REDACTED
 
 ## 删除kubeconfig文件中users字段中其name为kubernetes-admin@kubernetes的列表(用户)
-kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  delete-user  kubernetes-admin@kubernetes
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  delete-user  kubernetes-admin
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  get-users
 
 ## 再重新设置kubeconfig文件的users字段
@@ -331,7 +331,7 @@ kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  rename-context 
 
 查看kubeconfig之/tmp/make-kubernetes-admin.conf的整体信息(不显示敏感信息)
 ```
-root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  view --raw=false
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config view --raw=false
 apiVersion: v1
 clusters:
 - cluster:
@@ -347,14 +347,21 @@ current-context: kubernetes-admin@kubernetes
 kind: Config
 preferences: {}
 users:
-- name: kubernetes-admin@kubernetes
+- name: kubernetes-admin
   user:
     client-certificate-data: REDACTED
     client-key-data: REDACTED
 ```
 
-kubectl工作指定kubeconfig之/tmp/make-kubernetes-admin.conf，并发出相关命令
+kubectl工作指定kubeconfig之/tmp/make-kubernetes-admin.conf，并执行相关相关命令
 ```
-
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf   get nodes
+NAME       STATUS   ROLES           AGE   VERSION
+master01   Ready    control-plane   16d   v1.24.3
+master02   Ready    control-plane   16d   v1.24.3
+master03   Ready    control-plane   16d   v1.24.3
+node01     Ready    <none>          16d   v1.24.3
+node02     Ready    <none>          16d   v1.24.3
+node03     Ready    <none>          16d   v1.24.3
 ```
 
