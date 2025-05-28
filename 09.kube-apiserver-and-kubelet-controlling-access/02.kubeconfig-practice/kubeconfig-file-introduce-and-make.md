@@ -1,17 +1,17 @@
 
-# 1.kubeconfig文件的基本介绍
+# 1.kubeconfig的基本介绍
 官方参考
 ```
 https://kubernetes.io/zh-cn/docs/concepts/configuration/organize-cluster-access-kubeconfig/
 ```
 基本介绍
 ```
-kubeconfig是遵循一定格式文件的统称，用来承载连接kubernetes其kube-apiserver组件各实例的信息。
-其信息主要的两部分为：kube-apiserver的连接地址、client携带的所谓认证信息。
-client工具(例如:kubectl、helm)指定kubeconfig文件并提交相关操作命令。
+kubeconfig是遵循一定格式(内容)文件的统称。
+用来承载kube-apiserver组件各实例其client在连接时的一些信息。
+其信息肯定是要有：kube-apiserver的连接地址、client携带的所谓认证信息。
 ```
 
-# 2.kubectl工具找寻kubeconfig的优先级
+# 2.客户端工具kubectl找寻kubeconfig的优先级
 可通过 kubectl config --help 看到其对优先级的介绍
 ```
 ## 相关优化级
@@ -45,7 +45,7 @@ $HOME/.kube/config
   #
 ```
 
-# 3.kubeconfig文件的格式
+# 3.kubeconfig文件其内容的格式
 ```
 apiVersion: v1
 kind: Config
