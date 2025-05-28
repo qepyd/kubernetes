@@ -188,7 +188,7 @@ kubectl config命令其子命令unset可以取消kubeconfig中某一级字段的
 中的current-context字段的值。
 ```
 
-开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的clusters字段
+开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的 clusters 字段
 ```
 ## 设置kubeconfig文件的clusters字段
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config set-cluster  \
@@ -219,7 +219,7 @@ kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf   config get-clusters
 ..............参考第一步
 ```
 
-开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的users字段
+开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的 users 字段
 ```
 ## 我让后面设置的用户使用现成的证书、私钥。
 我将/etc/kubernetes/admin.conf这个kubeconfig中其users字段其kubernets-admin列表的相关证书、私钥取出来
@@ -261,7 +261,7 @@ kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  get-users
 .................参考第二步
 ```
 
-开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的containers字段
+开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的 contexts 字段
 ```
 ## 设置kubeconfig文件的contexts字段
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  set-context \
@@ -292,7 +292,7 @@ kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config get-contexts
 ...................参考第一步
 ```
 
-开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的current-context字段
+开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的 current-context 字段
 ```
 ## 设置kubeconfig文件的current-context字段
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  use-context  kubernetes-admin@kubernetes
@@ -361,7 +361,7 @@ users:
     client-key-data: REDACTED
 ```
 
-kubectl工作指定kubeconfig之/tmp/make-kubernetes-admin.conf，并执行相关相关命令
+kubectl工作指定kubeconfig之/tmp/make-kubernetes-admin.conf，并执行相关相关操作
 ```
 ## kubectl使用全局参数--kubeconfig指定kubeconfig文件,并执行相关操作
 root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf   get nodes
@@ -399,5 +399,10 @@ kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  view --raw=false
 
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  unset  clusters
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config  view --raw=false
+
+
+## 还原
+cp -a /tmp/make-kubernetes-admin.conf.bak  /tmp/make-kubernetes-admin.conf
+diff  /tmp/make-kubernetes-admin.conf.bak  /tmp/make-kubernetes-admin.conf
 ```
 
