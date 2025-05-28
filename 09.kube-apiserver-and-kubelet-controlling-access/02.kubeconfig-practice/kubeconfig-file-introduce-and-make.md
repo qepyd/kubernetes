@@ -69,6 +69,6 @@ $KUBECONFIG环境变量
 $HOME/.kube/config
   #
   # 具体文件
-  # 家目录下的.kube/目录下名为config的kubeconfig
+  # 用户家目录下的.kube/目录下名为config的kubeconfig
   #
 ```
