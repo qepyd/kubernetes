@@ -246,12 +246,115 @@ root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config
 NAME
 kubernetes-admin@kubernetes
 
+## 获取users字段中所有列表相关信息（不展示敏感信息）
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  view --raw=false | grep -A 10000 "users:"
+users:
+- name: kubernetes-admin@kubernetes
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+
 ## 删除kubeconfig文件中users字段中其name为kubernetes-admin@kubernetes的列表(用户)
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  delete-user  kubernetes-admin@kubernetes
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  get-users
 
 ## 再重新设置kubeconfig文件的users字段
 .................参考第二步
-.................
+.................参考第二步
+```
+
+开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的containers字段
+```
+## 设置kubeconfig文件的contexts字段
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  set-context \
+  kubernetes-admin@kubernetes                                                 \
+  --user=kubernetes-admin                                                      \
+  --cluster=kubernetes         
+
+## 列出kubeconfig文件中contexts字段的所有列表（其CURRENT字段为空表示kubeconfig文件的current-context字段没有来引用）
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config get-contexts
+CURRENT   NAME                          CLUSTER      AUTHINFO           NAMESPACE
+          kubernetes-admin@kubernetes   kubernetes   kubernetes-admin   
+
+## 获取kubeconfig文件中contexts字段的所有列表信息
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config view  | grep -A 10000 "contexts:" | grep -B 10000 "current-context:" | sed '$'d
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubernetes-admin
+  name: kubernetes-admin@kubernetes
+
+
+## 删除kubeconfig文件中contexts字段下name为kubernetes-admin@kubernetes的列表
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config delete-context  kubernetes-admin@kubernetes
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config get-contexts
+
+## 再重新设置kubeconfig文件的contexts字段
+...................参考第一步
+...................参考第一步
+```
+
+开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的current-context字段
+```
+## 设置kubeconfig文件的current-context字段
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  use-context  kubernetes-admin@kubernetes
+
+## 获取kubeconfig文件其current-context字段的值
+root@master01:~# grep "current-context:" /tmp/make-kubernetes-admin.conf 
+current-context: kubernetes-admin@kubernetes
+
+## 列出kubeconfig文件其contexts字段中的所有列表
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config get-contexts
+CURRENT   NAME                          CLUSTER      AUTHINFO           NAMESPACE
+*         kubernetes-admin@kubernetes   kubernetes   kubernetes-admin   
+
+
+## 对kubeconfig文件其currenet-context字段的值进行重命名，会影响其所关联contexts字段中列表的name
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  rename-context  kubernetes-admin@kubernetes   123kubernetes-admin@123kubernetes
+
+## 获取kubeconfig文件其contexts字段中的所有列表信息
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config view  | grep -A 10000 "contexts:" | grep -B 10000 "current-context:" | sed '$'d
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubernetes-admin
+  name: 123kubernetes-admin@123kubernetes
+
+## 列出kubeconfig文件其contexts字段中的所有列表
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config get-contexts
+CURRENT   NAME                          CLUSTER      AUTHINFO           NAMESPACE
+*         123kubernetes-admin@123kubernetes   kubernetes   kubernetes-admin
+
+## 重命名回来
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  rename-context  123kubernetes-admin@123kubernetes   kubernetes-admin@kubernetes
+```
+
+查看kubeconfig之/tmp/make-kubernetes-admin.conf的整体信息(不显示敏感信息)
+```
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  view --raw=false
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://k8s01-kubeapi-comp.qepyd.com:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubernetes-admin
+  name: kubernetes-admin@kubernetes
+current-context: kubernetes-admin@kubernetes
+kind: Config
+preferences: {}
+users:
+- name: kubernetes-admin@kubernetes
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+```
+
+kubectl工作指定kubeconfig之/tmp/make-kubernetes-admin.conf，并发出相关命令
+```
+
 ```
 
