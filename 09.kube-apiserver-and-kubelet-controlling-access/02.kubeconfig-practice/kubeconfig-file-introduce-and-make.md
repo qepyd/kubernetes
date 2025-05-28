@@ -176,6 +176,7 @@ delete-context  # <== 删除kubeconfig中contexts字段中的某列表，根据�
 set-context     # <== 改变kubeconfig中contexts字段中的某列表，添加新列表、修改现有列表。
 
 ## kubectl config命令设定kubeconfig中current-context值段的相关子命令
+current-context # <== 列出kubeconfig中current-context字段的值。
 use-context     # <== 改变kubeconfig中current-context字段的值，
 rename-context  # <== 对其kubeconfig中current-context字段的值及值关联的contexts中的相关列表name进行修改
 
@@ -296,9 +297,15 @@ kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config get-contexts
 ## 设置kubeconfig文件的current-context字段
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  use-context  kubernetes-admin@kubernetes
 
+## 列出kubeconfig文件其current-context字段的值
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config current-context
+kubernetes-admin@kubernetes
+
 ## 获取kubeconfig文件其current-context字段的值
 root@master01:~# grep "current-context:" /tmp/make-kubernetes-admin.conf 
 current-context: kubernetes-admin@kubernetes
+
+
 
 ## 列出kubeconfig文件其contexts字段中的所有列表
 root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config get-contexts
@@ -309,6 +316,15 @@ CURRENT   NAME                          CLUSTER      AUTHINFO           NAMESPAC
 ## 对kubeconfig文件其currenet-context字段的值进行重命名，会影响其所关联contexts字段中列表的name
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  rename-context  kubernetes-admin@kubernetes   123kubernetes-admin@123kubernetes
 
+## 列出kubeconfig文件其current-context字段的值
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config current-context
+123kubernetes-admin@123kubernetes
+
+## 列出kubeconfig文件其contexts字段中的所有列表
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config get-contexts
+CURRENT   NAME                          CLUSTER      AUTHINFO           NAMESPACE
+*         123kubernetes-admin@123kubernetes   kubernetes   kubernetes-admin
+
 ## 获取kubeconfig文件其contexts字段中的所有列表信息
 root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config view  | grep -A 10000 "contexts:" | grep -B 10000 "current-context:" | sed '$'d
 contexts:
@@ -316,11 +332,6 @@ contexts:
     cluster: kubernetes
     user: kubernetes-admin
   name: 123kubernetes-admin@123kubernetes
-
-## 列出kubeconfig文件其contexts字段中的所有列表
-root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config get-contexts
-CURRENT   NAME                          CLUSTER      AUTHINFO           NAMESPACE
-*         123kubernetes-admin@123kubernetes   kubernetes   kubernetes-admin
 
 ## 重命名回来
 kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  rename-context  123kubernetes-admin@123kubernetes   kubernetes-admin@kubernetes
