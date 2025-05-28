@@ -158,7 +158,7 @@ current-context: kubernetes-admin@kubernetes
 ```
 
 # 6.客户端工具kubectl制作kubeconfig
-利用kubectl工具其config命令的相关子命令的分类 
+kubectl工具其config命令相关子命令的分类 
 ```
 ## kubectl config命令设定kubeconfig中clusters字段的相关子命令
 get-clusters    # <== 列出kubeconfig中clusters字段中相关列表，只展示各列表name。
