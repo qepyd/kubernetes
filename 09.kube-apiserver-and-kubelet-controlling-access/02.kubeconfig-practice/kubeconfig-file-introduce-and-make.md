@@ -11,41 +11,7 @@ kubeconfig是遵循一定内容格式的文件统称。
 其信息肯定是要有：kube-apiserver的连接地址、client携带的所谓认证信息。
 ```
 
-# 2.客户端工具kubectl找寻kubeconfig的优先级
-可通过 kubectl config --help 看到其对优先级的介绍
-```
-## 相关优化级
---kubeconifg   >   $KUBECONFIG   >  $HOME/.kube/config
-
-## 相关的介绍
---kubeconfig参数
-  #
-  # 命令行使用参数指定的最大嘛
-  # 可以指定多个kubeconfig文件
-  #   例如：--kubeconfig  /path/kubeconfig   --kubeconfig /path/mykubeconfig
-  # 当指定了多个kubeconfig文件时
-  #   各kubeconfig是不会合并的
-  #   以最后(右/下)的为准
-  #
-
-$KUBECONFIG环境变量
-  #
-  # 变量的值可以有多个kubeconfig
-  #   例如: export KUBECONFIG=/path/kubeconfig:/path/mykubeconfig
-  # 当指定了多个kubeconfig时
-  #   各kubeconfig是会合并的
-  #     <[]object>类型的各字段下列表合并在一起
-  #     current-context字段的值,以第一个(从左至右)且拥有值的为准 
-  #   
-
-$HOME/.kube/config
-  #
-  # 具体文件
-  # 家目录下的.kube/目录下名为config的kubeconfig
-  #
-```
-
-# 3.kubeconfig文件其内容的格式
+# 2.kubeconfig的格式展示
 ```
 apiVersion: v1
 kind: Config
@@ -70,6 +36,39 @@ contexts: <[]Object>
     context: <Object>
       user: <String>      # 其users字段中某列表的name
       cluster: <String>   # 其clusters字段中某列表的name
-current-context: <string> # 指contexts字段中某列表的name 
+current-context: <string> # 指contexts字段中某列表的name
 ```
 
+# 2.客户端工具kubectl找寻kubeconfig的优先级
+可通过 kubectl config --help 看到其对优先级的介绍
+```
+## 相关优化级
+--kubeconifg   >   $KUBECONFIG   >  $HOME/.kube/config
+
+## 相关的介绍
+--kubeconfig参数
+  #
+  # 命令行使用参数指定的最大嘛
+  # 可以指定多个kubeconfig文件
+  #   例如：--kubeconfig  /path/kubeconfig   --kubeconfig /path/mykubeconfig
+  # 当指定了多个kubeconfig文件时
+  #   各kubeconfig是不会合并的
+  #   以最后(右/下)的为准
+  #
+
+$KUBECONFIG环境变量
+  #
+  # 变量的值可以有多个kubeconfig
+  #   例如: export KUBECONFIG=/path/kubeconfig:/path/mykubeconfig
+  # 当指定了多个kubeconfig时
+  #   各kubeconfig是会合并的
+  #     <[]Object>类型的各字段下各列表会去重(根据name,以最左边的为准)
+  #     current-context字段的值,以第一个(从左至右)且拥有值的为准 
+  #   
+
+$HOME/.kube/config
+  #
+  # 具体文件
+  # 家目录下的.kube/目录下名为config的kubeconfig
+  #
+```
