@@ -62,7 +62,7 @@ $KUBECONFIG环境变量
   #   例如: export KUBECONFIG=/path/kubeconfig:/path/mykubeconfig
   # 当指定了多个kubeconfig时
   #   各kubeconfig是会合并的
-  #     <[]Object>类型的各字段下各列表会去重(根据name,以最左边的为准)
+  #     <[]Object>类型的各字段下各列表会去重(根据name,以最左边的为准)合并。
   #     current-context字段的值,以第一个(从左至右)且拥有值的为准 
   #   
 
