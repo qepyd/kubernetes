@@ -7,7 +7,7 @@ https://kubernetes.io/zh-cn/docs/concepts/configuration/organize-cluster-access-
 基本介绍
 ```
 kubeconfig是遵循一定内容格式的文件统称。
-用来承载kube-apiserver组件各实例其client在连接时的一些信息。
+用来承载kube-apiserver组件各实例其client来连接时的一些信息。
 其信息肯定是要有：kube-apiserver的连接地址、client携带的所谓认证信息。
 ```
 
