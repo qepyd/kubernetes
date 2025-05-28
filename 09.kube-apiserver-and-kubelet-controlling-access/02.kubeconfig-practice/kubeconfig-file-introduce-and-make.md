@@ -377,7 +377,7 @@ node03     Ready    <none>          16d   v1.24.3
 root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf   --context=binbin@k8s01   get nodes
 Error in configuration: context was not found for specified context: binbin@k8s01
   # 
-  # 报错信息为：kubeconfig文件中其contexts字段下没有binbin@k8s01这个一个列表
+  # 报错信息为：kubeconfig文件中其contexts字段下没有binbin@k8s01这么一个列表
   # 
 ```
 
