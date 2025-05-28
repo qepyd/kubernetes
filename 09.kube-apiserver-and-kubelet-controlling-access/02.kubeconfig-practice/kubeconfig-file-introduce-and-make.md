@@ -156,3 +156,102 @@ contexts:
 root@master01:~# kubectl --kubeconfig /etc/kubernetes/admin.conf   config view  --raw=false | grep  "current-context:"
 current-context: kubernetes-admin@kubernetes
 ```
+
+# 6.客户端工具kubectl制作kubeconfig
+利用kubectl工具其config命令的相关子命令来制作 
+```
+## 注意1：
+在制作kubeconfig时,kubectl的全局参数之--kubeconfig表示指定其制作的kubeconfig所放的位置
+
+## kubectl config命令修改kubeconfig中clusters字段的相关子命令
+get-clusters    # <== 列出kubeconfig中clusters字段中相关列表，只展示各列表name。
+delete-cluster  # <== 删除kubeconfig中clusters字段中的某列表，根据其列表name。
+set-cluster     # <== 改变kubeconfig中clusters字段中的某列表，添加新列表、修改现有列表。
+
+## kubectl config命令修改kubeconfig中users字段的相关子命令
+get-users       # <== 列出kubeconfig中users字段中相关列表，只展示各列表name。
+delete-user     # <== 删除kubeconfig中users字段中的某列表，根据其列表name。
+set-credentials # <== 改变kubeconfig中users字段中的某列表，添加新列表、修改现有列表。
+
+## kubectl config命令修改kubeconfig中contexts字段的相关子命令
+get-contexts    # <== 列出kubeconfig中contexts字段中相关列表，只展示各列表name。
+delete-context  # <== 删除kubeconfig中contexts字段中的某列表，根据其列表name。
+set-context     # <== 改变kubeconfig中contexts字段中的某列表，添加新列表、修改现有列表。
+
+## kubectl config命令修改kubeconfig中current-context值段的相关子命令
+use-context     # <== 改变kubeconfig中current-context字段的值，
+rename-context  # <== 对其kubeconfig中current-context字段的值及值关联的contexts中的相关列表name进行修改
+
+## 注意2：
+kubectl config命令的子命令unset可以取消kubeconfig中某个一级字段的所有设定
+
+## 注意3：
+当kubectl工具在使用某kubeconfig时,可用全局参数--context选择kubeconfig中contexts字段中某列表,以忽略kubeconfig
+中的current-context字段的值。
+```
+
+开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的clusters字段
+```
+## 设置kubeconfig文件的clusters字段
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config set-cluster  \
+   kubernetes                                                                 \
+   --server="https://k8s01-kubeapi-comp.qepyd.com:6443"                        \
+   --certificate-authority=/etc/kubernetes/pki/ca.crt                           \
+   --embed-certs=true # 让其 --certificate-authority 承载所指定文件中的内容(会自动base64加密)
+
+## 列出clusters字段中所有列表的列表名（集群名）
+root@master01:~# kubectl --kubeconfig /tmp/make-kubernetes-admin.conf  config get-clusters
+NAME
+kubernetes
+
+## 获取clusters字段中所有列表相关信息（不展示敏感信息）
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf  config view --raw=false | grep -A 10000 "clusters:" | grep -B 10000 "contexts:" | sed '$'d
+clusters:
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://k8s01-kubeapi-comp.qepyd.com:6443
+  name: kubernetes
+
+## 删除cluster字段中name为kubernetes的列表(集群)
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf   config delete-cluster  kubernetes
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf   config get-clusters
+
+## 再重新设置kubeconfig文件的clusters字段
+..............参考第一步
+..............参考第一步
+```
+
+开始制作kubeconfig之/tmp/make-kubernetes-admin.conf的users字段
+```
+## 我让后面设置的用户使用现成的证书、私钥。
+我将/etc/kubernetes/admin.conf这个kubeconfig中其users字段其kubernets-admin列表的相关证书、私钥取出来
+
+grep "client-certificate-data" /etc/kubernetes/admin.conf  | awk -F " " '{print $NF}' | base64 -d
+grep "client-certificate-data" /etc/kubernetes/admin.conf  | awk -F " " '{print $NF}' | base64 -d >/tmp/kubernetes-admin.crt
+ls -l /tmp/kubernetes-admin.crt
+
+grep "client-key-data" /etc/kubernetes/admin.conf  | awk -F " " '{print $NF}' | base64 -d
+grep "client-key-data" /etc/kubernetes/admin.conf  | awk -F " " '{print $NF}' | base64 -d >/tmp/kubernetes-admin.key
+ls -l /tmp/kubernetes-admin.key
+
+## 设置kubeconfig文件的users字段
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  set-credentials  \
+   kubernetes-admin@kubernetes                                                     \
+   --client-certificate=/tmp/kubernetes-admin.crt                                   \
+   --client-key=/tmp/kubernetes-admin.key                                            \
+   --embed-certs=true  # 让--client-certificate和--client-key的值为所指定文件的内容  
+
+## 列出kubeconfig文件有哪些users
+root@master01:~# kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  get-users
+NAME
+kubernetes-admin@kubernetes
+
+## 删除kubeconfig文件中users字段中其name为kubernetes-admin@kubernetes的列表(用户)
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  delete-user  kubernetes-admin@kubernetes
+kubectl --kubeconfig=/tmp/make-kubernetes-admin.conf     config  get-users
+
+## 再重新设置kubeconfig文件的users字段
+.................参考第二步
+.................
+```
+
