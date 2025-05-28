@@ -1,4 +1,3 @@
-
 # 1.kubeconfig的基本介绍
 官方参考
 ```
@@ -157,7 +156,7 @@ root@master01:~# kubectl --kubeconfig /etc/kubernetes/admin.conf   config view  
 current-context: kubernetes-admin@kubernetes
 ```
 
-# 6.客户端工具kubectl制作kubeconfig
+# 5.客户端工具kubectl制作kubeconfig
 kubectl工具其config命令相关子命令的分类 
 ```
 ## kubectl config命令设定kubeconfig中clusters字段的相关子命令
