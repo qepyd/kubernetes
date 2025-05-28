@@ -98,7 +98,7 @@ users:
     client-key-data: REDACTED
 ```
 
-查看所找到kubeconfig文件的所有内容，显示敏感信息(经过了base64加密)，且我这里的是kubernetes的学习环境
+查看所找到kubeconfig文件的所有内容，显示敏感信息(经过了base64加密)。我这里的是kubernetes的学习环境的哈
 ```
 root@master01:~# kubectl --kubeconfig /etc/kubernetes/admin.conf   config view  --raw=true
 apiVersion: v1
