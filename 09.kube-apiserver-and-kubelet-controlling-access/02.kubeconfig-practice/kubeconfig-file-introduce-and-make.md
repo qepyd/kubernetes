@@ -39,7 +39,7 @@ contexts: <[]Object>
 current-context: <string> # 其contexts字段中某列表的name
 ```
 
-# 2.客户端工具kubectl找寻kubeconfig的优先级
+# 3.客户端工具kubectl找寻kubeconfig的优先级
 可通过 kubectl config --help 看到其对优先级的介绍
 ```
 ## 相关优化级
