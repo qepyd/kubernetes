@@ -169,6 +169,8 @@ spec:
         - /opt/bin/flanneld
         args:
         - --ip-masq
+        # <== 当为各worker node分配subnet cidr时,得根据k8s控制平面给各worker node
+        #     分配的subnet cidr。此参数就是让其根据worker node所得到Pod CIDR之subnet cidr
         - --kube-subnet-mgr
         resources:
           requests:
