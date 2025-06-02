@@ -1,0 +1,33 @@
+---
+# 基本说明:
+#   用于在相应的woker node上运行一个Pod(不共享宿主机网络名称空间)副本。
+#   Pod中的某容器先访问相应的FQDN：
+#      www.jd.com
+#      kubernetes.default.svc.cluster.local  # cluster.local是k8s集群dns的Domain
+#   Pod中的某容器再sleep 10000
+#      以便容器可前台运行
+# 使用场景：
+#   例如：安装好k8s的cni插件后
+# 注意：
+#    DaemonSet控制器不受kubectl cordon <NodeName>所产生污点的限制
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  namespace: default
+  name: pod-in-container-visit-fqdn 
+spec:
+  selector:
+    matchLabels:
+      app: pod-in-container-visit-fqdn 
+  template:
+    metadata:
+      labels:
+        app: pod-in-container-visit-fqdn 
+    spec:
+      containers:
+      - name: admin-toolbox
+        image: swr.cn-north-1.myhuaweicloud.com/chenliang/admin-toolbox:v1.0
+        imagePullPolicy: IfNotPresent
+        # <== 其kubernetes.default.svc.cluster.local其Domain根据k8s集群dns进行修改
+        args:
+        - "ping -c 2  www.jd.com  && ping -c 2 kubernetes.default.svc.cluster.local  && sleep 10000"
