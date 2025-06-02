@@ -5,6 +5,8 @@
 #   若不能成功访问互联网IPv4,那么容器是无法前台运行,Pod也不会处于Running状态。
 # 使用场景：
 #   例如：安装好k8s的cni插件后
+# 注意：
+#    DaemonSet控制器不受kubectl cordon <NodeName>所产生污点的限制
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
