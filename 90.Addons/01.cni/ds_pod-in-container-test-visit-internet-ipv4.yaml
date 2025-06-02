@@ -7,6 +7,7 @@
 #   例如：安装好k8s的cni插件后
 # 注意：
 #    DaemonSet控制器不受kubectl cordon <NodeName>所产生污点的限制
+#    即可以容忍 node.kubernetes.io/unschedulable:NoSchedule 污点
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
