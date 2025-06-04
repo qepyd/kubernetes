@@ -62,7 +62,7 @@ data:
         }
         reload
         loop
-        bind 169.254.20.10 __PILLAR__DNS__SERVER__
+        bind 169.254.20.10 10.144.0.2
         forward . __PILLAR__CLUSTER__DNS__ {
                 force_tcp
         }
@@ -74,7 +74,7 @@ data:
         cache 30
         reload
         loop
-        bind 169.254.20.10 __PILLAR__DNS__SERVER__
+        bind 169.254.20.10 10.144.0.2
         forward . __PILLAR__CLUSTER__DNS__ {
                 force_tcp
         }
@@ -85,7 +85,7 @@ data:
         cache 30
         reload
         loop
-        bind 169.254.20.10 __PILLAR__DNS__SERVER__
+        bind 169.254.20.10 10.144.0.2
         forward . __PILLAR__CLUSTER__DNS__ {
                 force_tcp
         }
@@ -96,7 +96,7 @@ data:
         cache 30
         reload
         loop
-        bind 169.254.20.10 __PILLAR__DNS__SERVER__
+        bind 169.254.20.10 10.144.0.2
         forward . __PILLAR__UPSTREAM__SERVERS__
         prometheus :9253
         }
@@ -138,12 +138,12 @@ spec:
         operator: "Exists"
       containers:
       - name: node-cache
-        image: k8s.gcr.io/dns/k8s-dns-node-cache:1.21.1
+        image: swr.cn-north-1.myhuaweicloud.com/qepyd/k8s-dns-node-cache:1.21.1
         resources:
           requests:
             cpu: 25m
             memory: 5Mi
-        args: [ "-localip", "169.254.20.10,__PILLAR__DNS__SERVER__", "-conf", "/etc/Corefile", "-upstreamsvc", "kube-dns-upstream" ]
+        args: [ "-localip", "169.254.20.10,10.144.0.2", "-conf", "/etc/Corefile", "-upstreamsvc", "kube-dns-upstream" ]
         securityContext:
           privileged: true
         ports:

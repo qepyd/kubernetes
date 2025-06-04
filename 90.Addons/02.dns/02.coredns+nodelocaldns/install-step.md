@@ -177,6 +177,9 @@ kubectl apply -f ./02.nodelocaldns.yaml
 列出相关资源对象
 ```
 kubectl get -f ./02.nodelocaldns.yaml
+  #
+  # 观察daemonsets资源对象其READY是否所有副本就绪
+  #
 ```
 
 # 7.测试
