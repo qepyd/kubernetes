@@ -31,4 +31,4 @@ spec:
         imagePullPolicy: IfNotPresent
         # <== 其kubernetes.default.svc.cluster.local其Domain根据k8s集群dns进行修改
         args:
-        - "ping -c 2  www.jd.com  && ping -c 2 kubernetes.default.svc.cluster.local  && sleep 10000"
+        - "ping -c 2  www.jd.com  && ping -c 2 kubernetes.default.svc.cluster.local  && sleep 100000000"
