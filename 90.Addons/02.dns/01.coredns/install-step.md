@@ -68,7 +68,7 @@ sed    's#k8s.gcr.io/coredns/coredns:v1.8.6#swr.cn-north-1.myhuaweicloud.com/qep
 sed -i 's#k8s.gcr.io/coredns/coredns:v1.8.6#swr.cn-north-1.myhuaweicloud.com/qepyd/coredns:v1.8.6#g'   ./coredns.yaml
 
 ## 修改configmaps/coredns对象
-将 __DNS__DOMAIN__ 替换成 所规划的Domain之cluster
+将 __DNS__DOMAIN__ 替换成 所规划的Domain之cluster.local
 
 sed    's#__DNS__DOMAIN__#cluster.local#g'  ./coredns.yaml  | grep cluster.local
 sed -i 's#__DNS__DOMAIN__#cluster.local#g'  ./coredns.yaml  | grep cluster.local
