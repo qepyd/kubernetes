@@ -104,7 +104,6 @@ spec:
   # 1. In order to make Addon Manager do not reconcile this replicas parameter.
   # 2. Default is 1.
   # 3. Will be tuned in real time if DNS horizontal auto-scaling is turned on.
-  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -144,8 +143,7 @@ spec:
         imagePullPolicy: IfNotPresent
         resources:
           limits:
-            # memory: __DNS__MEMORY__LIMIT__
-            memory: 500Mi
+            memory: 512Mi
           requests:
             cpu: 100m
             memory: 70Mi
@@ -198,7 +196,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # <== 名字不要修改,让其保持为 kube-dns
   name: kube-dns
   namespace: kube-system
   annotations:
@@ -212,11 +209,6 @@ metadata:
 spec:
   selector:
     k8s-app: kube-dns
-  # <== 从svc网络CIDR中分配的地址,我们应该固定,因定时:
-  #     A:根据kubelet组件各实例其--cluster-dns参数的值。
-  #       各worker node上其kubelet组件实例此参数应该保持一致。
-  #     B:其实我们在部署coredns前,你创建一个Pod,进入容器看/etc/resolv.conf
-  #       文件中的nameserver
   clusterIP: 10.144.0.2
   ports:
   - name: dns
