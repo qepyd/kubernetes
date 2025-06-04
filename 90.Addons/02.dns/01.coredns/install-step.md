@@ -10,7 +10,7 @@ node01     Ready                      node     22h   v1.24.4
 node02     Ready                      node     22h   v1.24.4
 node03     Ready                      node     22h   v1.24.4
 
-## 安装k8s时其k8s的相关规划在这里时引入
+## 引入与集群内Dns相关的一些规划(在安装k8s前是有规划)
 集群内部DNS的Domain为: cluster.local
 集群三条网络之Service网络为：10.144.0.0/16
 
@@ -95,6 +95,7 @@ sed -i 's#__DNS__SERVER__#10.144.0.2#g'  ./coredns.yaml
 kubectl apply -f ./coredns.yaml --dry-run=client
 kubectl apply -f ./coredns.yaml
 ```
+
 列出相关资源对象
 ```
 kubectl -n kube-system get deploy/coredns 
@@ -122,6 +123,7 @@ kubectl -n kube-system get svc/kube-dns
    # 列出其svc资源对象,检查其clusterIP是否是前面指定的10.144.0.2
    #
 ```
+
 测试：应用上一级目录中的ds_pod-in-container-visit-fqdn.yaml这个manifests
 ```
 ls -l ../ds_pod-in-container-visit-fqdn.yaml
