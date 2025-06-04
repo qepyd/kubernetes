@@ -17,7 +17,7 @@ node03     Ready                      node     22h   v1.24.4
 ## 各worker node上其kubelet组件实例涉及的相关参数
 --cluster-dns <strings>
    #
-   # 用于指定k8s集群内DNS的连接地址(来自于Service网络)
+   # 用于指定k8s集群内DNS的连接地址(不是Service网络中的IP)
    # 当前的值为：169.254.20.10   # 注意哈,这是个私有地址
    # 
 
