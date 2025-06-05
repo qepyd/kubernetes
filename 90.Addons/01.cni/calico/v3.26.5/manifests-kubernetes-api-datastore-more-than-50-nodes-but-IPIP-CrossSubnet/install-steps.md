@@ -20,11 +20,10 @@ daemonsets/calico-node对象的Manifests做修改
 # Enable IPIP
 - name: CALICO_IPV4POOL_IPIP
   value: "CrossSubnet"
-	  
+ 
 # Enable or Disable VXLAN on the default IP pool.
 - name: CALICO_IPV4POOL_VXLAN
   value: "Never"
-	  
 # Enable or Disable VXLAN on the default IPv6 IP pool.
 - name: CALICO_IPV6POOL_VXLAN
   value: "Never"
@@ -47,19 +46,26 @@ deployment/calico-typha
 
 修改相关的image
 ```
-docker image pull docker.io/calico/cni:v3.26.5
-docker image tag  docker.io/calico/cni:v3.26.5 swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
-docker image push  swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
+docker image pull  docker.io/calico/cni:v3.26.5
+docker image tag   docker.io/calico/cni:v3.26.5    swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
+docker image push                                  swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
 
-docker image pull docker.io/calico/node:v3.26.5   
-docker image tag  docker.io/calico/node:v3.26.5   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
-docker image push  swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
+docker image pull  docker.io/calico/node:v3.26.5   
+docker image tag   docker.io/calico/node:v3.26.5   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
+docker image push                                  swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
 
-docker image pull docker.io/calico/kube-controllers:v3.26.5
-docker image tag docker.io/calico/kube-controllers:v3.26.5  swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
-docker image push  swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
+docker image pull  docker.io/calico/kube-controllers:v3.26.5
+docker image tag   docker.io/calico/kube-controllers:v3.26.5  swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
+docker image push                                             swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
+
+docker image pull  docker.io/calico/typha:v3.26.5
+docker image tag   docker.io/calico/typha:v3.26.5             swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
+docker image push                                             swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
+
+
 
 sed  -i 's#docker.io/calico/cni:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5#g'  calico-typha.yaml  
-sed -i 's#docker.io/calico/node:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5#g'  calico-typha.yaml  
-sed -i 's#docker.io/calico/kube-controllers:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5#g'  calico-typha.yaml 
+sed  -i 's#docker.io/calico/node:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5#g'  calico-typha.yaml  
+sed  -i 's#docker.io/calico/kube-controllers:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5#g'  calico-typha.yaml  
+sed  -i "s#docker.io/calico/typha:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5#g"   calico-typha.yaml  
 ```
