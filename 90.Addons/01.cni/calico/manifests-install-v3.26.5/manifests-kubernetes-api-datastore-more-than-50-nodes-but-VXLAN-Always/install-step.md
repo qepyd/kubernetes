@@ -5,10 +5,14 @@ ls -l calico-typha.yaml
 ```
 
 ## 2.修改manifests
-configmap/calico-config对象
+configmap/calico-config对象将被DaemonSet/calico-node对象引用
 ```
-sed    's#__CNI_MTU__#1450#g' calico-typha.yaml  
-sed -i 's#__CNI_MTU__#1450#g' calico-typha.yaml  
+## 设置MTU
+sed    's#__CNI_MTU__#1450#g' calico-typha.yaml
+sed -i 's#__CNI_MTU__#1450#g' calico-typha.yaml
+
+## 设置后端(因为后面将使用VXLAN模式)
+将calico_backend: "bird" 替换为 "vxlan"
 ```
 
 daemonset/calico-node对象
@@ -20,7 +24,6 @@ daemonset/calico-node对象
 # Enable or Disable VXLAN on the default IP pool.
 - name: CALICO_IPV4POOL_VXLAN
   value: "Always"
-	  
 # Enable or Disable VXLAN on the default IPv6 IP pool.
 - name: CALICO_IPV6POOL_VXLAN
   value: "Never"
