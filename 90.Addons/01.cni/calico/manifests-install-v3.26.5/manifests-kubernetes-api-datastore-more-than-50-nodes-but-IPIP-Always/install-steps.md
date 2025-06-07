@@ -14,8 +14,8 @@ sed -i 's#__CNI_MTU__#1450#g' calico-typha.yaml
 daemonsets/calico-node对象的Manifests做修改
 ```
 ## 配置BGP（指定各Node上IPV4的业务网卡.有多种配置方法）
-- name: IP_AUTODETECTION_METHOD
-  value: "kubernetes-internal-ip"  # 即使用各node的INTERNAL-IP
+#- name: IP_AUTODETECTION_METHOD
+#  value: "kubernetes-internal-ip"  # 即使用各node的INTERNAL-IP
 
 # Enable IPIP
 - name: CALICO_IPV4POOL_IPIP
