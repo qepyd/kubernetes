@@ -4,15 +4,17 @@ wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.5/manifests/ca
 ls -l calico-typha.yaml
 ```
 
-## 2.修改manifests
+## 2.样式
+```
+Policy   IPAM    CNI      Overlay        Routing   Database
+calico   calico  calico   vxlan          calico    kubernetes
+```
+
+## 3.修改manifests
 configmap/calico-config对象将被DaemonSet/calico-node对象引用
 ```
-## 设置MTU
-sed    's#__CNI_MTU__#1450#g' calico-typha.yaml
-sed -i 's#__CNI_MTU__#1450#g' calico-typha.yaml
-
-## 设置后端(因为后面将使用VXLAN模式)
-将calico_backend: "bird" 替换为 "vxlan"
+# 设置calico后端
+calico_backend: "vxlan"  # 可修改为vxlan
 ```
 
 daemonset/calico-node对象
@@ -30,7 +32,6 @@ daemonset/calico-node对象
 
 - name: CALICO_IPV4POOL_CIDR
   value: "10.244.0.0/16"
-	  
 - name: CALICO_IPV4POOL_BLOCK_SIZE
   value: "24"
 ```
@@ -70,12 +71,12 @@ sed  -i 's#docker.io/calico/kube-controllers:v3.26.5#swr.cn-north-1.myhuaweiclou
 sed  -i "s#docker.io/calico/typha:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5#g"   calico-typha.yaml  
 ```
 
-# 3.应用manifests
+# 4.应用manifests
 ```
 kubectl apply -f calico-typha.yaml
 ```
 
-# 4.验证
+# 5.验证
 ```
 ## 拥有相关的crd
 kubectl get crd | grep calicio 
