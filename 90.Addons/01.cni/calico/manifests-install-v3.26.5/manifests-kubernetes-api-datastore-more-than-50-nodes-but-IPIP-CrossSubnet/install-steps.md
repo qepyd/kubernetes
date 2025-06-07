@@ -4,7 +4,13 @@ wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.5/manifests/ca
 ls -l calico-typha.yaml
 ```
 
-# 2.Manifests的相关修改
+# 2.样式
+```
+Policy   IPAM   CNI     Cross-Subnet Routing   Database
+calico   calico calico  IPIP         BGP       kubernetes
+```
+
+# 3.Manifests的相关修改
 configmap/calico-config对象
 ```
 # 设置calico后端
@@ -60,8 +66,6 @@ docker image push                                             swr.cn-north-1.myh
 docker image pull  docker.io/calico/typha:v3.26.5
 docker image tag   docker.io/calico/typha:v3.26.5             swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
 docker image push                                             swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
-
-
 
 sed  -i 's#docker.io/calico/cni:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5#g'  calico-typha.yaml  
 sed  -i 's#docker.io/calico/node:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5#g'  calico-typha.yaml  

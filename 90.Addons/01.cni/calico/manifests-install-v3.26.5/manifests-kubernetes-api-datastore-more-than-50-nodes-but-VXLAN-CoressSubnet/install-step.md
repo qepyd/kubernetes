@@ -1,16 +1,16 @@
-## 1.下载manifests
+# 1.下载manifests
 ```
 wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.5/manifests/calico-typha.yaml
 ls -l calico-typha.yaml
 ```
 
-## 2.样式
+# 2.样式
 ```
 Policy   IPAM    CNI      Cross-Subnet  Routing   Database
 calico   calico  calico   vxlan         calico    kubernetes
 ```
 
-## 3.修改manifests
+# 3.修改manifests
 configmap/calico-config对象会被DaemonSet/calico-node对象引用
 ```
 # 设置calico后端
