@@ -387,14 +387,18 @@ root@node04:~#
 
 # 9.同宿主机间Pod的通信及分析
 ## 9.1 抓包
+**场景**
 ```
-## 场景
 node01上 pods/client-b76dk (10.244.220.1)  与 node01上 pods/server-h28zl (10.244.220.2)
+```
 
-## 说明
+**说明**
+```
 同宿主机上Pod间的通信在本机就完成了，不会经过vxlan隧道，也不会经过本机的eth0网卡
+```
 
-## 抓包相关命令(6个xshell窗口中执行)
+**抓包相关命令(6个xshell窗口中执行)**
+```
 # <== 进入容器（client-b76dk）
 kubectl -n default exec -it pods/client-b76dk /bin/bash   # 进入容器
    tcpdump -nn -vvv -i eth0  -p tcp port 80                  -w  1.1.Clinet-Pod-Internal-eth0.pcap
@@ -422,13 +426,16 @@ tcpdump -nn -vvv -i cali914974cddc2  -p tcp port 80          -w  1.5.Server-Pod-
 # <== 进入容器(pods/server-h28zl)
 kubectl -n default exec -it pods/server-h28zl /bin/bash   # 进入容器
     tcpdump -nn -vvv -i eth0  -p tcp port 80                 -w  1.6.Server-Pod-Internal-eth0.pcap
+```
 
-
-## client：pods/client-b76dk (10.244.220.1) 发起请求
+**client：pods/client-b76dk (10.244.220.1) 发起请求**
+```
 kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
    curl  10.244.220.2
+```
 
-## 停止"抓包相关命令"并下载相关文件
+**停止"抓包相关命令"并下载相关文件**
+```
 .................停止 ctrl + c
 .................下载 sz 命令
 ```
