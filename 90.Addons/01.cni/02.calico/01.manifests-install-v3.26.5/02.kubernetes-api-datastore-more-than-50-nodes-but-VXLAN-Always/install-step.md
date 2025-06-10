@@ -231,13 +231,41 @@ server-cbgkj   1/1     Running   0          7m58s   10.244.143.2   node04     <n
     link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff
 ```
 
-# 6.相关worker node上的route
+# 4.做一下简单的测试
+**前面做的测试1**
 ```
-## 子网2
+即应用 ds_client.yaml 后，会从容器内部ping互联网IPv4(例如:223.5.5.5)
+```
+**这里再做测试(测试容器与容器的通信)***
+```
+## 同宿主机上Pod间的通信
+# <== 说明
+node01上 pods/client-b76dk (10.244.220.1)  与 node01上 pods/server-h28zl (10.244.220.2)
 
+# <== 操作
+kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.220.2
+  #
+  # 结果是可以通信的 
+  #
 
-## 子网3
+## 跨宿主机(在同一子网)间Pod的通信
+# <== 说明
+node01上 pods/client-b76dk (10.244.220.1)  与 node02上 pods/server-gldfz (10.244.231.2)
 
+# <== 操作
+kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.231.2
+  #
+  # 结果是可以通信的
+  # 
 
+## 跨宿主机(不在同一子网)间Pod的通信
+# <== 说明
+node01上 pods/client-b76dk (10.244.220.1)  与 node03上 pods/server-4vz7d (10.244.99.3)
+
+# <== 操作
+kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.99.3
+  #
+  # 结果是可以通信的
+  # 
 ```
 
