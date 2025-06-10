@@ -408,7 +408,7 @@ tcpdump -nn -vvv -i cali0dcca1f2adb  -p tcp port 80          -w  1.2.Clinet-Pod-
 
 
 # <== node01宿主机上对 eth0 网卡进行抓包
-tcpdump -nn -vvv -i eth0             'ip proto 4'            -w  1.3.Client-Server-Pod-In-Host-eth0.pcap
+tcpdump -nn -vvv -i eth0             'udp and port 4789'            -w  1.3.Client-Server-Pod-In-Host-eth0.pcap
     #
     # 没有数据包经过
     # 
@@ -530,18 +530,21 @@ tcpdump -nn -vvv -i cali0dcca1f2adb  -p tcp port 80          -w  2.2.Clinet-Pod-
 tcpdump -nn -vvv -i vxlan.calico            -p tcp port 80   -w  2.3.Client-Pod-In-Host-vxlan.calico.pcap
 
 # <== node01宿主机上对 eth0 网卡进行抓包
-tcpdump -nn -vvv -i eth0             'ip proto 4'            -w  2.4.Client-Pod-In-Host-eth0.pcap
+tcpdump -nn -vvv -i eth0             'udp and port 4789'     -w  2.4.Client-Pod-In-Host-eth0.pcap
 
 
 # <== node02宿主机上对 eth0 网卡进行抓包
-tcpdump -nn -vvv -i eth0             'ip proto 4'            -w  2.5.Server-Pod-In-Host-eth0.pcap
+tcpdump -nn -vvv -i eth0             'udp and port 4789'     -w  2.5.Server-Pod-In-Host-eth0.pcap
+
+# <== node02宿主机上对 vxlan.calico 网卡进行抓包
+tcpdump -nn -vvv -i vxlan.calico            -p tcp port 80   -w  2.6.Server-Pod-In-Host-vxlan.calico.pcap
 
 # <== node02宿主机上对  pods/server-gldfz   对应的 cali<随机数11位> 网卡抓包
-tcpdump -nn -vvv -i cali804b82732a1  -p tcp port 80          -w  2.6.Server-Pod-In-Host-cali.pcap
+tcpdump -nn -vvv -i cali804b82732a1  -p tcp port 80          -w  2.7.Server-Pod-In-Host-cali.pcap
 
 # <== 进入容器(pods/server-gldfz)
 kubectl -n default exec -it pods/server-gldfz  /bin/bash      # 进入容器
-    tcpdump -nn -vvv -i eth0  -p tcp port 80                 -w  2.7.Server-Pod-Internal-eth0.pcap
+    tcpdump -nn -vvv -i eth0  -p tcp port 80                 -w  2.8.Server-Pod-Internal-eth0.pcap
 ```
 
 **client：pods/client-b76dk (10.244.220.1) 发起请求**
