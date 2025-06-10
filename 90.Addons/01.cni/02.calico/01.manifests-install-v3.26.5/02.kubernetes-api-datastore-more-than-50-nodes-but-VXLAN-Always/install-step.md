@@ -124,6 +124,17 @@ calico-node-jxphk                         1/1     Running   0          50s   172
 calico-kube-controllers-7847d5868-shgzk   1/1     Running   0          50s   10.244.99.1   node03     <none>           <none>
 calico-node-wwttk                         1/1     Running   0          50s   172.31.3.2    node04     <none>           <none>
 
+## 查看各worker node的状态
+root@deploy:~# kubectl get nodes
+NAME       STATUS                     ROLES    AGE   VERSION
+master01   Ready,SchedulingDisabled   master   2d    v1.24.4
+master02   Ready,SchedulingDisabled   master   2d    v1.24.4
+master03   Ready,SchedulingDisabled   master   2d    v1.24.4
+node01     Ready                      node     2d    v1.24.4
+node02     Ready                      node     2d    v1.24.4
+node03     Ready                      node     2d    v1.24.4
+node04     Ready                      node     2d    v1.24.4
+
 ## 有相关的crd
 kubectl get crd | grep calico
   # 
