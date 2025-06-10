@@ -210,7 +210,7 @@ server-4vz7d   1/1     Running   0          7m58s   10.244.99.3    node03     <n
 server-cbgkj   1/1     Running   0          7m58s   10.244.143.2   node04     <none>           <none>
 ```
 
-# 5.各worker node上的设备
+# 5.k8s各Worker Node上的设备
 ```
 隧道设备: vxlan.calico
   各worker node上的隧道设备具备不同的IPv4地址,但子网掩码为32，例如：
