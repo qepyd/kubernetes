@@ -301,7 +301,7 @@ kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.99.3
   # 
 ```
 
-# 7.相关worker node上的route
+# 8.相关worker node上的route
 **子网2中各worker node的route**
 ```
 ## node01
@@ -385,8 +385,8 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 root@node04:~# 
 ```
 
-# 8.同宿主机间Pod的通信及分析
-## 8.1 抓包
+# 9.同宿主机间Pod的通信及分析
+## 9.1 抓包
 ```
 ## 场景
 node01上 pods/client-b76dk (10.244.220.1)  与 node01上 pods/server-h28zl (10.244.220.2)
@@ -433,8 +433,8 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 .................下载 sz 命令
 ```
 
-## 8.2 分析
-ClientPod(client-b76dk 10.244.220.1) 发起请求
+## 9.2 分析
+**ClientPod(client-b76dk 10.244.220.1) 发起请求**
 ```
 源MAC地址  ：客户端Pod其eth0网卡的mac地址
 源IP地址   : 客户端Pod的IP地址(10.244.220.1)
@@ -446,7 +446,7 @@ ClientPod(client-b76dk 10.244.220.1) 发起请求
 <image src="./picture/1.1.Clinet-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
 
 
-到达ClientPod(client-b76dk 10.244.220.1)在宿主机上的 cali<随机数11位> 网卡
+**到达ClientPod(client-b76dk 10.244.220.1)在宿主机上的 cali<随机数11位> 网卡**
 ```
 
 ```
