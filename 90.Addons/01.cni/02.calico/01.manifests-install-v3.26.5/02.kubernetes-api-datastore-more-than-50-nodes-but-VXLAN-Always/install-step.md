@@ -19,6 +19,10 @@ Node网络：172.31.0.0/16
 
 Node网络：10.244.0.0/16
     
+Svc网络：10.144.0.0/16
+   集群dns的daemon: cluster.local
+   集群dns应用的ip: 10.144.0.2
+   各worker node上kubelet指定dns应用的ip为: 10.144.0.2
 ```
 
 # 2.k8s各Worker Node状态
@@ -249,7 +253,14 @@ server-cbgkj   1/1     Running   0          7m58s   10.244.143.2   node04     <n
     link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff
 ```
 
-# 6.做一下必要测试
+# 6.安装coredns
+后面的相关测试中，可能需要在Pod中的容器里面安装软件。  
+```
+根据k8s的规划，可以部署
+  https://github.com/qepyd/kubernetes/tree/main/90.Addons/02.dns/01.coredns 下的manifests
+```
+
+# 7.做一下必要测试
 **前面做的测试**
 ```
 "4.创建几个Pod" 处应用 ds_client.yaml 后，会从容器内部ping互联网IPv4(例如:223.5.5.5)
@@ -290,7 +301,7 @@ kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.99.3
   # 
 ```
 
-7.Pod间通信抓包分析
+# 8.Pod间通信抓包分析
 **子网2中各worker node的route**
 ```
 ## node01
@@ -374,8 +385,8 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 root@node04:~# 
 ```
 
-# 7.同宿主机间Pod的通信及分析
-## 7.1 抓包
+# 8.同宿主机间Pod的通信及分析
+## 8.1 抓包
 ```
 ## 场景
 node01上 pods/client-b76dk (10.244.220.1)  与 node01上 pods/server-h28zl (10.244.220.2)
@@ -422,7 +433,7 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 .................下载 sz 命令
 ```
 
-## 7.2 分析
+## 8.2 分析
 ClientPod(client-b76dk 10.244.220.1) 发起请求
 ```
 源MAC地址  ：客户端Pod其eth0网卡的mac地址
