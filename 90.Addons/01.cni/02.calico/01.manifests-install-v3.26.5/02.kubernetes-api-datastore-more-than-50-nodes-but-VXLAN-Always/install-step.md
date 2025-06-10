@@ -301,7 +301,7 @@ kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.99.3
   # 
 ```
 
-# 8.Pod间通信抓包分析
+# 7.相关worker node上的route
 **子网2中各worker node的route**
 ```
 ## node01
