@@ -25,13 +25,14 @@ Node网络：10.244.0.0/16
 只部署了基本框架，就等着安装CNI插件呢。安装好CNI插件后，其各worker node的状态就是Ready了。
 ```
 roott@deploy:~# kubectl get nodes
-NAME       STATUS                     ROLES    AGE   VERSION
-master01   NotReady,SchedulingDisabled   master   7d    v1.24.4
-master02   NotReady,SchedulingDisabled   master   7d    v1.24.4
-master03   NotReady,SchedulingDisabled   master   7d    v1.24.4
-node01     NotReady                      node     7d    v1.24.4
-node02     NotReady                      node     7d    v1.24.4
-node03     NotReady                      node     7d    v1.24.4
+NAME       STATUS                        ROLES    AGE   VERSION
+master01   NotReady,SchedulingDisabled   master   2d    v1.24.4
+master02   NotReady,SchedulingDisabled   master   2d    v1.24.4
+master03   NotReady,SchedulingDisabled   master   2d    v1.24.4
+node01     NotReady                      node     2d    v1.24.4
+node02     NotReady                      node     2d    v1.24.4
+node03     NotReady                      node     2d    v1.24.4
+node04     NotReady                      node     2d    v1.24.4
 ```
 
 # 3.安装CNI插件之Calico 
