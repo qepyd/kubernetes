@@ -267,6 +267,7 @@ kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.220.2
   # 结果是可以通信的 
   #
 
+
 ## 跨宿主机(在同一子网)间Pod的通信
 # <== 说明
 node01上 pods/client-b76dk (10.244.220.1)  与 node02上 pods/server-gldfz (10.244.231.2)
@@ -276,6 +277,7 @@ kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.231.2
   #
   # 结果是可以通信的
   # 
+
 
 ## 跨宿主机(不在同一子网)间Pod的通信
 # <== 说明
@@ -287,4 +289,142 @@ kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.99.3
   # 结果是可以通信的
   # 
 ```
+
+7.Pod间通信抓包分析
+**子网2中各worker node的route**
+```
+## node01
+root@node01:~# 
+root@node01:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         172.31.2.253    0.0.0.0         UG    100    0        0 eth0
+10.244.40.0     10.244.40.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.99.0     10.244.99.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.143.0    10.244.143.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.220.0    0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.220.1    0.0.0.0         255.255.255.255 UH    0      0        0 cali0dcca1f2adb  # 本机上的 Pod(10.244.220.1) 所对应本机上的 cali<随机数11位> 网卡
+10.244.220.2    0.0.0.0         255.255.255.255 UH    0      0        0 cali914974cddc2  # 本机上的 Pod(10.244.220.2) 所对应本机上的 cali<随机数11位> 网卡 
+10.244.231.0    10.244.231.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico 
+10.244.239.0    10.244.239.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+172.31.2.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0             # 本机eth0网卡(来自于node网络)与同子网通信的路由,例如：node01与node02的通信
+172.31.2.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0             # 本机eth0网卡(来自于node网络)与非同子网通信的路由(到达网关处)
+root@node01:~# 
+
+## node02
+root@node02:~# 
+root@node02:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         172.31.2.253    0.0.0.0         UG    100    0        0 eth0
+10.244.40.0     10.244.40.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.99.0     10.244.99.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.143.0    10.244.143.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.220.0    10.244.220.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.231.0    0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.231.1    0.0.0.0         255.255.255.255 UH    0      0        0 cali1b5158766a9  # 本机上的 Pod(10.244.231.1) 所对应本机上的 cali<随机数11位> 网卡
+10.244.231.2    0.0.0.0         255.255.255.255 UH    0      0        0 cali804b82732a1  # 本机上的 Pod(10.244.231.2) 所对应本机上的 cali<随机数11位> 网卡
+10.244.239.0    10.244.239.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+172.31.2.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0             # 本机eth0网卡(来自于node网络)与同子网通信的路由,例如：node02与node01的通信
+172.31.2.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0             # 本机eth0网卡(来自于node网络)与非同子网通信的路由(到达网关处)
+root@node02:~# 
+```
+
+**子网3中各worker node的route**
+```
+## node03
+root@node03:~# 
+root@node03:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         172.31.3.253    0.0.0.0         UG    100    0        0 eth0
+10.244.40.0     10.244.40.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.99.0     0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.99.1     0.0.0.0         255.255.255.255 UH    0      0        0 cali9c03a6138eb  # 本机上的 Pod(10.244.99.1) 所对应本机上的 cali<随机数11位> 网卡
+10.244.99.2     0.0.0.0         255.255.255.255 UH    0      0        0 cali2227d568990  # 本机上的 Pod(10.244.99.2) 所对应本机上的 cali<随机数11位> 网卡
+10.244.99.3     0.0.0.0         255.255.255.255 UH    0      0        0 cali06eb98133be  # 本机上的 Pod(10.244.99.3) 所对应本机上的 cali<随机数11位> 网卡
+10.244.143.0    10.244.143.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.220.0    10.244.220.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.231.0    10.244.231.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.239.0    10.244.239.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+172.31.3.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0             # 本机eth0网卡(来自于node网络)与同子网通信的路由,例如：node03与node04的通信
+172.31.3.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0             # 本机eth0网卡(来自于node网络)与非同子网通信的路由(到达网关处)
+root@node03:~# 
+
+## node04
+root@node04:~# 
+root@node04:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         172.31.3.253    0.0.0.0         UG    100    0        0 eth0
+10.244.40.0     10.244.40.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.99.0     10.244.99.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.143.0    0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.143.1    0.0.0.0         255.255.255.255 UH    0      0        0 calib1aef58abd4  # 本机上的 Pod(10.244.143.1) 所对应本机上的 cali<随机数11位> 网卡
+10.244.143.2    0.0.0.0         255.255.255.255 UH    0      0        0 caliab261192ca1  # 本机上的 Pod(10.244.143.2) 所对应本机上的 cali<随机数11位> 网卡
+10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.220.0    10.244.220.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.231.0    10.244.231.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+10.244.239.0    10.244.239.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+172.31.3.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0             # 本机eth0网卡(来自于node网络)与同子网通信的路由,例如：node04与node03的通信
+172.31.3.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0             # 本机eth0网卡(来自于node网络)与非同子网通信的路由(到达网关处)
+root@node04:~# 
+```
+
+**同宿主机间Pod的通信**
+```
+## 场景
+node01上 pods/client-b76dk (10.244.220.1)  与 node01上 pods/server-h28zl (10.244.220.2)
+
+## 说明
+同宿主机上Pod间的通信在本机就完成了，不会经过vxlan隧道，也不会经过本机的eth0网卡
+
+## 抓包相关命令(6个xshell窗口中执行)
+# <== 进入容器（client-b76dk）
+kubectl -n default exec -it pods/client-b76dk /bin/bash   # 进入容器
+   tcpdump -nn -vvv -i eth0  -p tcp port 80                  -w  1.1.Clinet-Pod-Internal-eth0.pcap
+
+# <== node01宿主机上对 容器（client-b76dk） 对应的 cali<随机数11位> 网卡抓包
+tcpdump -nn -vvv -i cali0dcca1f2adb  -p tcp port 80          -w  1.2.Clinet-Pod-In-Host-cali.pcap
+
+
+# <== node01宿主机上对 eth0 网卡进行抓包
+tcpdump -nn -vvv -i eth0             'ip proto 4'            -w  1.3.Client-Server-Pod-In-Host-eth0.pcap
+    #
+    # 没有数据包经过
+    # 
+
+# <== node01宿主机上对 vxlan.calico 网卡进行抓包
+tcpdump -nn -vvv -i vxlan.calico            -p tcp port 80   -w  1.4.Client-Server-Pod-In-Host-vxlan.calico.pcap
+    #
+    # 没有数据包经过
+    #
+
+# <== node01宿主机上对  pods/server-h28zl  对应的 cali<随机数11位> 网卡抓包
+tcpdump -nn -vvv -i cali914974cddc2  -p tcp port 80          -w  1.5.Server-Pod-In-Host-cali.pcap
+
+
+# <== 进入容器(pods/server-h28zl)
+kubectl -n default exec -it pods/server-h28zl /bin/bash   # 进入容器
+    tcpdump -nn -vvv -i eth0  -p tcp port 80                 -w  1.6.Server-Pod-Internal-eth0.pcap
+
+
+## client：pods/client-b76dk (10.244.220.1) 发起请求
+kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
+   curl  10.244.220.2
+
+## 停止"抓包相关命令"并下载相关文件
+.................停止 ctrl + c
+.................下载 sz 命令
+```
+
+**各阶段图文整理***
+Client: pods/client-b76dk 发起请求
+   源IP地址 : 10.244.220.1
+   源MAC地址：eth0网卡的mac地址
+   源Port 为: 随机产生
+
 
