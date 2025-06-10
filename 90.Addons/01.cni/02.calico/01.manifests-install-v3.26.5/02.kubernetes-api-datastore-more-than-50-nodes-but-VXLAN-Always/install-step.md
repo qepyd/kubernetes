@@ -374,7 +374,8 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 root@node04:~# 
 ```
 
-**同宿主机间Pod的通信**
+# 7.同宿主机间Pod的通信及分析
+## 7.1 抓包
 ```
 ## 场景
 node01上 pods/client-b76dk (10.244.220.1)  与 node01上 pods/server-h28zl (10.244.220.2)
@@ -421,10 +422,21 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 .................下载 sz 命令
 ```
 
-**各阶段图文整理***
-Client: pods/client-b76dk 发起请求
-   源IP地址 : 10.244.220.1
-   源MAC地址：eth0网卡的mac地址
-   源Port 为: 随机产生
+## 7.2 分析
+ClientPod(client-b76dk 10.244.220.1) 发起请求
+```
+源IP地址 : 客户端Pod的IP地址(10.244.220.1)
+源MAC地址：客户端Pod其eth0网卡的mac地址
+源Port 为: 随机产生
+目标IP地址：服务端Pod的IP地址(10.244.220.2)
+目标MAC地址：客户端Pod对应宿主机上cali<随机数11位>网卡的mac地址(ee:ee:ee:ee:ee:ee)
+目标Port:    服务端Pod的port(这里是80)
+```
+<image src="./picture/1.1.Clinet-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
 
+
+到达ClientPod(client-b76dk 10.244.220.1)在宿主机上的 cali<随机数11位> 网卡
+```
+
+```
 
