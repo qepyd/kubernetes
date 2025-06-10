@@ -302,7 +302,7 @@ kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.99.3
 ```
 
 # 8.相关worker node上的route
-**子网2中各worker node的route**
+**Node网络子网2中各worker node的route**
 ```
 ## node01
 root@node01:~# 
@@ -343,7 +343,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 root@node02:~# 
 ```
 
-**子网3中各worker node的route**
+**Node网络子网3中各worker node的route**
 ```
 ## node03
 root@node03:~# 
@@ -498,4 +498,14 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 目标Port为 : 服务端Pod的port(这里是80)
 ```
 <image src="./picture/SameHost/1.6.Server-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
+
+
+# 10.跨宿主机间Pod的通信及分析
+Calico VXLAN模式之Always机制下，跨宿主机(worker node)间通信都会走VXLAN隧道，即使宿主机在同一Node网络下的同一subnet(子网)。  
+所以这里的实践基于 Node网络子网2 中的宿主机(node01、node02)间Pod的通信抓包和分析
+
+
+
+
+
 
