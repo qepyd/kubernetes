@@ -512,6 +512,49 @@ Calico VXLAN模式之Always机制下，跨宿主机(worker node)间通信都会�
 所以这里的实践基于 Node网络子网2 中的宿主机(node01、node02)间Pod的通信抓包和分析
 
 ## 10.1 抓包
+**场景**
+```
+node01上 pods/client-b76dk (10.244.220.1)  与 node02上 pods/server-gldfz(10.244.231.2)
+```
+
+**抓包相关命令(7个xshell窗口中执行)**
+```
+# <== 进入容器（client-b76dk）
+kubectl -n default exec -it pods/client-b76dk /bin/bash      # 进入容器
+   tcpdump -nn -vvv -i eth0  -p tcp port 80                  -w  2.1.Clinet-Pod-Internal-eth0.pcap
+
+# <== node01宿主机上对 容器（client-b76dk） 对应的 cali<随机数11位> 网卡抓包
+tcpdump -nn -vvv -i cali0dcca1f2adb  -p tcp port 80          -w  2.2.Clinet-Pod-In-Host-cali.pcap
+
+# <== node01宿主机上对 vxlan.calico 网卡进行抓包
+tcpdump -nn -vvv -i vxlan.calico            -p tcp port 80   -w  2.3.Client-Pod-In-Host-vxlan.calico.pcap
+
+# <== node01宿主机上对 eth0 网卡进行抓包
+tcpdump -nn -vvv -i eth0             'ip proto 4'            -w  2.4.Client-Pod-In-Host-eth0.pcap
+
+
+# <== node02宿主机上对 eth0 网卡进行抓包
+tcpdump -nn -vvv -i eth0             'ip proto 4'            -w  2.5.Server-Pod-In-Host-eth0.pcap
+
+# <== node02宿主机上对  pods/server-gldfz   对应的 cali<随机数11位> 网卡抓包
+tcpdump -nn -vvv -i cali804b82732a1  -p tcp port 80          -w  2.6.Server-Pod-In-Host-cali.pcap
+
+# <== 进入容器(pods/server-gldfz)
+kubectl -n default exec -it pods/server-gldfz  /bin/bash      # 进入容器
+    tcpdump -nn -vvv -i eth0  -p tcp port 80                 -w  2.7.Server-Pod-Internal-eth0.pcap
+```
+
+**client：pods/client-b76dk (10.244.220.1) 发起请求**
+```
+kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
+   curl  10.244.231.2
+```
+
+**停止"抓包相关命令"并下载相关文件**
+```
+.................停止: ctrl + c
+.................下载: sz 命令
+```
 
 ## 10.2 分析
 
