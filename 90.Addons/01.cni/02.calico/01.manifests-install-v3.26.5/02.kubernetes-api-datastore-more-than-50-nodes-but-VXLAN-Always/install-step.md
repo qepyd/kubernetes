@@ -28,17 +28,22 @@ node02     NotReady                      node     7d    v1.24.4
 node03     NotReady                      node     7d    v1.24.4
 ```
 
-# 3.安装CNI插件之Calico VXLAN Always模式(Calico纯VXLAN模式)
-**下载manifests**
+# 3.安装CNI插件之Calico 
+**Clico模式选择**
 ```
-wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.5/manifests/calico-typha.yaml
-ls -l calico-typha.yaml
+VXLAN模式之Always，即Calico纯VXLAN模式。
 ```
 
 **样式**
 ```
 Policy   IPAM    CNI      Overlay        Routing   Database
 calico   calico  calico   vxlan          calico    kubernetes
+```
+
+**下载manifests**
+```
+wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.5/manifests/calico-typha.yaml
+ls -l calico-typha.yaml
 ```
 
 **修改manifests**
