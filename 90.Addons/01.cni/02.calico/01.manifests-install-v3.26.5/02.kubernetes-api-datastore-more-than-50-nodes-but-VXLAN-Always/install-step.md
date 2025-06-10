@@ -237,7 +237,7 @@ server-cbgkj   1/1     Running   0          7m58s   10.244.143.2   node04     <n
     link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff
 ```
 
-# 4.做一下必要测试
+# 6.做一下必要测试
 **前面做的测试**
 ```
 即应用 ds_client.yaml 后，会从容器内部ping互联网IPv4(例如:223.5.5.5)
