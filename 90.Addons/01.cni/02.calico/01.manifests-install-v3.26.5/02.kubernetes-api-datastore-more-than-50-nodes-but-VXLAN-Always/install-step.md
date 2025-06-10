@@ -197,7 +197,7 @@ client-dt79m   1/1     Running   0          8m22s   10.244.99.2    node03     <n
 client-zbh2h   1/1     Running   0          8m22s   10.244.143.1   node04     <none>           <none>
 ```
 
-应用 https://github.com/qepyd/kubernetes/tree/main/90.Addons/01.cni 下的 ds_server.yaml，
+应用 https://github.com/qepyd/kubernetes/tree/main/90.Addons/01.cni 下的 ds_server.yaml，  
 为了后面的对calico vxlan always的原理分析，其结果如下
 ```
 root@deploy:~# kubectl  -n default get pods -o wide | grep server | sort -k 7
