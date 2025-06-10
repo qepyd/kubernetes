@@ -504,6 +504,9 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 Calico VXLAN模式之Always机制下，跨宿主机(worker node)间通信都会走VXLAN隧道，即使宿主机在同一Node网络下的同一subnet(子网)。  
 所以这里的实践基于 Node网络子网2 中的宿主机(node01、node02)间Pod的通信抓包和分析
 
+## 10.1 抓包
+
+## 10.2 分析
 
 
 
