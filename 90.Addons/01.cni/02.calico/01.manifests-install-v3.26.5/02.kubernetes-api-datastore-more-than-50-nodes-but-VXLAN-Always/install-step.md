@@ -444,7 +444,7 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 目标Port为 : 服务端Pod的port(这里是80)
 下一跳     ：169.254.1.1(route表中的网关)，到达 客户端Pod对应宿主机上的 cali<随机数11位> 网卡 
 ```
-<image src="./picture/1.1.Clinet-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
+<image src="./picture/SameHost/1.1.Clinet-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
 
 
 **ClientPod(client-b76dk 10.244.220.1)在宿主机上的 cali<随机数11位> 网卡**
@@ -459,11 +459,29 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
              对应有 cali<随机数11位> 网卡[对应ServerPod(server-h28zl) ]
              所以不会经过本机的eth0和vxlan.calico网卡
 ```
-<image src="./picture/1.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
+<image src="./picture/SameHost/1.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
 
+**同宿主机上的eth0网卡**
+```
+没有数据
+```
+
+**同宿主机上的vxlan.calico网卡**
+```
+没有数据
+```
 
 **ServerPod(server-h28zl 10.244.220.2 )在宿主机上的 cali<随机数11位> 网卡***
- 
+```
+源MAC地址  ：mac地址(ee:ee:ee:ee:ee:ee)
+源IP地址   : 客户端Pod的IP地址(10.244.220.1)
+源Port 为  : 随机产生(32818)
+目标MAC地址：服务端Pod其eth0网卡的mac地址
+目标IP地址 ：服务端Pod的IP地址(10.244.220.2)
+目标Port为 : 服务端Pod的port(这里是80)
+           : 已在达服务端Pod其eth0网卡
+``` 
+<image src="./picture/SameHost/1.5.Server-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
 
 
 
