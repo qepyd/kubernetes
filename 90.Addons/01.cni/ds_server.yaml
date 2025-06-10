@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: DaemonSet 
 metadata:
   namespace: default 
-  name: nginx
+  name: server 
 spec:
   selector:
     matchLabels:
