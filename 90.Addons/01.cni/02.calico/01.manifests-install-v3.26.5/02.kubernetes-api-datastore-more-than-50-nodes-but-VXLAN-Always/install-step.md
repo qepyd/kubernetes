@@ -15,7 +15,7 @@ Node网络：172.31.0.0/16
 Node网络：10.244.0.0/16
 ```
 
-# 2.当前k8s各worker node状态
+# 2.k8s各Worker Node状态
 只部署了基本框架，就等着安装CNI插件呢。安装好CNI插件后，其各worker node的状态就是Ready了。
 ```
 roott@deploy:~# kubectl get nodes
