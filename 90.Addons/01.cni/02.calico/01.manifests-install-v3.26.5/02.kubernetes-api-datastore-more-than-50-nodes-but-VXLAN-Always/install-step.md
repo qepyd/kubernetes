@@ -180,11 +180,11 @@ items:
     - Workload
     - Tunnel
     blockSize: 24               # <== 从IPv4CIDR中分配子网时,其子网的大小,我修改成了24
-    cidr: 10.244.0.0/16         # <== IPv4的CIDR(我让其与我规范的保持了一致)
+    cidr: 10.244.0.0/16         # <== IPv4的CIDR(我让其与我规划的Pod网络保持了一致,在calico中是可以不一致的)
     ipipMode: Never             # <== Calico IPIP模式被禁用了的
     natOutgoing: true
     nodeSelector: all()         # <== 选择所有的worker node
-    vxlanMode: Always           # <== Calico VXLAN模式之Always
+    vxlanMode: Always           # <== Calico VXLAN模式之Always机制，我称之为"Calico纯VXLAN模式"
 kind: List
 metadata:
   resourceVersion: ""
