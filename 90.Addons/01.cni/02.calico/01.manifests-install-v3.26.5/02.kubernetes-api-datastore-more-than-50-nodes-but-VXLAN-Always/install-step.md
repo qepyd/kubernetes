@@ -581,7 +581,7 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 不会对收到的报文做任何的改变
 <image src="./picture/CrossHost/2.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
 ```
-给 谁 呢: 给本机隧道设备vxlan.calico。因为一看本机的路由没有关于目的IP(10.244.232.2)的主机路由(UG)。
+给 谁 呢: 给本机隧道设备vxlan.calico。因为一看本机的路由没有关于目的IP(10.244.231.2)的主机路由(UG)。
 ```
 
 
