@@ -572,27 +572,16 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 目的IP  :  ServerPod中eth0网卡的ip
 目的Port:  ServerPod中应用的port(例如:80)
  
-下一跳  :  到达ClientPod对应所在宿主机上 cali<随机数11位> 网卡
+到   达 :  ClientPod对应所在宿主机上 cali<随机数11位> 网卡
 ```
 <image src="./picture/CrossHost/2.1.Clinet-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
 
 
-**ClientPod所在宿主机上与之对应的 cali<随机数11位> 网卡**
+**ClientPod所在宿主机上与之对应的 cali<随机数11位> 网卡**  
 不会对收到的报文做任何的改变
-```
-源MAC   :  ClientPod中eth0网卡的mac
-源IP    :  ClientPod中eth0网卡的ip
-源Port  :  随机机生成(例如:60646) 
-
-目的MAC :  ee:ee:ee:ee:ee:ee
-目的IP  :  ServerPod中eth0网卡的ip
-目的Port:  ServerPod中应用的port(例如:80)
-```
 <image src="./picture/CrossHost/2.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
-
 ```
-下一跳  :  ClientPod所在宿主机上Route Table 中的 Destination 没有对应 "ServerPod中eth0网卡的ip(10.244.231.2)"。
-           交给本机的隧道设备vxlan.calico
+给 谁 呢: 给本机隧道设备vxlan.calico。因为一看本机的路由没有关于目的IP(10.244.232.2)的主机路由(UG)。
 ```
 
 
