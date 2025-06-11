@@ -43,13 +43,13 @@ node04     NotReady                      node     2d    v1.24.4
 # 3.安装CNI插件之Calico 
 **Clico模式选择**
 ```
-VXLAN模式之Always，即Calico纯VXLAN模式。
+VXLAN模式之Always机制，我称之为Calico纯VXLAN模式。
 ```
 
 **样式**
 ```
-Policy   IPAM    CNI      Overlay        Routing   Database
-calico   calico  calico   vxlan          calico    kubernetes
+Policy   IPAM    CNI      Overlay   Routing   Database
+calico   calico  calico   vxlan     calico    kubernetes
 ```
 
 **下载manifests**
@@ -60,11 +60,11 @@ ls -l calico-typha.yaml
 
 **修改manifests**
 ```
-#### configmap/calico-config对象将被DaemonSet/calico-node对象引用
+## configmap/calico-config对象将被DaemonSet/calico-node对象引用
 # <== 设置calico后端
 calico_backend: "vxlan"  # 可修改为vxlan
 
-#### daemonset/calico-node对象
+## daemonset/calico-node对象
 # Enable IPIP
 - name: CALICO_IPV4POOL_IPIP
   value: "Never"
@@ -81,7 +81,7 @@ calico_backend: "vxlan"  # 可修改为vxlan
 - name: CALICO_IPV4POOL_BLOCK_SIZE
   value: "24"
 
-#### deployment/calico-typha
+## deployment/calico-typha
 其副本数默认为1，关于副本数的设置官方的建议为：
 01：官方建议每200个worker node至少设置一个副本，最多不超过20个副本。
 02：在生产环境中，我们建议至少设置三个副本，以减少滚动升级和故障的影响。
@@ -91,26 +91,27 @@ calico_backend: "vxlan"  # 可修改为vxlan
 
 **替换相关image**
 ```
-docker image pull  docker.io/calico/cni:v3.26.5
-docker image tag   docker.io/calico/cni:v3.26.5    swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
-docker image push                                  swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
+## 所用镜像
+grep image: calico-typha.yaml  | sort| uniq
+   #
+   # 所用镜像为
+   #   image: docker.io/calico/cni:v3.26.5
+   #   image: docker.io/calico/kube-controllers:v3.26.5
+   #   image: docker.io/calico/node:v3.26.5
+   #   - image: docker.io/calico/typha:v3.26.5
+   #
 
-docker image pull  docker.io/calico/node:v3.26.5   
-docker image tag   docker.io/calico/node:v3.26.5   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
-docker image push                                  swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
-
-docker image pull  docker.io/calico/kube-controllers:v3.26.5
-docker image tag   docker.io/calico/kube-controllers:v3.26.5  swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
-docker image push                                             swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
-
-docker image pull  docker.io/calico/typha:v3.26.5
-docker image tag   docker.io/calico/typha:v3.26.5             swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
-docker image push                                             swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
-
-sed  -i 's#docker.io/calico/cni:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5#g'  calico-typha.yaml  
-sed  -i 's#docker.io/calico/node:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5#g'  calico-typha.yaml  
-sed  -i 's#docker.io/calico/kube-controllers:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5#g'  calico-typha.yaml  
-sed  -i "s#docker.io/calico/typha:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5#g"   calico-typha.yaml  
+## 替换镜像
+我已将相关镜像放至个人镜像仓库中并公开(下载时不用认证)。
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
+替换镜像
+   sed  -i 's#docker.io/calico/cni:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5#g'                            calico-typha.yaml
+   sed  -i 's#docker.io/calico/node:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5#g'                          calico-typha.yaml
+   sed  -i 's#docker.io/calico/kube-controllers:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5#g'  calico-typha.yaml
+   sed  -i "s#docker.io/calico/typha:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5#g"                        calico-typha.yaml
 ```
 
 **应用manifests**
