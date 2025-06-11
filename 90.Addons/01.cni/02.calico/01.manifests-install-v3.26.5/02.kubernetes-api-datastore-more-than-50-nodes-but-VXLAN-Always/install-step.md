@@ -628,7 +628,8 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 <br>
 <br>
 
-**ServerPod所在宿主机上的隧道设备vxlan.calico**
+
+**ServerPod所在宿主机上的隧道设备vxlan.calico**  
 根据收到报文得知其目标IP(10.244.231.2),一看本机route table具备相应的主机路由(UH),会交给本机对应的 cali<随机数11位>
 <image src="./picture/CrossHost/2.6.Server-Pod-In-Host-vxlan.calico.jpg" style="width: 100%; height: auto;">
 <br>
