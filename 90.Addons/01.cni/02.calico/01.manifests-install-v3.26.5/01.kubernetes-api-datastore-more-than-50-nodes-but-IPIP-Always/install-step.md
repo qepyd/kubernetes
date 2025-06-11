@@ -484,7 +484,7 @@ kubectl -n default exec -it pods/client-gr9cc /bin/bash  # 进入容器
 <br>
 
 **ClientPod所在宿主机上与之对应的 cali<随机数11位> 网卡**  
-不会对收到的报文做任何的改变。但要决定把报文给到谁，一看本机的route tagle中具备目地IP(20.244.220.2)的主机路由(UH)，从而
+不会对收到的报文做任何的改变。但要决定把报文给到谁，一看本机的route table中具备目地IP(20.244.220.2)的主机路由(UH)，从而
 将其交给ServerPod对应的 cali<随机数11位> 网卡。
 ```
 源MAC地址  : ClientPod中eth0网卡的mac
