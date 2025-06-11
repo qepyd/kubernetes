@@ -585,8 +585,9 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 ```
 给 谁 呢: 给本机隧道设备vxlan.calico。因为一看本机的路由没有关于目的IP(10.244.231.2)的主机路由(UG)。
 ```
-  
-  
+<br>
+<br>
+
 
 **ClientPod所在宿主机上的隧道设备vxlan.calico**  
 会对收到的报文做源MAC更改和目的MAC更改。
@@ -611,14 +612,17 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 
 下 一 步: 根据路由将给本机的eth0网卡 
 ```
-  
-    
+<br>
+<br>
+
+
 **ClientPod所在宿主机上的eth0网卡**
 接收并传输至ServerPod所在宿主机
 ```
 ```
 <image src="./picture/CrossHost/2.4.Client-Pod-In-Host-eth0.jpg" style="width: 100%; height: auto;">
-
+<br>
+<br>
 
 
 
