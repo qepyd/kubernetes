@@ -620,12 +620,36 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 ## 被封装层
 本机隧道设备vxlan.calico发来的数据包
 ```
-<image src="./picture/CrossHost/2.4.Client-Pod-In-Host-eth0.jpg" style="width: 100%; height: auto;">
+
+
+**ServerPod所在宿主机上的eth0网卡**  
+对收到报文进行解包(解除最外一层)，通过其目标Port 4789，最后会交给本机的隧道设备vxlan.calico。
+<image src="./picture/CrossHost/2.5.Server-Pod-In-Host-eth0.jpg" style="width: 100%; height: auto;">
 <br>
 <br>
 
+**ServerPod所在宿主机上的隧道设备vxlan.calico**
+根据收到报文得知其目标IP(10.244.231.2),一看本机route table具备相应的主机路由(UH),会交给本机对应的 cali<随机数11位>
+<image src="./picture/CrossHost/2.6.Server-Pod-In-Host-vxlan.calico.jpg" style="width: 100%; height: auto;">
+<br>
+<br>
 
+**ServerPod所在宿主机上对应的cali<随机数11位>**  
+会更改源MAC和目的MAC，然后给到 ServerPod中的eth0网卡
+<image src="./picture/CrossHost/2.7.Server-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
+```
+源MAC   ：ServerPod对 cali<随机数11位> 的mac，做了 源mac 更改
+源IP    ：ClientPod所在宿主机上eth0的ip
+源Port  ：随机机生成(例如:60646)
 
+目的MAC ：ServerPod中eth0网卡的mac，做了 目的mac 更改。
+目的IP  ：ServerPod所在宿主机上eth0的ip
+目的Port: ServerPod中应用的端口(例如:80)
+```
+
+**ServerPod中eth0网卡**  
+接收对应cali<随机数11位>网卡发来的数据报文。
+<image src="./picture/CrossHost/2.8.Server-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
 
 
 
