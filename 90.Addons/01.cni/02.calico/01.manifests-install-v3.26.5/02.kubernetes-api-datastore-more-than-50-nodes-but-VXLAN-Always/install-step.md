@@ -578,7 +578,7 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 
 
 **ClientPod所在宿主机上与之对应的 cali<随机数11位> 网卡**
-<image src="./picture/CrossHost/2.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
+不会对收到的报文做任何的改变
 ```
 源MAC   :  ClientPod中eth0网卡的mac
 源IP    :  ClientPod中eth0网卡的ip
@@ -587,10 +587,14 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 目的MAC :  ee:ee:ee:ee:ee:ee
 目的IP  :  ServerPod中eth0网卡的ip
 目的Port:  ServerPod中应用的port(例如:80)
+```
+<image src="./picture/CrossHost/2.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
 
+```
 下一跳  :  ClientPod所在宿主机上Route Table 中的 Destination 没有对应 "ServerPod中eth0网卡的ip(10.244.231.2)"。
            交给本机的隧道设备vxlan.calico
 ```
+
 
 **ClientPod所在宿主机上的隧道设备vxlan.calico**
 <image src="./picture/CrossHost/2.3.Client-Pod-In-Host-vxlan.calico.jpg" style="width: 100%; height: auto;">
@@ -616,7 +620,6 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 ```
 
 **ClientPod所在宿主机上的eth0网卡**
-```
 接收并传输至ServerPod所在宿主机
 ```
 ```
