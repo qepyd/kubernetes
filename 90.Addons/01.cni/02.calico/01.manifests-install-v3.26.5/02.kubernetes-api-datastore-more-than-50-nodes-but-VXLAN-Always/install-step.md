@@ -585,7 +585,8 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 ```
 
 
-**ClientPod所在宿主机上的隧道设备vxlan.calico**
+**ClientPod所在宿主机上的隧道设备vxlan.calico**  
+会对收到的报文做源MAC更改和目的MAC更改。
 <image src="./picture/CrossHost/2.3.Client-Pod-In-Host-vxlan.calico.jpg" style="width: 100%; height: auto;">
 ```
 源MAC   : ClientPod所在宿主机上隧道设备vxlan.calico的mac，做了 源MAC 更改 
