@@ -588,40 +588,38 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 
 
 **ClientPod所在宿主机上的隧道设备vxlan.calico**  
-会对收到的报文做源MAC更改和目的MAC更改。
+会对收到的报文做源MAC更改和目的MAC更改(这个跟Calico IPIP Always下跨宿主机间Pod通信时其tunl0处不一样，tunl0不会有源MAC和目的MAC)。  
+交给 本机的eth0网卡
 <image src="./picture/CrossHost/2.3.Client-Pod-In-Host-vxlan.calico.jpg" style="width: 100%; height: auto;">
 ```
-源MAC   : ClientPod所在宿主机上隧道设备vxlan.calico的mac，做了 源MAC 更改 
+源MAC   : ClientPod所在宿主机上隧道设备vxlan.calico的mac，做了 源MAC 更改。
 源IP    : ClientPod中eth0网卡的ip
 源Port  : 随机机生成(例如:60646)
 
-目的MAC : ServerPod所在宿主机上隧道设备vxlan.calcio的mac，做了 目的MAC 更改。 你执行 arp -a 看一下
+目的MAC : ServerPod所在宿主机上隧道设备vxlan.calcio的mac，做了 目的MAC 更改。
 目的IP  : ServerPod中eth0网卡的ip
 目的Port: ServerPod中应用的port(例如:80)
-
-封 装 层: 
-        源MAC   ：ClientPod所在宿主机上eth0的mac
-        源IP    ： ClientPod所在宿主机上eth0的ip
-        源Port  ：随机
-      
-        目的MAC ：ee:ff:ff:ff:ff:ff
-        目的IP  ： ServerPod所在宿主机上eth0的ip
-        目的Port: 4789(Calico VXLAN 隧道设备使用4789端口进行接收报文并解封装)
-
-下 一 步: 根据路由将给本机的eth0网卡 
 ```
-<br>
-<br>
-
 
 **ClientPod所在宿主机上的eth0网卡**
-接收并传输至ServerPod所在宿主机
+将从本机隧道设备vxlan.calico发来的报文进行再次封装，并给到ServerPod所在宿主机的eth0网卡。
+<image src="./picture/CrossHost/2.4.Client-Pod-In-Host-eth0.jpg" style="width: 100%; height: auto;">
 ```
+## 封装层
+源MAC   ：ClientPod所在宿主机上eth0的mac
+源IP    ：ClientPod所在宿主机上eth0的ip
+源Port  ：随机
+      
+目的MAC ：ee:ff:ff:ff:ff:ff
+目的IP  ：ServerPod所在宿主机上eth0的ip
+目的Port: 4789(Calico VXLAN 隧道设备使用4789端口进行接收报文并解封装)
+
+## 被封装层
+本机隧道设备vxlan.calico发来的数据包
 ```
 <image src="./picture/CrossHost/2.4.Client-Pod-In-Host-eth0.jpg" style="width: 100%; height: auto;">
 <br>
 <br>
-
 
 
 
