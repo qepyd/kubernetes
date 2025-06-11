@@ -504,7 +504,7 @@ kubectl -n default exec -it pods/client-gr9cc /bin/bash  # 进入容器
 ```
 <br>
 
-**同宿主机上的vxlan.calico网卡**
+**同宿主机上的tunl0网卡**
 ```
 没有数据
 ```
