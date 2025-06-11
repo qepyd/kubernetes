@@ -600,9 +600,12 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 目的IP  : ServerPod中eth0网卡的ip
 目的Port: ServerPod中应用的port(例如:80)
 ```
+<br>
+<br>
+
 
 **ClientPod所在宿主机上的eth0网卡**
-将从本机隧道设备vxlan.calico发来的报文进行再次封装，并给到ServerPod所在宿主机的eth0网卡。
+将本机隧道设备vxlan.calico发来的报文进行再次封装，并给到ServerPod所在宿主机的eth0网卡。
 <image src="./picture/CrossHost/2.4.Client-Pod-In-Host-eth0.jpg" style="width: 100%; height: auto;">
 ```
 ## 封装层
@@ -612,7 +615,7 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
       
 目的MAC ：ee:ff:ff:ff:ff:ff
 目的IP  ：ServerPod所在宿主机上eth0的ip
-目的Port: 4789(Calico VXLAN 隧道设备使用4789端口进行接收报文并解封装)
+目的Port: 4789(ServerPod所在宿主机上隧道设备vxlan.calico的监听端口)
 
 ## 被封装层
 本机隧道设备vxlan.calico发来的数据包
