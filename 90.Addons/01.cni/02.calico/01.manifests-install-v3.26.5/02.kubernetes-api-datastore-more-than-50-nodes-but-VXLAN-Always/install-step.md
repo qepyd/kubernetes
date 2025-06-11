@@ -509,8 +509,8 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 
 # 10.跨宿主机间Pod的通信抓包分析
 ## 10.1 注意
-这里的跨宿主间Pod的通信及分析，我没有强调宿主机间是否有跨Node网络下的子网(subnet)。这是因为  
-Calico VXLAN模式之Always机制下，只要跨主机【即使主机间在同一子网(Node网络下的)]都会走VXLAN隧道。  
+这里的跨宿主间Pod的通信及分析，我没有强调宿主机间是否有跨Node网络下的子网(subnet)。这是因为
+Calico VXLAN模式之Always机制下，只要跨主机【即使主机间在同一子网(Node网络下的)]都会走VXLAN隧道。
 所以后面的实践基于 Node网络子网2 中的宿主机(node01、node02)间Pod的通信抓包分析。
 
 ## 10.2 抓包
