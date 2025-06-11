@@ -385,7 +385,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 root@node04:~# 
 ```
 
-# 9.同宿主机间Pod的通信及分析
+# 9.同宿主机间Pod的通信抓包分析
 ## 9.1 抓包
 **场景**
 ```
@@ -507,11 +507,13 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 <image src="./picture/SameHost/1.6.Server-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
 
 
-# 10.跨宿主机间Pod的通信及分析
-Calico VXLAN模式之Always机制下，跨宿主机(worker node)间通信都会走VXLAN隧道，即使宿主机在同一Node网络下的同一subnet(子网)。  
-所以这里的实践基于 Node网络子网2 中的宿主机(node01、node02)间Pod的通信抓包和分析
+# 10.跨宿主机间Pod的通信抓包分析
+## 10.1 注意
+这里的跨宿主间Pod的通信及分析，我没有强调宿主机间是否有跨Node网络下的子网(subnet)。这是因为  
+Calico VXLAN模式之Always机制下，只要跨主机【即使主机间在同一子网(Node网络下的)]都会走VXLAN隧道。  
+所以后面的实践基于 Node网络子网2 中的宿主机(node01、node02)间Pod的通信抓包分析。
 
-## 10.1 抓包
+## 10.2 抓包
 **场景**
 ```
 node01上 pods/client-b76dk (10.244.220.1)  与 node02上 pods/server-gldfz(10.244.231.2)
@@ -559,7 +561,7 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 .................下载: sz 命令
 ```
 
-## 10.2 分析
+## 10.3 分析
 
 
 
