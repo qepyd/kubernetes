@@ -46,13 +46,13 @@ node04     NotReady                      node     2d    v1.24.4
 # 3.安装CNI插件之Calico 
 **Clico模式选择**
 ```
-VXLAN模式之Always机制，我称之为Calico纯VXLAN模式。
+IPIP模式之Always机制，我称之为Calico纯IPIP模式。
 ```
 
 **样式**
 ```
 Policy   IPAM    CNI      Overlay   Routing   Database
-calico   calico  calico   vxlan     calico    kubernetes
+calico   calico  calico   ipip      calico    kubernetes
 ```
 
 **下载manifests**
@@ -65,16 +65,16 @@ ls -l calico-typha.yaml
 ```
 ## configmap/calico-config对象将被DaemonSet/calico-node对象引用
 # <== 设置calico后端
-calico_backend: "vxlan"  # 可修改为vxlan
+calico_backend: "brid"
 
 ## daemonset/calico-node对象
 # Enable IPIP
 - name: CALICO_IPV4POOL_IPIP
-  value: "Never"
+  value: "Always"
 	  
 # Enable or Disable VXLAN on the default IP pool.
 - name: CALICO_IPV4POOL_VXLAN
-  value: "Always"
+  value: "Never"
 # Enable or Disable VXLAN on the default IPv6 IP pool.
 - name: CALICO_IPV6POOL_VXLAN
   value: "Never"
@@ -124,15 +124,15 @@ kubectl apply -f calico-typha.yaml
 
 ## 列出相关Pod
 root@deploy:~# kubectl  -n kube-system get pods -o wide | grep calico | sort -k 7
-calico-node-hqxqt                         1/1     Running   0          50s   172.31.1.4    master01   <none>           <none>
-calico-node-jln7n                         1/1     Running   0          50s   172.31.1.5    master02   <none>           <none>
-calico-typha-8c6dfc44b-8fljf              1/1     Running   0          50s   172.31.1.5    master02   <none>           <none>
-calico-node-dhpzl                         1/1     Running   0          50s   172.31.1.6    master03   <none>           <none>
-calico-node-vsmjg                         1/1     Running   0          50s   172.31.2.1    node01     <none>           <none>
-calico-node-ppskf                         1/1     Running   0          50s   172.31.2.2    node02     <none>           <none>
-calico-node-jxphk                         1/1     Running   0          50s   172.31.3.1    node03     <none>           <none>
-calico-kube-controllers-7847d5868-shgzk   1/1     Running   0          50s   10.244.99.1   node03     <none>           <none>
-calico-node-wwttk                         1/1     Running   0          50s   172.31.3.2    node04     <none>           <none>
+calico-node-rkgwz                         1/1     Running   0          95s   172.31.1.4    master01   <none>           <none>
+calico-node-d9h7t                         1/1     Running   0          95s   172.31.1.5    master02   <none>           <none>
+calico-node-hxfwk                         1/1     Running   0          95s   172.31.1.6    master03   <none>           <none>
+calico-node-xsc5l                         1/1     Running   0          95s   172.31.2.1    node01     <none>           <none>
+calico-typha-8c6dfc44b-97h68              1/1     Running   0          95s   172.31.2.1    node01     <none>           <none>
+calico-node-lc6dx                         1/1     Running   0          95s   172.31.2.2    node02     <none>           <none>
+calico-node-rnzg7                         1/1     Running   0          95s   172.31.3.1    node03     <none>           <none>
+calico-kube-controllers-7847d5868-pldz2   1/1     Running   0          95s   10.244.99.1   node03     <none>           <none>
+calico-node-56vn7                         1/1     Running   0          95s   172.31.3.2    node04     <none>           <none>
 
 ## 查看各worker node的状态
 root@deploy:~# kubectl get nodes
@@ -169,39 +169,37 @@ items:
   kind: IPPool
   metadata:
     annotations:
-      projectcalico.org/metadata: '{"uid":"5a56a03f-c1f2-49c2-b92f-dc0f9ab69a27","creationTimestamp":"2025-06-10T07:03:30Z"}'
-    creationTimestamp: "2025-06-10T07:03:30Z"
+      projectcalico.org/metadata: '{"uid":"e6b4d437-05d2-4a12-b491-040b19deb7ac","creationTimestamp":"2025-06-11T16:49:59Z"}'
+    creationTimestamp: "2025-06-11T16:49:59Z"
     generation: 1
     name: default-ipv4-ippool
-    resourceVersion: "12964"
-    uid: 8a7b61a0-d75c-4678-99d2-3826cdfd47df
+    resourceVersion: "20161"
+    uid: 6471c2b4-0e82-4348-9334-a5b7e82feca6
   spec:
     allowedUses:
     - Workload
     - Tunnel
-    blockSize: 24               # <== 从IPv4CIDR中分配子网时,其子网的大小,我修改成了24
-    cidr: 10.244.0.0/16         # <== IPv4的CIDR(我让其与我规划的Pod网络保持了一致,在calico中是可以不一致的)
-    ipipMode: Never             # <== Calico IPIP模式被禁用了的
+    blockSize: 24                # <== 从IPv4CIDR中分配子网时,其子网的大小,我修改成了24
+    cidr: 10.244.0.0/16          # <== IPv4的CIDR(我让其与我规划的Pod网络保持了一致,在calico中是可以不一致的)
+    ipipMode: Always             # <== Calico IPIP模式之Always机制
     natOutgoing: true
-    nodeSelector: all()         # <== 选择所有的worker node
-    vxlanMode: Always           # <== Calico VXLAN模式之Always机制，我称之为"Calico纯VXLAN模式"
+    nodeSelector: all()          # <== 选择所有的worker node
+    vxlanMode: Never             # <== Calico VXLAN模式已被禁用
 kind: List
 metadata:
   resourceVersion: ""
-root@deploy:~# 
-root@deploy:~# 
 root@deploy:~# 
 
 ## 列出 blockaffinities 资源对象
 root@deploy:~# kubectl get blockaffinities
 NAME                       AGE
-master01-10-244-170-0-24   25m
-master02-10-244-239-0-24   25m
-master03-10-244-40-0-24    25m
-node01-10-244-220-0-24     25m
-node02-10-244-231-0-24     25m
-node03-10-244-99-0-24      25m
-node04-10-244-143-0-24     25m
+master01-10-244-170-0-24   4m11s
+master02-10-244-239-0-24   4m11s
+master03-10-244-40-0-24    4m11s
+node01-10-244-220-0-24     4m12s
+node02-10-244-231-0-24     4m11s
+node03-10-244-99-0-24      4m11s
+node04-10-244-143-0-24     4m11s
    #
    # 可看出给各worker node分配的子网(来自于10.244.0.0/16)
    # 不遵循describe WorkerNode 中的 PodCIDRs
@@ -218,26 +216,26 @@ node04-10-244-143-0-24     25m
 会ping互联网IPv4(例如：223.5.5.5)，为了后面的对calico vxlan always的原理分析，其结果如下
 ```
 root@deploy:~# kubectl  -n default get pods -o wide | grep client | sort -k 7
-client-srnfg   1/1     Running   0          8m22s   10.244.170.1   master01   <none>           <none>
-client-gq897   1/1     Running   0          8m22s   10.244.239.1   master02   <none>           <none>
-client-mssql   1/1     Running   0          8m22s   10.244.40.1    master03   <none>           <none>
-client-b76dk   1/1     Running   0          8m22s   10.244.220.1   node01     <none>           <none>
-client-2hmzf   1/1     Running   0          8m22s   10.244.231.1   node02     <none>           <none>
-client-dt79m   1/1     Running   0          8m22s   10.244.99.2    node03     <none>           <none>
-client-zbh2h   1/1     Running   0          8m22s   10.244.143.1   node04     <none>           <none>
+client-nw27x   1/1     Running   1 (4s ago)   94s   10.244.239.1   master02   <none>           <none>
+client-st7tm   1/1     Running   0            94s   10.244.170.1   master01   <none>           <none>
+client-9s5sr   1/1     Running   0            94s   10.244.40.1    master03   <none>           <none>
+client-gr9cc   1/1     Running   0            94s   10.244.220.1   node01     <none>           <none>
+client-xwvmt   1/1     Running   0            94s   10.244.231.1   node02     <none>           <none>
+client-krkd9   1/1     Running   0            94s   10.244.99.2    node03     <none>           <none>
+client-x4mrn   1/1     Running   0            94s   10.244.143.1   node04     <none>           <none>
 ```
 
 应用 https://github.com/qepyd/kubernetes/tree/main/90.Addons/01.cni 下的 ds_server.yaml，  
 为了后面的对calico vxlan always的原理分析，其结果如下
 ```
 root@deploy:~# kubectl  -n default get pods -o wide | grep server | sort -k 7
-server-69lmp   1/1     Running   0          7m58s   10.244.170.2   master01   <none>           <none>
-server-b4fk6   1/1     Running   0          7m58s   10.244.239.2   master02   <none>           <none>
-server-ml52d   1/1     Running   0          7m58s   10.244.40.2    master03   <none>           <none>
-server-h28zl   1/1     Running   0          7m58s   10.244.220.2   node01     <none>           <none>
-server-gldfz   1/1     Running   0          7m58s   10.244.231.2   node02     <none>           <none>
-server-4vz7d   1/1     Running   0          7m58s   10.244.99.3    node03     <none>           <none>
-server-cbgkj   1/1     Running   0          7m58s   10.244.143.2   node04     <none>           <none>
+server-9znx7   0/1     ImagePullBackOff   0             9m29s   10.244.170.2   master01   <none>           <none>
+server-sf59m   1/1     Running            0             9m29s   10.244.239.2   master02   <none>           <none>
+server-p6lnk   1/1     Running            0             9m29s   10.244.40.2    master03   <none>           <none>
+server-8mj2k   1/1     Running            0             9m29s   10.244.220.2   node01     <none>           <none>
+server-z5vpw   1/1     Running            0             9m29s   10.244.231.2   node02     <none>           <none>
+server-xps7r   1/1     Running            0             9m29s   10.244.99.3    node03     <none>           <none>
+server-tc7pm   1/1     Running            0             9m29s   10.244.143.2   node04     <none>           <none>
 ```
 <br>
 <br>
@@ -245,7 +243,7 @@ server-cbgkj   1/1     Running   0          7m58s   10.244.143.2   node04     <n
 
 # 5.k8s各Worker Node上的设备
 ```
-隧道设备: vxlan.calico
+隧道设备: tunl0
   各worker node上的隧道设备具备不同的IPv4地址,但子网掩码为32，例如：
      master01  10.244.170.0/32
      master02  10.244.239.0/32
@@ -254,9 +252,17 @@ server-cbgkj   1/1     Running   0          7m58s   10.244.143.2   node04     <n
      node02    10.244.231.0/32
      node03    10.244.99.0/32
      node04    10.244.143.0/32
-  拥有唯一的MAC地址，相同的广播地址
-     master01  link/ether 66:aa:99:2f:dc:24 brd ff:ff:ff:ff:ff:ff 
-     master02  link/ether 66:9a:be:a5:63:87 brd ff:ff:ff:ff:ff:ff
+  MAC地址、广播地址均为0.0.0.0
+     link/ipip 0.0.0.0 brd 0.0.0.0
+
+各容器中的eth0网卡相关信息
+  具备唯一IPv4
+  子网掩码为32
+  广播地址为0.0.0.0
+  路由为
+    Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+    0.0.0.0         169.254.1.1     0.0.0.0         UG    0      0        0 eth0
+    169.254.1.1     0.0.0.0         255.255.255.255 UH    0      0        0 eth0
 
 各容器一一对应所在宿主机上的设备: cali<随机数11位>
   没有IP地址。
