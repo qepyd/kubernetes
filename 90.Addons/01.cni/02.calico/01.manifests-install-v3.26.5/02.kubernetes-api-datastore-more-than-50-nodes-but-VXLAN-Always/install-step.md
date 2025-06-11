@@ -618,7 +618,8 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 **ClientPod所在宿主机上的eth0网卡**
 ```
 接收并传输至ServerPod所在宿主机
-``
+```
+```
 <image src="./picture/CrossHost/2.4.Client-Pod-In-Host-eth0.jpg" style="width: 100%; height: auto;">
 
 
