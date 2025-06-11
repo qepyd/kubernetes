@@ -20,10 +20,11 @@ Node网络：172.31.0.0/16
 Node网络：10.244.0.0/16
     
 Svc网络：10.144.0.0/16
-   集群dns的daemon: cluster.local
-   集群dns应用的ip: 10.144.0.2
-   各worker node上kubelet指定dns应用的ip为: 10.144.0.2
+   集群dns的Domain为: cluster.local
+   集群提供dns应用IP: 10.144.0.2
+   各WorkerNode上kubelet组件实例指定提供dns应用的IP为: 10.144.0.2
 ```
+<br>
 
 # 2.k8s各Worker Node状态
 只部署了基本框架，就等着安装CNI插件呢。安装好CNI插件后，其各worker node的状态就是Ready了。当然
@@ -39,6 +40,8 @@ node02     NotReady                      node     2d    v1.24.4
 node03     NotReady                      node     2d    v1.24.4
 node04     NotReady                      node     2d    v1.24.4
 ```
+<br>
+
 
 # 3.安装CNI插件之Calico 
 **Clico模式选择**
@@ -206,6 +209,9 @@ node04-10-244-143-0-24     25m
    #   但worker node是有Pod个数限制的哈(默认110),这里分配的子网,其IPv4肯定用不完的
    # 
 ```
+<br>
+<br>
+
 
 # 4.创建几个Pod
 应用 https://github.com/qepyd/kubernetes/tree/main/90.Addons/01.cni 下的 ds_client.yaml,   
@@ -233,6 +239,9 @@ server-gldfz   1/1     Running   0          7m58s   10.244.231.2   node02     <n
 server-4vz7d   1/1     Running   0          7m58s   10.244.99.3    node03     <none>           <none>
 server-cbgkj   1/1     Running   0          7m58s   10.244.143.2   node04     <none>           <none>
 ```
+<br>
+<br>
+
 
 # 5.k8s各Worker Node上的设备
 ```
@@ -254,6 +263,9 @@ server-cbgkj   1/1     Running   0          7m58s   10.244.143.2   node04     <n
   具备相同的MAC地址，相同的广播地址。
     link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff
 ```
+<br>
+<br>
+
 
 # 6.安装coredns
 后面的相关测试中，可能需要在Pod中的容器里面安装软件。  
@@ -261,6 +273,9 @@ server-cbgkj   1/1     Running   0          7m58s   10.244.143.2   node04     <n
 根据k8s的规划，可以部署
   https://github.com/qepyd/kubernetes/tree/main/90.Addons/02.dns/01.coredns 下的manifests
 ```
+<br>
+<br>
+
 
 # 7.做一下必要测试
 **前面做的测试**
@@ -302,6 +317,9 @@ kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.99.3
   # 结果是可以通信的
   # 
 ```
+<br>
+<br>
+
 
 # 8.相关worker node上的route
 **Node网络子网2中各worker node的route**
@@ -386,6 +404,9 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 172.31.3.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0             # 本机eth0网卡(来自于node网络)与非同子网通信的路由(到达网关处)
 root@node04:~# 
 ```
+<br>
+<br>
+
 
 # 9.同宿主机间Pod的通信抓包分析
 ## 9.1 抓包
@@ -457,8 +478,6 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 ```
 <image src="./picture/SameHost/1.1.Clinet-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
 <br>
-<br>
-
 
 **ClientPod所在宿主机上与之对应的 cali<随机数11位> 网卡**  
 不会对收到的报文做任何的改变。但要决定把报文给到谁，一看本机的route tagle中具备目地IP(20.244.220.2)的主机路由(UH)，从而
@@ -474,25 +493,18 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 ```
 <image src="./picture/SameHost/1.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
 <br>
-<br>
-
 
 **同宿主机上的eth0网卡**
 ```
 没有数据
 ```
 <br>
-<br>
-
-
 
 **同宿主机上的vxlan.calico网卡**
 ```
 没有数据
 ```
 <br>
-<br>
-
 
 **ServerPod所在宿主机上对应的cali<随机数11位>**  
 会做源MAC和目的MAC更改，然后将报文给到ServerPod中的eth0网卡。
@@ -507,8 +519,6 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 ``` 
 <image src="./picture/SameHost/1.5.Server-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
 <br>
-<br>
-
 
 **ServerPod中eth0网卡**  
 接收对应 cali<随机数11位> 网卡发来的数据
@@ -586,16 +596,12 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 ```
 <image src="./picture/CrossHost/2.1.Clinet-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
 <br>
-<br> 
-  
-
+ 
 **ClientPod所在宿主机上与之对应的 cali<随机数11位> 网卡**  
 不会对收到的报文做任何的改变。但要决定把报文给到谁，会给到本机的隧道设备vxlan.calico。因为一看本机的路
 由表中没有关于目的IP(10.244.231.2)的主机路由(UH)。
 <image src="./picture/CrossHost/2.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
 <br>
-<br>
-
 
 **ClientPod所在宿主机上的隧道设备vxlan.calico**  
 会对收到的报文做源MAC更改和目的MAC更改(这个跟Calico IPIP Always下跨宿主机间Pod通信时其tunl0处不一样，tunl0不会有源MAC和目的MAC)。
@@ -611,8 +617,6 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 目的Port: ServerPod中应用的port(例如:80)
 ```
 <br>
-<br>
-
 
 **ClientPod所在宿主机上的eth0网卡**  
 将本机隧道设备vxlan.calico发来的报文进行再次封装，并给到ServerPod所在宿主机的eth0网卡，目的端口为4789。
@@ -631,21 +635,15 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 本机隧道设备vxlan.calico发来的数据包
 ```
 <br>
-<br>
-
-
 
 **ServerPod所在宿主机上的eth0网卡**  
 对收到报文进行解包(解除最外一层)，通过其目标Port 4789，最后会交给本机的隧道设备vxlan.calico。
 <image src="./picture/CrossHost/2.5.Server-Pod-In-Host-eth0.jpg" style="width: 100%; height: auto;">
 <br>
-<br>
-
 
 **ServerPod所在宿主机上的隧道设备vxlan.calico**  
 根据收到报文得知其目标IP(10.244.231.2),一看本机route table具备相应的主机路由(UH),会交给本机对应的 cali<随机数11位>
 <image src="./picture/CrossHost/2.6.Server-Pod-In-Host-vxlan.calico.jpg" style="width: 100%; height: auto;">
-<br>
 <br>
 
 **ServerPod所在宿主机上对应的cali<随机数11位>**  
@@ -661,12 +659,7 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 目的Port: ServerPod中应用的端口(例如:80)
 ```
 <br>
-<br>
 
 **ServerPod中eth0网卡**  
 接收对应cali<随机数11位>网卡发来的数据报文。
 <image src="./picture/CrossHost/2.8.Server-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
-
-
-
-
