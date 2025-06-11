@@ -562,6 +562,52 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 ```
 
 ## 10.3 分析
+**ClientPod: pods/client-b76dk (10.244.220.1) 向 ServerPod: pods/server-gldfz (10.244.231.2) 发起请求**
+```
+源MAC   :  ClientPod中eth0网卡的mac
+源IP    :  ClientPod中eth0网卡的ip
+源Port  :  随机机生成(例如:60646) 
+
+目的MAC :  ee:ee:ee:ee:ee:ee
+目的IP  :  ServerPod中eth0网卡的ip
+目的Port:  ServerPod中应用的port(例如:80)
+ 
+下一跳  :  到达ClientPod对应所在宿主机上 cali<随机数11位> 网卡
+```
+<image src="./picture/CrossHost/2.1.Clinet-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
+
+
+**ClientPod所在宿主机上与之对应的 cali<随机数11位> 网卡**
+<image src="./picture/CrossHost/2.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
+```
+源MAC   :  ClientPod中eth0网卡的mac
+源IP    :  ClientPod中eth0网卡的ip
+源Port  :  随机机生成(例如:60646) 
+
+目的MAC :  ee:ee:ee:ee:ee:ee
+目的IP  :  ServerPod中eth0网卡的ip
+目的Port:  ServerPod中应用的port(例如:80)
+
+下一跳  :  ClientPod所在宿主机上Route Table 中的 Destination 没有对应 "ServerPod中eth0网卡的ip(10.244.231.2)"。
+           交给本机的隧道设备vxlan.calico
+```
+
+**ClientPod所在宿主机上的隧道设备vxlan.calico**
+<image src="./picture/CrossHost/2.3.Client-Pod-In-Host-vxlan.calico.jpg" style="width: 100%; height: auto;">
+```
+源MAC   : ClientPod所在宿主机上隧道设备vxlan.calico的mac，做了 源MAC 更改 
+源IP    : ClientPod中eth0网卡的ip
+源Port  : 随机机生成(例如:60646)
+
+目的MAC : ServerPod所在宿主机上隧道设备vxlan.calcio的mac，做了 目的MAC 更改。 你执行 arp -a 看一下
+目的IP  : ServerPod中eth0网卡的ip
+目的Port: ServerPod中应用的port(例如:80)
+
+下一跳  : 
+```
+
+
+
 
 
 
