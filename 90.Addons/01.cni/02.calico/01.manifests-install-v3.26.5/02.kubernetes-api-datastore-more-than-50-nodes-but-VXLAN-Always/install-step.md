@@ -26,7 +26,8 @@ Svc网络：10.144.0.0/16
 ```
 
 # 2.k8s各Worker Node状态
-只部署了基本框架，就等着安装CNI插件呢。安装好CNI插件后，其各worker node的状态就是Ready了。
+只部署了基本框架，就等着安装CNI插件呢。安装好CNI插件后，其各worker node的状态就是Ready了。当然
+了，即使处于Ready也不代表k8s中各Pod间的通信是否正常。如何测试可见 "7.做一下必要测试"。
 ```
 roott@deploy:~# kubectl get nodes
 NAME       STATUS                        ROLES    AGE   VERSION
