@@ -513,16 +513,17 @@ kubectl -n default exec -it pods/client-gr9cc /bin/bash  # 进入容器
 **ServerPod所在宿主机上对应的cali<随机数11位>**  
 会做源MAC和目的MAC更改，然后将报文给到ServerPod中的eth0网卡。
 ```
-源MAC地址  : ServerPod对应 cali<随机数11位> 网卡 的mac(ee:ee:ee:ee:ee:ee)
+源MAC地址  : ServerPod对应cali<随机数11位>网卡的mac，做了 源MAC 更改。
 源IP地址   : ClientPod中eth0网卡的ip
 源Port 为  : 随机产生
 
-目标MAC地址: ServerPod中eth0网卡的mac
+目标MAC地址: ServerPod中eth0网卡的mac，做了 目的MAC 更改。
 目标IP地址 : ServerPod中eth0网卡的ip
-目标Port为 : 服务端Pod的port
+目标Port为 : ServerPod中Pod的port
 ``` 
 <image src="./picture/SameHost/1.5.Server-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
 <br>
+
 
 **ServerPod中eth0网卡**  
 接收对应 cali<随机数11位> 网卡发来的数据
