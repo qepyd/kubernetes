@@ -441,7 +441,7 @@ tcpdump -nn -vvv -i eth0             'ip proto 4'            -w  1.3.Client-Serv
     # 
 
 # <== node01宿主机上对 tunl0 网卡进行抓包
-tcpdump -nn -vvv -i tunl0            -p tcp port 80          -w  1.4.Client-Server-Pod-In-Host-vxlan.calico.pcap
+tcpdump -nn -vvv -i tunl0            -p tcp port 80          -w  1.4.Client-Server-Pod-In-Host-tunl0.pcap
     #
     # 没有数据包经过
     #
@@ -463,16 +463,16 @@ kubectl -n default exec -it pods/client-gr9cc /bin/bash  # 进入容器
 
 **停止"抓包相关命令"并下载相关文件**
 ```
-.................停止 ctrl + c
-.................下载 sz 命令
+.................停止：ctrl + c
+.................下载：在宿主机上把容器中的文件拷贝至宿主机、sz命令
 ```
 
 ## 9.2 分析
-**ClientPod: pods/client-b76dk (10.244.220.1) 向 ServerPod: pods/server-h28zl (10.244.220.2)发起请求**
+**ClientPod: pods/client-gr9cc (10.244.220.1) 向 ServerPod: pods/server-8mj2k (10.244.220.2)发起请求**
 ```
 源MAC地址  ：ClientPod中eth0网卡的mac
 源IP地址   : ClientPod中eth0网卡的ip
-源Port 为  : 随机产生(32818)
+源Port 为  : 随机产生
 
 目标MAC地址：ee:ee:ee:ee:ee:ee
 目标IP地址 ：ServerPod中eth0网卡的ip
@@ -489,7 +489,7 @@ kubectl -n default exec -it pods/client-gr9cc /bin/bash  # 进入容器
 ```
 源MAC地址  ：ClientPod中eth0网卡的mac
 源IP地址   : ClientPod中eth0网卡的ip
-源Port 为  : 随机产生(32818)
+源Port 为  : 随机产生
 
 目标MAC地址：ee:ee:ee:ee:ee:ee
 目标IP地址 ：ServerPod中eth0网卡的ip
@@ -515,11 +515,11 @@ kubectl -n default exec -it pods/client-gr9cc /bin/bash  # 进入容器
 ```
 源MAC地址  ：ServerPod对应 cali<随机数11位> 网卡 的mac(ee:ee:ee:ee:ee:ee)
 源IP地址   : ClientPod中eth0网卡的ip
-源Port 为  : 随机产生(32818)
+源Port 为  : 随机产生
 
 目标MAC地址：ServerPod中eth0网卡的mac
 目标IP地址 ：ServerPod中eth0网卡的ip
-目标Port为 : 服务端Pod的port(这里是80)
+目标Port为 : 服务端Pod的port
 ``` 
 <image src="./picture/SameHost/1.5.Server-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
 <br>
