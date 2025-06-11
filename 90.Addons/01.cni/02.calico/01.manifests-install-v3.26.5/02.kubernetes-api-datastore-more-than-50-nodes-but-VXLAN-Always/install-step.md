@@ -589,7 +589,7 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 
 **ClientPod所在宿主机上的隧道设备vxlan.calico**  
 会对收到的报文做源MAC更改和目的MAC更改(这个跟Calico IPIP Always下跨宿主机间Pod通信时其tunl0处不一样，tunl0不会有源MAC和目的MAC)。  
-交给 本机的eth0网卡
+会交给本机的eth0网卡。
 <image src="./picture/CrossHost/2.3.Client-Pod-In-Host-vxlan.calico.jpg" style="width: 100%; height: auto;">
 ```
 源MAC   : ClientPod所在宿主机上隧道设备vxlan.calico的mac，做了 源MAC 更改。
