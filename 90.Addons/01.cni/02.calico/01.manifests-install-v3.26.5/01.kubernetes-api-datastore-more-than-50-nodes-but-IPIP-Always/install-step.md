@@ -293,32 +293,30 @@ server-tc7pm   1/1     Running            0             9m29s   10.244.143.2   n
 ```
 ## 同宿主机上Pod间的通信
 # <== 说明
-node01上 pods/client-b76dk (10.244.220.1)  与 node01上 pods/server-h28zl (10.244.220.2)
+node01上 pods/client-gr9cc (10.244.220.1)  与 node01上 pods/server-8mj2k (10.244.220.2)
 
 # <== 操作
-kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.220.2
+kubectl -n default exec -it pods/client-gr9cc  --  ping -c 2 10.244.220.2
   #
   # 结果是可以通信的 
   #
 
-
 ## 跨宿主机(在同一子网)间Pod的通信
 # <== 说明
-node01上 pods/client-b76dk (10.244.220.1)  与 node02上 pods/server-gldfz (10.244.231.2)
+node01上 pods/client-gr9cc (10.244.220.1)  与 node02上 pods/server-z5vpw (10.244.231.2)
 
 # <== 操作
-kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.231.2
+kubectl -n default exec -it pods/client-gr9cc  --  ping -c 2 10.244.231.2
   #
   # 结果是可以通信的
   # 
 
-
 ## 跨宿主机(不在同一子网)间Pod的通信
 # <== 说明
-node01上 pods/client-b76dk (10.244.220.1)  与 node03上 pods/server-4vz7d (10.244.99.3)
+node01上 pods/client-gr9cc (10.244.220.1)  与 node03上 pods/server-xps7r (10.244.99.3)
 
 # <== 操作
-kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.99.3
+kubectl -n default exec -it pods/client-gr9cc  --  ping -c 2 10.244.99.3
   #
   # 结果是可以通信的
   # 
@@ -331,41 +329,40 @@ kubectl -n default exec -it pods/client-b76dk  --  ping -c 2 10.244.99.3
 **Node网络子网2中各worker node的route**
 ```
 ## node01
-root@node01:~# 
 root@node01:~# route -n
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-0.0.0.0         172.31.2.253    0.0.0.0         UG    100    0        0 eth0
-10.244.40.0     10.244.40.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.99.0     10.244.99.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.143.0    10.244.143.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.220.0    0.0.0.0         255.255.255.0   U     0      0        0 *                # 本worker node上的 隧道设备 vxlan.calico
-10.244.220.1    0.0.0.0         255.255.255.255 UH    0      0        0 cali0dcca1f2adb  # 本机上的 Pod(10.244.220.1) 所对应本机上的 cali<随机数11位> 网卡
-10.244.220.2    0.0.0.0         255.255.255.255 UH    0      0        0 cali914974cddc2  # 本机上的 Pod(10.244.220.2) 所对应本机上的 cali<随机数11位> 网卡 
-10.244.231.0    10.244.231.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico 
-10.244.239.0    10.244.239.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
+0.0.0.0         172.31.2.253    0.0.0.0         UG    100    0        0 eth0    
+10.244.40.0     172.31.1.6      255.255.255.0   UG    0      0        0 tunl0            # 某worker node上的 隧道设备 tunl0
+10.244.99.0     172.31.3.1      255.255.255.0   UG    0      0        0 tunl0            # 某worker node上的 隧道设备 tunl0
+10.244.143.0    172.31.3.2      255.255.255.0   UG    0      0        0 tunl0            # 某worker node上的 隧道设备 tunl0
+10.244.170.0    172.31.1.4      255.255.255.0   UG    0      0        0 tunl0            # 某worker node上的 隧道设备 tunl0
+10.244.220.0    0.0.0.0         255.255.255.0   U     0      0        0 *                # 此worker node上的 隧道设备 tunl0
+10.244.220.1    0.0.0.0         255.255.255.255 UH    0      0        0 cali6e75b120c7a  # 此worker node上 IPv4为10.244.220.1/32 广播(网关)为0.0.0.0 容器对应的 cali<随机数11位>
+10.244.220.2    0.0.0.0         255.255.255.255 UH    0      0        0 cali28be1102a3d  # 此worker node上 IPv4为10.244.220.1/32 广播(网关)为0.0.0.0 容器对应的 cali<随机数11位>
+10.244.231.0    172.31.2.2      255.255.255.0   UG    0      0        0 tunl0            # 某worker node上的 隧道设备 tunl0
+10.244.239.0    172.31.1.5      255.255.255.0   UG    0      0        0 tunl0            # 某worker node上的 隧道设备 tunl0
 172.31.2.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0             # 本机eth0网卡(来自于node网络)与同子网通信的路由,例如：node01与node02的通信
-172.31.2.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0             # 本机eth0网卡(来自于node网络)与非同子网通信的路由(到达网关处)
-root@node01:~# 
+172.31.2.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0             # 本机eth0网卡(来自于node网络)与同子网、非同子网通信的路由(到达网关处)
+root@node01:~#
 
 ## node02
 root@node02:~# 
 root@node02:~# route -n
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-0.0.0.0         172.31.2.253    0.0.0.0         UG    100    0        0 eth0
-10.244.40.0     10.244.40.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.99.0     10.244.99.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.143.0    10.244.143.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.220.0    10.244.220.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.231.0    0.0.0.0         255.255.255.0   U     0      0        0 *                # 本worker node上的 隧道设备 vxlan.calico
-10.244.231.1    0.0.0.0         255.255.255.255 UH    0      0        0 cali1b5158766a9  # 本机上的 Pod(10.244.231.1) 所对应本机上的 cali<随机数11位> 网卡
-10.244.231.2    0.0.0.0         255.255.255.255 UH    0      0        0 cali804b82732a1  # 本机上的 Pod(10.244.231.2) 所对应本机上的 cali<随机数11位> 网卡
-10.244.239.0    10.244.239.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-172.31.2.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0             # 本机eth0网卡(来自于node网络)与同子网通信的路由,例如：node02与node01的通信
-172.31.2.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0             # 本机eth0网卡(来自于node网络)与非同子网通信的路由(到达网关处)
+0.0.0.0         172.31.2.253    0.0.0.0         UG    100    0        0 eth0            
+10.244.40.0     172.31.1.6      255.255.255.0   UG    0      0        0 tunl0
+10.244.99.0     172.31.3.1      255.255.255.0   UG    0      0        0 tunl0
+10.244.143.0    172.31.3.2      255.255.255.0   UG    0      0        0 tunl0
+10.244.170.0    172.31.1.4      255.255.255.0   UG    0      0        0 tunl0
+10.244.220.0    172.31.2.1      255.255.255.0   UG    0      0        0 tunl0
+10.244.231.0    0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.231.1    0.0.0.0         255.255.255.255 UH    0      0        0 cali58b2b1e3f07
+10.244.231.2    0.0.0.0         255.255.255.255 UH    0      0        0 cali773215c5eaf
+10.244.239.0    172.31.1.5      255.255.255.0   UG    0      0        0 tunl0
+172.31.2.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+172.31.2.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0
 root@node02:~# 
 ```
 
@@ -377,18 +374,18 @@ root@node03:~# route -n
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 0.0.0.0         172.31.3.253    0.0.0.0         UG    100    0        0 eth0
-10.244.40.0     10.244.40.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.99.0     0.0.0.0         255.255.255.0   U     0      0        0 *                # 本worker node上的 隧道设备 vxlan.calico
-10.244.99.1     0.0.0.0         255.255.255.255 UH    0      0        0 cali9c03a6138eb  # 本机上的 Pod(10.244.99.1) 所对应本机上的 cali<随机数11位> 网卡
-10.244.99.2     0.0.0.0         255.255.255.255 UH    0      0        0 cali2227d568990  # 本机上的 Pod(10.244.99.2) 所对应本机上的 cali<随机数11位> 网卡
-10.244.99.3     0.0.0.0         255.255.255.255 UH    0      0        0 cali06eb98133be  # 本机上的 Pod(10.244.99.3) 所对应本机上的 cali<随机数11位> 网卡
-10.244.143.0    10.244.143.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.220.0    10.244.220.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.231.0    10.244.231.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.239.0    10.244.239.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-172.31.3.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0             # 本机eth0网卡(来自于node网络)与同子网通信的路由,例如：node03与node04的通信
-172.31.3.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0             # 本机eth0网卡(来自于node网络)与非同子网通信的路由(到达网关处)
+10.244.40.0     172.31.1.6      255.255.255.0   UG    0      0        0 tunl0
+10.244.99.0     0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.99.1     0.0.0.0         255.255.255.255 UH    0      0        0 cali2cdef65d3ba
+10.244.99.2     0.0.0.0         255.255.255.255 UH    0      0        0 calic1225528490
+10.244.99.3     0.0.0.0         255.255.255.255 UH    0      0        0 cali5c9a6ee13b1
+10.244.143.0    172.31.3.2      255.255.255.0   UG    0      0        0 tunl0
+10.244.170.0    172.31.1.4      255.255.255.0   UG    0      0        0 tunl0
+10.244.220.0    172.31.2.1      255.255.255.0   UG    0      0        0 tunl0
+10.244.231.0    172.31.2.2      255.255.255.0   UG    0      0        0 tunl0
+10.244.239.0    172.31.1.5      255.255.255.0   UG    0      0        0 tunl0
+172.31.3.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+172.31.3.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0
 root@node03:~# 
 
 ## node04
@@ -397,17 +394,18 @@ root@node04:~# route -n
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 0.0.0.0         172.31.3.253    0.0.0.0         UG    100    0        0 eth0
-10.244.40.0     10.244.40.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.99.0     10.244.99.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.143.0    0.0.0.0         255.255.255.0   U     0      0        0 *                # 本worker node上的 隧道设备 vxlan.calico
-10.244.143.1    0.0.0.0         255.255.255.255 UH    0      0        0 calib1aef58abd4  # 本机上的 Pod(10.244.143.1) 所对应本机上的 cali<随机数11位> 网卡
-10.244.143.2    0.0.0.0         255.255.255.255 UH    0      0        0 caliab261192ca1  # 本机上的 Pod(10.244.143.2) 所对应本机上的 cali<随机数11位> 网卡
-10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.220.0    10.244.220.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.231.0    10.244.231.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.239.0    10.244.239.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-172.31.3.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0             # 本机eth0网卡(来自于node网络)与同子网通信的路由,例如：node04与node03的通信
-172.31.3.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0             # 本机eth0网卡(来自于node网络)与非同子网通信的路由(到达网关处)
+10.244.40.0     172.31.1.6      255.255.255.0   UG    0      0        0 tunl0
+10.244.99.0     172.31.3.1      255.255.255.0   UG    0      0        0 tunl0
+10.244.143.0    0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.143.1    0.0.0.0         255.255.255.255 UH    0      0        0 caliecbac56ef34
+10.244.143.2    0.0.0.0         255.255.255.255 UH    0      0        0 calibe5728cb3c3
+10.244.143.3    0.0.0.0         255.255.255.255 UH    0      0        0 calia2ed1dd65d7
+10.244.170.0    172.31.1.4      255.255.255.0   UG    0      0        0 tunl0
+10.244.220.0    172.31.2.1      255.255.255.0   UG    0      0        0 tunl0
+10.244.231.0    172.31.2.2      255.255.255.0   UG    0      0        0 tunl0
+10.244.239.0    172.31.1.5      255.255.255.0   UG    0      0        0 tunl0
+172.31.3.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+172.31.3.253    0.0.0.0         255.255.255.255 UH    100    0        0 eth0
 root@node04:~# 
 ```
 <br>
