@@ -581,7 +581,7 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 
 **ClientPod所在宿主机上与之对应的 cali<随机数11位> 网卡**  
 不会对收到的报文做任何的改变。但要决定把报文给到谁，会给到本机的隧道设备vxlan.calico。因为一看本机的路
-由表没有关于目的IP(10.244.231.2)的主机路由(UG)
+由表中没有关于目的IP(10.244.231.2)的主机路由(UH)。
 <image src="./picture/CrossHost/2.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
 <br>
 <br>
