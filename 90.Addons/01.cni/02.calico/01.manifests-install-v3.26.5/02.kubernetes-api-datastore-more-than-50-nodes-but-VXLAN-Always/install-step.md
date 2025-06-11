@@ -517,7 +517,7 @@ Calico VXLAN模式之Always机制下，跨宿主机(worker node)间通信都会�
 node01上 pods/client-b76dk (10.244.220.1)  与 node02上 pods/server-gldfz(10.244.231.2)
 ```
 
-**抓包相关命令(7个xshell窗口中执行)**
+**抓包相关命令(8个xshell窗口中执行)**
 ```
 # <== 进入容器（client-b76dk）
 kubectl -n default exec -it pods/client-b76dk /bin/bash      # 进入容器
