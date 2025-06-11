@@ -416,48 +416,48 @@ root@node04:~#
 ## 9.1 抓包
 **场景**
 ```
-node01上 pods/client-b76dk (10.244.220.1)  与 node01上 pods/server-h28zl (10.244.220.2)
+node01上 pods/client-gr9cc (10.244.220.1)  与 node01上 pods/server-8mj2k (10.244.220.2)
 ```
 
 **说明**
 ```
-同宿主机上Pod间的通信在本机就完成了，不会经过vxlan隧道，也不会经过本机的eth0网卡
+同宿主机上Pod间的通信在本机就完成了，不会经过tunl0隧道，也不会经过本机的eth0网卡
 ```
 
 **抓包相关命令(6个xshell窗口中执行)**
 ```
-# <== 进入容器（client-b76dk）
-kubectl -n default exec -it pods/client-b76dk /bin/bash   # 进入容器
+# <== 进入容器（client-gr9cc）
+kubectl -n default exec -it pods/client-gr9cc /bin/bash   # 进入容器
    tcpdump -nn -vvv -i eth0  -p tcp port 80                  -w  1.1.Clinet-Pod-Internal-eth0.pcap
 
-# <== node01宿主机上对 容器（client-b76dk） 对应的 cali<随机数11位> 网卡抓包
-tcpdump -nn -vvv -i cali0dcca1f2adb  -p tcp port 80          -w  1.2.Clinet-Pod-In-Host-cali.pcap
+# <== node01宿主机上对 容器（client-gr9cc） 对应的 cali<随机数11位> 网卡抓包
+tcpdump -nn -vvv -i cali6e75b120c7a   -p tcp port 80          -w  1.2.Clinet-Pod-In-Host-cali.pcap
 
 
 # <== node01宿主机上对 eth0 网卡进行抓包
-tcpdump -nn -vvv -i eth0             'udp and port 4789'            -w  1.3.Client-Server-Pod-In-Host-eth0.pcap
+tcpdump -nn -vvv -i eth0             'ip proto 4'            -w  1.3.Client-Server-Pod-In-Host-eth0.pcap
     #
     # 没有数据包经过
     # 
 
-# <== node01宿主机上对 vxlan.calico 网卡进行抓包
-tcpdump -nn -vvv -i vxlan.calico            -p tcp port 80   -w  1.4.Client-Server-Pod-In-Host-vxlan.calico.pcap
+# <== node01宿主机上对 tunl0 网卡进行抓包
+tcpdump -nn -vvv -i tunl0            -p tcp port 80          -w  1.4.Client-Server-Pod-In-Host-vxlan.calico.pcap
     #
     # 没有数据包经过
     #
 
-# <== node01宿主机上对  pods/server-h28zl  对应的 cali<随机数11位> 网卡抓包
-tcpdump -nn -vvv -i cali914974cddc2  -p tcp port 80          -w  1.5.Server-Pod-In-Host-cali.pcap
+# <== node01宿主机上对  pods/server-8mj2k  对应的 cali<随机数11位> 网卡抓包
+tcpdump -nn -vvv -i cali28be1102a3d    -p tcp port 80          -w  1.5.Server-Pod-In-Host-cali.pcap
 
 
-# <== 进入容器(pods/server-h28zl)
-kubectl -n default exec -it pods/server-h28zl /bin/bash   # 进入容器
+# <== 进入容器(pods/server-8mj2k)
+kubectl -n default exec -it pods/server-8mj2k /bin/bash   # 进入容器
     tcpdump -nn -vvv -i eth0  -p tcp port 80                 -w  1.6.Server-Pod-Internal-eth0.pcap
 ```
 
-**client：pods/client-b76dk (10.244.220.1) 发起请求**
+**client：pods/client-gr9cc (10.244.220.1) 发起请求**
 ```
-kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
+kubectl -n default exec -it pods/client-gr9cc /bin/bash  # 进入容器
    curl  10.244.220.2
 ```
 
