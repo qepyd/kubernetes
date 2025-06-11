@@ -441,70 +441,78 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 ```
 
 ## 9.2 分析
-**ClientPod(client-b76dk 10.244.220.1) 发起请求**
+**ClientPod: pods/client-b76dk (10.244.220.1) 向 ServerPod: pods/server-h28zl (10.244.220.2)发起请求**
 ```
-源MAC地址  ：客户端Pod其eth0网卡的mac地址
-源IP地址   : 客户端Pod的IP地址(10.244.220.1)
+源MAC地址  ：ClientPod中eth0网卡的mac
+源IP地址   : ClientPod中eth0网卡的ip
 源Port 为  : 随机产生(32818)
 
-目标MAC地址：mac地址(ee:ee:ee:ee:ee:ee)
-目标IP地址 ：服务端Pod的IP地址(10.244.220.2)
-目标Port为 : 服务端Pod的port(这里是80)
-下一跳     ：169.254.1.1(route表中的网关)，到达 客户端Pod对应宿主机上的 cali<随机数11位> 网卡 
+目标MAC地址：ee:ee:ee:ee:ee:ee
+目标IP地址 ：ServerPod中eth0网卡的ip
+目标Port为 : ServerPod中应用的port
+
+到       达:  ClientPod对应所在宿主机上 cali<随机数11位> 网卡
 ```
 <image src="./picture/SameHost/1.1.Clinet-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
+<br>
+<br>
 
 
-**ClientPod(client-b76dk 10.244.220.1)在宿主机上的 cali<随机数11位> 网卡**
+**ClientPod所在宿主机上与之对应的 cali<随机数11位> 网卡**  
+不会对收到的报文做任何的改变。但要决定把报文给到谁，一看本机的route tagle中具备目地IP(20.244.220.2)的主机路由(UH)，从而
+将其交给ServerPod对应的 cali<随机数11位> 网卡。
 ```
-源MAC地址  ：客户端Pod其eth0网卡的mac地址
-源IP地址   : 客户端Pod的IP地址(10.244.220.1)
+源MAC地址  ：ClientPod中eth0网卡的mac
+源IP地址   : ClientPod中eth0网卡的ip
 源Port 为  : 随机产生(32818)
 
-目标MAC地址：mac地址(ee:ee:ee:ee:ee:ee)
-目标IP地址 ：服务端Pod的IP地址(10.244.220.2)
-目标Port为 : 服务端Pod的port(这里是80)
-下一跳：   : 所在宿主机的route表的 Destination字段中具备 10.244.220.2 地址，
-             对应有 cali<随机数11位> 网卡[对应ServerPod(server-h28zl) ]
-             所以不会经过本机的eth0和vxlan.calico网卡
+目标MAC地址：ee:ee:ee:ee:ee:ee
+目标IP地址 ：ServerPod中eth0网卡的ip
+目标Port为 : ServerPod中应用的port
 ```
 <image src="./picture/SameHost/1.2.Clinet-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
+<br>
+<br>
+
 
 **同宿主机上的eth0网卡**
 ```
 没有数据
 ```
+<br>
+<br>
+
+
 
 **同宿主机上的vxlan.calico网卡**
 ```
 没有数据
 ```
+<br>
+<br>
 
-**ServerPod(server-h28zl 10.244.220.2 )在宿主机上的 cali<随机数11位> 网卡**
+
+**ServerPod所在宿主机上对应的cali<随机数11位>**  
+会做源MAC和目的MAC更改，然后将报文给到ServerPod中的eth0网卡。
 ```
-源MAC地址  ：mac地址(ee:ee:ee:ee:ee:ee)
-源IP地址   : 客户端Pod的IP地址(10.244.220.1)
+源MAC地址  ：ServerPod对应 cali<随机数11位> 网卡 的mac(ee:ee:ee:ee:ee:ee)
+源IP地址   : ClientPod中eth0网卡的ip
 源Port 为  : 随机产生(32818)
 
-目标MAC地址：服务端Pod其eth0网卡的mac地址
-目标IP地址 ：服务端Pod的IP地址(10.244.220.2)
+目标MAC地址：ServerPod中eth0网卡的mac
+目标IP地址 ：ServerPod中eth0网卡的ip
 目标Port为 : 服务端Pod的port(这里是80)
-           : 已在达服务端Pod其eth0网卡
 ``` 
 <image src="./picture/SameHost/1.5.Server-Pod-In-Host-cali.jpg" style="width: 100%; height: auto;">
+<br>
+<br>
 
 
-**ServerPod(server-h28zl 10.244.220.2 )**
-```
-源MAC地址  ：mac地址(ee:ee:ee:ee:ee:ee)
-源IP地址   : 客户端Pod的IP地址(10.244.220.1)
-源Port 为  : 随机产生(32818)
-
-目标MAC地址：服务端Pod其eth0网卡的mac地址
-目标IP地址 ：服务端Pod的IP地址(10.244.220.2)
-目标Port为 : 服务端Pod的port(这里是80)
-```
+**ServerPod中eth0网卡**  
+接收对应 cali<随机数11位> 网卡发来的数据
 <image src="./picture/SameHost/1.6.Server-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
+<br>
+<br>
 
 
 # 10.跨宿主机间Pod的通信抓包分析
