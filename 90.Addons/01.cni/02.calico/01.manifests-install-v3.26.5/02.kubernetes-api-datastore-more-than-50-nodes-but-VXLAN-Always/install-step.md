@@ -314,7 +314,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.244.99.0     10.244.99.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
 10.244.143.0    10.244.143.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
 10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.220.0    0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.220.0    0.0.0.0         255.255.255.0   U     0      0        0 *                # 本worker node上的 隧道设备 vxlan.calico
 10.244.220.1    0.0.0.0         255.255.255.255 UH    0      0        0 cali0dcca1f2adb  # 本机上的 Pod(10.244.220.1) 所对应本机上的 cali<随机数11位> 网卡
 10.244.220.2    0.0.0.0         255.255.255.255 UH    0      0        0 cali914974cddc2  # 本机上的 Pod(10.244.220.2) 所对应本机上的 cali<随机数11位> 网卡 
 10.244.231.0    10.244.231.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico 
@@ -334,7 +334,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.244.143.0    10.244.143.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
 10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
 10.244.220.0    10.244.220.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.231.0    0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.231.0    0.0.0.0         255.255.255.0   U     0      0        0 *                # 本worker node上的 隧道设备 vxlan.calico
 10.244.231.1    0.0.0.0         255.255.255.255 UH    0      0        0 cali1b5158766a9  # 本机上的 Pod(10.244.231.1) 所对应本机上的 cali<随机数11位> 网卡
 10.244.231.2    0.0.0.0         255.255.255.255 UH    0      0        0 cali804b82732a1  # 本机上的 Pod(10.244.231.2) 所对应本机上的 cali<随机数11位> 网卡
 10.244.239.0    10.244.239.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
@@ -352,7 +352,7 @@ Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 0.0.0.0         172.31.3.253    0.0.0.0         UG    100    0        0 eth0
 10.244.40.0     10.244.40.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.99.0     0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.99.0     0.0.0.0         255.255.255.0   U     0      0        0 *                # 本worker node上的 隧道设备 vxlan.calico
 10.244.99.1     0.0.0.0         255.255.255.255 UH    0      0        0 cali9c03a6138eb  # 本机上的 Pod(10.244.99.1) 所对应本机上的 cali<随机数11位> 网卡
 10.244.99.2     0.0.0.0         255.255.255.255 UH    0      0        0 cali2227d568990  # 本机上的 Pod(10.244.99.2) 所对应本机上的 cali<随机数11位> 网卡
 10.244.99.3     0.0.0.0         255.255.255.255 UH    0      0        0 cali06eb98133be  # 本机上的 Pod(10.244.99.3) 所对应本机上的 cali<随机数11位> 网卡
@@ -373,7 +373,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 0.0.0.0         172.31.3.253    0.0.0.0         UG    100    0        0 eth0
 10.244.40.0     10.244.40.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
 10.244.99.0     10.244.99.0     255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
-10.244.143.0    0.0.0.0         255.255.255.0   U     0      0        0 *
+10.244.143.0    0.0.0.0         255.255.255.0   U     0      0        0 *                # 本worker node上的 隧道设备 vxlan.calico
 10.244.143.1    0.0.0.0         255.255.255.255 UH    0      0        0 calib1aef58abd4  # 本机上的 Pod(10.244.143.1) 所对应本机上的 cali<随机数11位> 网卡
 10.244.143.2    0.0.0.0         255.255.255.255 UH    0      0        0 caliab261192ca1  # 本机上的 Pod(10.244.143.2) 所对应本机上的 cali<随机数11位> 网卡
 10.244.170.0    10.244.170.0    255.255.255.0   UG    0      0        0 vxlan.calico     # 某worker node上的 隧道设备 vxlan.calico
