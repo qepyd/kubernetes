@@ -575,7 +575,8 @@ kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
 到   达 :  ClientPod对应所在宿主机上 cali<随机数11位> 网卡
 ```
 <image src="./picture/CrossHost/2.1.Clinet-Pod-Internal-eth0.jpg" style="width: 100%; height: auto;">
-  
+<br>
+<br> 
   
 
 **ClientPod所在宿主机上与之对应的 cali<随机数11位> 网卡**  
