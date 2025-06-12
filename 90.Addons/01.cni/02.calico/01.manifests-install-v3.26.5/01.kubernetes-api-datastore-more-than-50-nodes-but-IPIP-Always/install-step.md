@@ -534,49 +534,49 @@ kubectl -n default exec -it pods/client-gr9cc /bin/bash  # 进入容器
 
 # 10.跨宿主机间Pod的通信抓包分析
 ## 10.1 注意
-这里的跨宿主间Pod的通信及分析，我没有强调宿主机间是否有跨Node网络下的子网(subnet)。这是因为
-Calico VXLAN模式之Always机制下，只要跨主机【即使主机间在同一子网(Node网络下的)]都会走VXLAN隧道。
+这里的跨宿主间Pod通信抓包及分析，我没有强调宿主机间是否有跨Node网络下的子网(subnet)。这是因为
+Calico IPIP模式之Always机制下，只要跨主机【即使主机间在同一子网(Node网络下的)]都会走IPIP隧道。
 所以后面的实践基于 Node网络子网2 中的宿主机(node01、node02)间Pod的通信抓包分析。
 
 ## 10.2 抓包
 **场景**
 ```
-node01上 pods/client-b76dk (10.244.220.1)  与 node02上 pods/server-gldfz(10.244.231.2)
-```
+node01上 pods/client-gr9cc (10.244.220.1)  与 node02上 pods/server-z5vpw(10.244.231.2)
+```	
 
 **抓包相关命令(8个xshell窗口中执行)**
 ```
-# <== 进入容器（client-b76dk）
-kubectl -n default exec -it pods/client-b76dk /bin/bash      # 进入容器
+# <== 进入容器（client-gr9cc）
+kubectl -n default exec -it pods/client-gr9cc /bin/bash      # 进入容器
    tcpdump -nn -vvv -i eth0  -p tcp port 80                  -w  2.1.Clinet-Pod-Internal-eth0.pcap
 
-# <== node01宿主机上对 容器（client-b76dk） 对应的 cali<随机数11位> 网卡抓包
-tcpdump -nn -vvv -i cali0dcca1f2adb  -p tcp port 80          -w  2.2.Clinet-Pod-In-Host-cali.pcap
+# <== node01宿主机上对 容器（client-gr9cc） 对应的 cali<随机数11位> 网卡抓包
+tcpdump -nn -vvv -i cali6e75b120c7a  -p tcp port 80          -w  2.2.Clinet-Pod-In-Host-cali.pcap
 
-# <== node01宿主机上对 vxlan.calico 网卡进行抓包
-tcpdump -nn -vvv -i vxlan.calico            -p tcp port 80   -w  2.3.Client-Pod-In-Host-vxlan.calico.pcap
+# <== node01宿主机上对 tunl0 网卡进行抓包
+tcpdump -nn -vvv -i tunl0            -p tcp port 80          -w  2.3.Client-Pod-In-Host-tunl0.pcap
 
 # <== node01宿主机上对 eth0 网卡进行抓包
-tcpdump -nn -vvv -i eth0             'udp and port 4789'     -w  2.4.Client-Pod-In-Host-eth0.pcap
+tcpdump -nn -vvv -i eth0             'ip proto 4'            -w  2.4.Client-Pod-In-Host-eth0.pcap
 
 
 # <== node02宿主机上对 eth0 网卡进行抓包
-tcpdump -nn -vvv -i eth0             'udp and port 4789'     -w  2.5.Server-Pod-In-Host-eth0.pcap
+tcpdump -nn -vvv -i eth0             'ip proto 4'            -w  2.5.Server-Pod-In-Host-eth0.pcap
 
-# <== node02宿主机上对 vxlan.calico 网卡进行抓包
-tcpdump -nn -vvv -i vxlan.calico            -p tcp port 80   -w  2.6.Server-Pod-In-Host-vxlan.calico.pcap
+# <== node02宿主机上对 tunl0 网卡进行抓包
+tcpdump -nn -vvv -i tunl0            -p tcp port 80          -w  2.6.Server-Pod-In-Host-tunl0.pcap
 
-# <== node02宿主机上对  pods/server-gldfz   对应的 cali<随机数11位> 网卡抓包
-tcpdump -nn -vvv -i cali804b82732a1  -p tcp port 80          -w  2.7.Server-Pod-In-Host-cali.pcap
+# <== node02宿主机上对  pods/server-z5vpw   对应的 cali<随机数11位> 网卡抓包
+tcpdump -nn -vvv -i cali773215c5eaf  -p tcp port 80          -w  2.7.Server-Pod-In-Host-cali.pcap
 
-# <== 进入容器(pods/server-gldfz)
-kubectl -n default exec -it pods/server-gldfz  /bin/bash      # 进入容器
+# <== 进入容器(pods/server-z5vpw)
+kubectl -n default exec -it pods/server-z5vpw  /bin/bash      # 进入容器
     tcpdump -nn -vvv -i eth0  -p tcp port 80                 -w  2.8.Server-Pod-Internal-eth0.pcap
 ```
 
-**client：pods/client-b76dk (10.244.220.1) 发起请求**
+**client：pods/client-gr9cc (10.244.220.1) 发起请求**
 ```
-kubectl -n default exec -it pods/client-b76dk /bin/bash  # 进入容器
+kubectl -n default exec -it pods/client-gr9cc /bin/bash  # 进入容器
    curl  10.244.231.2
 ```
 
