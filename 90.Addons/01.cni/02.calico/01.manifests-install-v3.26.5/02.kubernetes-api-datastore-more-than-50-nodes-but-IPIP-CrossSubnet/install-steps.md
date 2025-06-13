@@ -7,7 +7,7 @@ ls -l calico-typha.yaml
 # 2.样式
 ```
 Policy   IPAM   CNI     Cross-Subnet Routing   Database
-calico   calico calico  IPIP         BGP       kubernetes
+calico   calico calico  IPIP         calico    kubernetes
 ```
 
 # 3.Manifests的相关修改
