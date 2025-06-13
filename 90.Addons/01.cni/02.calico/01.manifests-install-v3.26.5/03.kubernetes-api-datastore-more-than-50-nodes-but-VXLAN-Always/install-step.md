@@ -61,6 +61,47 @@ wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.5/manifests/ca
 ls -l calico-typha.yaml
 ```
 
+**查看所用namespace及是否是namespace资源对象的manifests**
+```
+## 查看所用的namespaces资源对象
+grep "namespace:" calico-typha.yaml
+  #
+  # 结果是ns/kube-system对象(k8s中默认的ns资源对象)
+  # 
+
+## 查看是否有创建ns/kube-system对象的manifests
+grep "^kind: Namespace" calico-typha.yaml
+  #
+  # 结果是没有
+  # 没有就对了
+  # 
+```
+
+**替换相关image**
+```
+## 所用镜像
+grep image: calico-typha.yaml  | sort| uniq
+   #
+   # 所用镜像为
+   #   image: docker.io/calico/cni:v3.26.5
+   #   image: docker.io/calico/kube-controllers:v3.26.5
+   #   image: docker.io/calico/node:v3.26.5
+   #   - image: docker.io/calico/typha:v3.26.5
+   #
+
+## 替换镜像
+我已将相关镜像放至个人镜像仓库中并公开(下载时不用认证)。
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
+替换镜像
+   sed  -i 's#docker.io/calico/cni:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5#g'                            calico-typha.yaml
+   sed  -i 's#docker.io/calico/node:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5#g'                          calico-typha.yaml
+   sed  -i 's#docker.io/calico/kube-controllers:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5#g'  calico-typha.yaml
+   sed  -i "s#docker.io/calico/typha:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5#g"                        calico-typha.yaml
+```
+
 **修改manifests**
 ```
 ########## configmap/calico-config对象(会被DaemonSet/calico-node对象引用)
@@ -107,34 +148,10 @@ ls -l calico-typha.yaml
 04:此外，只有当Typha实例数量少于节点数量时，Typha 才能帮助实现扩展。
 ```
 
-**替换相关image**
-```
-## 所用镜像
-grep image: calico-typha.yaml  | sort| uniq
-   #
-   # 所用镜像为
-   #   image: docker.io/calico/cni:v3.26.5
-   #   image: docker.io/calico/kube-controllers:v3.26.5
-   #   image: docker.io/calico/node:v3.26.5
-   #   - image: docker.io/calico/typha:v3.26.5
-   #
-
-## 替换镜像
-我已将相关镜像放至个人镜像仓库中并公开(下载时不用认证)。
-   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
-   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
-   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
-   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
-替换镜像
-   sed  -i 's#docker.io/calico/cni:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5#g'                            calico-typha.yaml
-   sed  -i 's#docker.io/calico/node:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5#g'                          calico-typha.yaml
-   sed  -i 's#docker.io/calico/kube-controllers:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5#g'  calico-typha.yaml
-   sed  -i "s#docker.io/calico/typha:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5#g"                        calico-typha.yaml
-```
-
 **应用manifests**
 ```
 ## 应用manifests
+kubectl apply -f calico-typha.yaml --dry-run=client
 kubectl apply -f calico-typha.yaml
 
 ## 列出相关Pod
