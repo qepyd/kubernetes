@@ -61,18 +61,18 @@ wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.5/manifests/ca
 ls -l calico-typha.yaml
 ```
 
-**查看所用namespace及是否是namespace资源对象的manifests**
+**查看所用ns资源对象,若有(查看是否有其相应的manifests)**
 ```
-## 查看所用的namespaces资源对象
+## 查看所用ns资源对象
 grep "namespace:" calico-typha.yaml
   #
   # 结果是ns/kube-system对象(k8s中默认的ns资源对象)
-  # 
+  #  
 
 ## 查看是否有创建ns/kube-system对象的manifests
 grep "^kind: Namespace" calico-typha.yaml
   #
-  # 结果是没有
+  # 结果是没有(也不应该有)
   # 没有就对了
   # 
 ```
