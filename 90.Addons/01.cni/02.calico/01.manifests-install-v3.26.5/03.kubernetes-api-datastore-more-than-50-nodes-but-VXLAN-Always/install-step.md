@@ -230,7 +230,7 @@ node04-10-244-143-0-24     25m
 
 # 4.创建几个Pod
 应用 https://github.com/qepyd/kubernetes/tree/main/90.Addons/01.cni 下的 ds_client.yaml,   
-会ping互联网IPv4(例如：223.5.5.5)，为了后面的对calico vxlan always的原理分析，其结果如下
+会ping互联网IPv4(例如：223.5.5.5)，也为了后面的对calico vxlan always的原理分析，其结果如下
 ```
 root@deploy:~# kubectl  -n default get pods -o wide | grep client | sort -k 7
 client-srnfg   1/1     Running   0          8m22s   10.244.170.1   master01   <none>           <none>
@@ -243,7 +243,7 @@ client-zbh2h   1/1     Running   0          8m22s   10.244.143.1   node04     <n
 ```
 
 应用 https://github.com/qepyd/kubernetes/tree/main/90.Addons/01.cni 下的 ds_server.yaml，  
-为了后面的对calico vxlan always的原理分析，其结果如下
+Pod中容器的应用端口为80，为了后面的对calico vxlan always的原理分析，其结果如下
 ```
 root@deploy:~# kubectl  -n default get pods -o wide | grep server | sort -k 7
 server-69lmp   1/1     Running   0          7m58s   10.244.170.2   master01   <none>           <none>
