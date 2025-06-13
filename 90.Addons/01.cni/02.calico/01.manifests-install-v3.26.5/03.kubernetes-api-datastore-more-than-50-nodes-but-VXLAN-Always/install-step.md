@@ -63,19 +63,19 @@ ls -l calico-typha.yaml
 
 **修改manifests**
 ```
-########## configmap/calico-config对象会被DaemonSet/calico-node对象引用
+########## configmap/calico-config对象(会被DaemonSet/calico-node对象引用)
 ## <== 设置calico后端
 将 calico_backend: "bird" 修改为 calico_backend: "vxlan"
   #
   # 这样各worker node上就不会有bird、confd进程
   #
 
-########## daemonset/calico-node对象的calico-node主容器
+########## daemonset/calico-node对象(Pod模板中其calico-node主容器)
 ## <== livenessProbe
-将 - -bird-live 给注释掉，因为calico后端为vxlan，各worker node上不会有bird、confd进程。
+将 - -bird-live 给注释掉。因为calico后端为vxlan，各worker node上不会有bird、confd进程。
 
 ## <== readinessProbe
-将 - -bird-live 给注释掉，因为calico后端为vxlan，各worker node上不会有bird、confd进程。
+将 - -bird-live 给注释掉。因为calico后端为vxlan，各worker node上不会有bird、confd进程。
 
 ## <== env
 # Enable IPIP
