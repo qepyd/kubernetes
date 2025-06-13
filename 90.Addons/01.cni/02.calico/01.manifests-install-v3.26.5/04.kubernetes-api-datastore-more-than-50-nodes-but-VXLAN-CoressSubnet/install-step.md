@@ -13,25 +13,40 @@ calico   calico  calico   vxlan         calico    kubernetes
 # 3.修改manifests
 configmap/calico-config对象会被DaemonSet/calico-node对象引用
 ```
-# 设置calico后端
-calico_backend: "vxlan"  # 可修改为vxlan
+#### 设置calico后端
+将 calico_backend: "bird" 修改为 calico_backend: "vxlan"
+  # 
+  # 这样各worker node上就不会有bird、confd进程
+  # 
 ```
 
-daemonset/calico-node对象
+daemonset/calico-node对象的calico-node主容器
 ```
+#### livenessProbe
+将 - -bird-live 给注释掉，因为calico后端为vxlan，各worker node上不会有bird、confd进程。
+
+#### readinessProbe
+将 - -bird-live 给注释掉，因为calico后端为vxlan，各worker node上不会有bird、confd进程。
+
+#### env
 # Enable IPIP
 - name: CALICO_IPV4POOL_IPIP
   value: "Never"
 	  
 # Enable or Disable VXLAN on the default IP pool.
 - name: CALICO_IPV4POOL_VXLAN
-  value: "CrossSubnet" 
+  value: "CrossSubnet"
 # Enable or Disable VXLAN on the default IPv6 IP pool.
 - name: CALICO_IPV6POOL_VXLAN
   value: "Never"
 
+# 指定Pod网络的CIDR(可以和规划的POD网络一致,也可以不一致)
+# 默认为192.168.0.0/16，我这里修改成了其我所规划的Pod网络
 - name: CALICO_IPV4POOL_CIDR
   value: "10.244.0.0/16"
+  
+# 从CLICO_IPV4POOL_CIDR中给worker node分配其子网的子网掩码,默认26。
+# 你可以设置得更小,当某个worker node上的子网中IP用尽后,还会再给分配一个。
 - name: CALICO_IPV4POOL_BLOCK_SIZE
   value: "24"
 ```
