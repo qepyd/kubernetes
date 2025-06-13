@@ -26,7 +26,7 @@ daemonset/calico-node对象的calico-node主容器
 将 - -bird-live 给注释掉，因为calico后端为vxlan，各worker node上不会有bird、confd进程。
 
 #### readinessProbe
-将 - -bird-live 给注释掉，因为calico后端为vxlan，各worker node上不会有bird、confd进程。
+将 - -bird-ready 给注释掉，因为calico后端为vxlan，各worker node上不会有bird、confd进程。
 
 #### env
 # Enable IPIP
