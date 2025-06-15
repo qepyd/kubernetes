@@ -96,17 +96,17 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/02.dns/ds_pod-in-contain
 ```
 https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
 ```
-**宿主机上Pod的通信**
+**宿主机上Pod间的通信**
 ```
 ........是能够通信的。
 ```
 
-**跨宿主机(Node网络下相同subnet)上Pod的通信**
+**跨宿主机(Node网络下相同subnet)间Pod的通信**
 ```
 ........是能够通信的。
 ```
 
-**跨宿主机(Node网络下相同subnet)上Pod的通信**
+**跨宿主机(Node网络下相同subnet)间Pod的通信**
 ```
 ........无法通信的。
 ```
