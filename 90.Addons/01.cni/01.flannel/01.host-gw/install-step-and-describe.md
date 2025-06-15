@@ -119,7 +119,7 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
 <image src="./picture/flannel-host-gw-plan.jpg" style="width: 100%; height: auto;">
 
 
-## 2.2 k8s上各Worker Node上的路由
+## 2.2 各宿主机上的路由 
 **node01上的路由**
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
