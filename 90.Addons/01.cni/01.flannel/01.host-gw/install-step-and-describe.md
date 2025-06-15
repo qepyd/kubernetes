@@ -124,6 +124,7 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.0.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
 10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 eth0
 10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0
 ............    ..............  255.255.255.0   UG    0      0        0 eth0
@@ -138,6 +139,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.2.0        0.0.0.0         255.255.255.0   UG    0      0        0 cni0
+
 10.0.1.0        172.31.0.1      255.255.255.0   UG    0      0        0 eth0
 10.0.3.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0
 ............    ..............  255.255.255.0   UG    0      0        0 eth0
