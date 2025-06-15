@@ -116,7 +116,7 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
 
 # 2.Flannel之host-gw后端的相关说明
 ## 2.1 网络平面图
-<image src="./picture/flannel-vxlan-DirectRoute-true-plan.jpg" style="width: 100%; height: auto;">
+<image src="./picture/flannel-vxlan-DirectRoute-false-plan.jpg" style="width: 100%; height: auto;">
 
 
 ## 2.2 各宿主机上的路由
