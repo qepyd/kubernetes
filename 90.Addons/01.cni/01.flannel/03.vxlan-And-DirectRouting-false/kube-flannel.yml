@@ -100,10 +100,7 @@ data:
       "Network": "10.244.0.0/16",
       "Backend": {
         "Type": "vxlan",
-        "VNI": 1,
-        "Port": 8472,
-        "DirectRouting": false,
-        "MTU": 1450
+        "DirectRouting": false
       }
     }
 ---
