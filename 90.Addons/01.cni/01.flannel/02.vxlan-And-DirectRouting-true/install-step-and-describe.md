@@ -133,15 +133,20 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
 <image src="./picture/SameHost-Pod-to-Pod-Communication.jpg" style="width: 100%; height: auto;">
 
 ## 2.4 跨宿主机(处于同一网关)间Pod的通信
-注意：通过主机间的路由。另外，Flannel host-gw后端，各worker node上不存在隧道设备flannel.1。  
+注意：不会经过双方宿主机上其隧道设备flannel.1。
 **ClientPod**
-<image src="./picture/CoressHost-Pod-to-Pod-Communication.jpg-1.jpg" style="width: 100%; height: auto;">
+<image src="./picture/CoressHost-SameSubnet-Pod-to-Pod-Communication.jpg-1.jpg" style="width: 100%; height: auto;">
 
 **ServerPod**
-<image src="./picture/CoressHost-Pod-to-Pod-Communication.jpg-2.jpg" style="width: 100%; height: auto;">
+<image src="./picture/CoressHost-SameSubnet-Pod-to-Pod-Communication.jpg-2.jpg" style="width: 100%; height: auto;">
 
 ## 2.5 跨宿主机(处于不同网关)间Pod的通信
-注意：不能通信
+注意：会经过双方宿主机上其隧道设备flannel.1。
+**ClientPod**
+<image src="./picture/CoressHost-DifferentSubnet-Pod-to-Pod-Communication.jpg-1.jpg" style="width: 100%; height: auto;">
+
+**ServerPod**
+<image src="./picture/CoressHost-DifferentSubnet-Pod-to-Pod-Communication.jpg-2.jpg" style="width: 100%; height: auto;">
 <br>
 <br>
 
