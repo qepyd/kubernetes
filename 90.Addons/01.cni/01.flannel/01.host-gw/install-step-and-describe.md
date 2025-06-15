@@ -84,7 +84,7 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_client.yaml
 https://github.com/qepyd/kubernetes/blob/main/90.Addons/02.dns/ds_pod-in-container-visit-fqdn.yaml
 ```
 
-## 1.6 Pod间的通信测试
+## 1.6 Pod间的通信测试(必要的)
 **创建ServerPod**
 ```
 https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
@@ -103,6 +103,8 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
 ```
 ........无法通信的。
 ```
+<br>
+<br>
 
 
 # 2.Flannel之host-gw后端的相关说明
