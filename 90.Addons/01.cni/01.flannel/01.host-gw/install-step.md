@@ -1,5 +1,5 @@
 # 1.Flannel之host-gw后端平面图
-<image src="./picture/CrossHost/flannel-host-gw-plan.jpg" style="width: 100%; height: auto;">
+<image src="./picture/flannel-host-gw-plan.jpg" style="width: 100%; height: auto;">
 
 
 # 2.Flannel之worker node上路由
