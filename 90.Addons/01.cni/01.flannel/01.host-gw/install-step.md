@@ -38,7 +38,11 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 ## 1.4.跨宿主机(处于同一网关,L2网络)间Pod的通信
 注意：通过主机间的路由。另外，Flannel host-gw后端，各worker node上不存在隧道设备flannel.1。
-<image src="./picture/CoressHost-Pod-to-Pod-Communication.jpg" style="width: 100%; height: auto;">
+**ClientPod**
+<image src="./picture/CoressHost-Pod-to-Pod-Communication.jpg-1.jpg" style="width: 100%; height: auto;">
+
+**ServerPod**
+<image src="./picture/CoressHost-Pod-to-Pod-Communication.jpg-2.jpg" style="width: 100%; height: auto;">
 
 ## 1.5.跨宿主机(处于不同网关,L3网络)间Pod的通信
 注意：不能通信
