@@ -101,14 +101,14 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
 ........是能够通信的。
 ```
 
-**跨宿主机(Node网络下相同subnet)间Pod的通信**
+**跨宿主机(Node网络下相同subnet，L2通信)间Pod的通信**
 ```
 ........是能够通信的。
 ```
 
-**跨宿主机(Node网络下相同subnet)间Pod的通信**
+**跨宿主机(Node网络下不同subnet，L3通信)间Pod的通信**
 ```
-........无法通信的。
+........是能够通信的。
 ```
 <br>
 <br>
@@ -116,38 +116,16 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
 
 # 2.Flannel之host-gw后端的相关说明
 ## 2.1 网络平面图
-<image src="./picture/flannel-host-gw-plan.jpg" style="width: 100%; height: auto;">
+<image src="./picture/flannel-vxlan-DirectRoute-true-plan.jpg" style="width: 100%; height: auto;">
 
 
 ## 2.2 k8s上各Worker Node上的路由
 **node01上的路由**
 ```
-Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-10.0.0.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
-
-10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 eth0
-10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0
-............    ..............  255.255.255.0   UG    0      0        0 eth0
-............    ..............  255.255.255.0   UG    0      0        0 eth0
-10.255.254.0    172.31.255.254  255.255.255.0   UG    0      0        0 eth0
-
-0.0.0.0         172.31.255.255  0.0.0.0         UG    0      0        0 eth0
-172.31.0.0      0.0.0.0         255.255.0.0     U     0      0        0 eth0
 ```
 
 **node02上的路由**
 ```
-Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-10.0.2.0        0.0.0.0         255.255.255.0   UG    0      0        0 cni0
-
-10.0.1.0        172.31.0.1      255.255.255.0   UG    0      0        0 eth0
-10.0.3.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0
-............    ..............  255.255.255.0   UG    0      0        0 eth0
-............    ..............  255.255.255.0   UG    0      0        0 eth0
-10.255.254.0    172.31.255.254  255.255.255.0   UG    0      0        0 eth0
-
-0.0.0.0         172.31.255.255  0.0.0.0         UG    0      0        0 eth0
-172.31.0.0      0.0.0.0         255.255.0.0     U     0      0        0 eth0
 ```
 
 ## 2.3 同宿主机上Pod间的通信
