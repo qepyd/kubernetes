@@ -1,5 +1,5 @@
 # 1.Flannel之host-gw后端的相关说明
-## 1.1 平面图
+## 1.1 网络平面图
 <image src="./picture/flannel-host-gw-plan.jpg" style="width: 100%; height: auto;">
 
 
