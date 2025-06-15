@@ -45,7 +45,6 @@ root@deploy:~# grep "docker.io" kube-flannel.yml
 我已将相关镜像放在我个人的镜像仓库中并公开（pull时不用认证）。
 swr.cn-north-1.myhuaweicloud.com/qepyd/flannel-cni-plugin:v1.2.0
 swr.cn-north-1.myhuaweicloud.com/qepyd/flannel:v0.22.3
-swr.cn-north-1.myhuaweicloud.com/qepyd/flannel:v0.22.3
 
 ## 替换镜像的相关命令
 sed    's#docker.io/flannel/flannel-cni-plugin:v1.2.0#swr.cn-north-1.myhuaweicloud.com/qepyd/flannel-cni-plugin:v1.2.0#g'   kube-flannel.yml  | grep "image:"
