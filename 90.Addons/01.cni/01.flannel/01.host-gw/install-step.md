@@ -1,9 +1,9 @@
 # 1.Flannel之host-gw后端的相关说明
-## 1.1 Flannel之host-gw后端的平面图
+## 1.1 平面图
 <image src="./picture/flannel-host-gw-plan.jpg" style="width: 100%; height: auto;">
 
 
-## 1.2.kubernetes上各Worker Node路由
+## 1.2.k8s上各Worker Node上的路由
 **node01上的路由**
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
@@ -41,4 +41,4 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 <image src="./picture/CoressHost-Pod-to-Pod-Communication.jpg" style="width: 100%; height: auto;">
 
 ## 1.5.跨宿主机(处于不同网关,L3网络)间Pod的通信
-不能通信
+注意：不能通信
