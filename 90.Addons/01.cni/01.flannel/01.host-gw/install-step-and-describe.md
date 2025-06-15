@@ -10,7 +10,15 @@ ls -l kube-flannel.yml
 ```
 
 ## 1.2 修改manifests
-**是否有所用ns/kube-flannel对象的manifests**
+**查看所用的ns资源对象**
+```
+grep "namespace:"  kube-flannel.yml
+  #
+  # 结果是 ns/kube-flannel 对象
+  # 
+```
+
+**检查是否有所用ns资源对象的manifests**
 ```
 grep "^kind: Namespace" kube-flannel.yml
   #
@@ -47,7 +55,7 @@ sed    's#docker.io/flannel/flannel:v0.22.3#swr.cn-north-1.myhuaweicloud.com/qep
 sed -i 's#docker.io/flannel/flannel:v0.22.3#swr.cn-north-1.myhuaweicloud.com/qepyd/flannel:v0.22.3#g'   kube-flannel.yml
 ```
 
-**configmaps/kube-flannel-cfg**
+**configmaps/kube-flannel-cfg对象**
 ```
 ## data字段中的 net-conf.json 键相关值的更改
 将 "Network": "10.244.0.0/16"  修改成  "Network": "<你k8s所规划的Pod网络>"
