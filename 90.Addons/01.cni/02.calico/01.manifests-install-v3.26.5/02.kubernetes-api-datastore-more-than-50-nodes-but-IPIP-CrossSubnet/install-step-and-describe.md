@@ -1,8 +1,7 @@
 # 1.安装的相关步骤
 # 2.Calico IPIP模式之CoressSubnet的相关说明
 ## 2.1 网络平面图
-
-
+<image src="./picture/calico-ipip-coresssubnet-plan.jpg" style="width: 100%; height: auto;">
 
 ## 2.2 各宿主机上的路由
 **Node网络下Subnet(172.31.0.0/24)下的节点(k8s node01)**
@@ -93,7 +92,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 ## 2.4 跨宿主机(处于相同网关)间Pod的通信
 注意：不会经过双方宿主机的隧道设备tunl0
-
 
 ## 2.5 跨宿主机(处于不同网关)间Pod的通信
 注意：会经过双方宿主机的隧道设备tunl0
