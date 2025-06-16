@@ -73,6 +73,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.254.255    0.0.0.0         255.255.255.255 UH    0      0        0 cali<随机数11位>    # 本机上其Pod副本的路由
 
 10.0.0.0        172.31.0.1      255.255.255.0   UG    0      0        0 tunl0
+10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 tunl0
 10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 tunl0
 ..........      ............    255.255.255.0   UG    0      0        0 tunl0
 ..........      ............    255.255.255.0   UG    0      0        0 tunl0
@@ -88,7 +89,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 0.0.0.0         172.31.1.255    0.0.0.0         UG    0      0        0 eth0                # node255到所处Node网络下Subnet其网关的路由
 172.31.1.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0                # node255到所处Node网络下Subnet其网关的路由
 ```
-
 
 ## 2.3 同宿主机上Pod间的通信
 注意：直接通过本机的 Route Table进行路由后通信
