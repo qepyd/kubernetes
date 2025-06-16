@@ -140,6 +140,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.1.0.0        10.1.0.0        255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
 10.1.1.0        10.1.1.0        255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
 ............    ............    255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
+............    ............    255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
 10.1.251.0      10.1.251.0      255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
 ```
 
@@ -163,6 +164,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.1.0.0        10.1.0.0        255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
 10.1.1.0        10.1.1.0        255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
 ............    ............    255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
+............    ............    255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
 10.1.251.0      10.1.251.0      255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
 ```
 
@@ -176,7 +178,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.1.1.0        172.31.1.4      255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
 ..........      ............    255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
 ..........      ............    255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-10.1.252.0      172.31.1.254    255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
+10.1.251.0      172.31.1.254    255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
 
 0.0.0.0         172.31.1.255    0.0.0.0         UG    0      0        0 eth0          # node255到到所处Node下Subnet其网关的路由 
 172.31.1.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0          # node255到到所处Node下Subnet其网关的路由 
