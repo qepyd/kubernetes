@@ -120,7 +120,7 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
 
 
 ## 2.2 各宿主机上的路由
-所有宿主机(worker node)上的路由均遵循以下node01、node02所示路由的规律。
+所有宿主机(worker node)上的路由均遵循以下node01、node02所示路由的规律。  
 **node01上的路由**
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
