@@ -46,6 +46,83 @@ Name:               node02
 PodCIDRs:                     10.0.3.0/24
 ```
 
+## 1.3 k8s中安装CNI插件Calico IPIP Always
+**Clico模式选择**
+```
+IPIP模式之Always，我称之为Calico纯IPIP模式。
+```
+
+**样式**
+```
+Policy   IPAM    CNI      Overlay   Routing                                             Database
+calico   calico  calico   ipip      calico(需要underlay网络支持bgp协议,用于路由分发)    kubernetes
+```
+
+**下载manifests**
+```
+wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.5/manifests/calico-typha.yaml
+ls -l calico-typha.yaml
+```
+
+**修改manifests**
+```
+## configmap/calico-config对象将被DaemonSet/calico-node对象引用
+# <== 设置calico后端为brid，这样各worker node上具备felix、bird、confd进程。
+calico_backend: "brid"
+
+## daemonset/calico-node对象
+# Enable IPIP
+- name: CALICO_IPV4POOL_IPIP
+  value: "Always"
+	  
+# Enable or Disable VXLAN on the default IP pool.
+- name: CALICO_IPV4POOL_VXLAN
+  value: "Never"
+# Enable or Disable VXLAN on the default IPv6 IP pool.
+- name: CALICO_IPV6POOL_VXLAN
+  value: "Never"
+
+# Pod Network IPv4 CIDR，default 192.168.0.0/16
+- name: CALICO_IPV4POOL_CIDR
+  value: "10.0.0.0/8"
+# Pod Network IPv4 CIDR allocation subnet size，默认26
+- name: CALICO_IPV4POOL_BLOCK_SIZE
+  value: "24"
+
+## deployment/calico-typha
+其副本数默认为1，关于副本数的设置官方的建议为：
+01：官方建议每200个worker node至少设置一个副本，最多不超过20个副本。
+02：在生产环境中，我们建议至少设置三个副本，以减少滚动升级和故障的影响。
+03：副本数量应始终小于节点数量，否则滚动升级将会停滞。
+04：此外，只有当Typha实例数量少于节点数量时，Typha 才能帮助实现扩展。
+```
+
+**替换相关image**
+```
+## 所用镜像
+grep image: calico-typha.yaml  | sort| uniq
+   #
+   # 所用镜像为
+   #   image: docker.io/calico/cni:v3.26.5
+   #   image: docker.io/calico/kube-controllers:v3.26.5
+   #   image: docker.io/calico/node:v3.26.5
+   #   - image: docker.io/calico/typha:v3.26.5
+   #
+
+## 替换镜像
+我已将相关镜像放至个人镜像仓库中并公开(下载时不用认证)。
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
+替换镜像
+   sed  -i 's#docker.io/calico/cni:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5#g'                            calico-typha.yaml
+   sed  -i 's#docker.io/calico/node:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5#g'                          calico-typha.yaml
+   sed  -i 's#docker.io/calico/kube-controllers:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5#g'  calico-typha.yaml
+   sed  -i "s#docker.io/calico/typha:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5#g"                        calico-typha.yaml
+```
+
+
 
 
 # 2.Calico IPIP模式之Always的相关说明
