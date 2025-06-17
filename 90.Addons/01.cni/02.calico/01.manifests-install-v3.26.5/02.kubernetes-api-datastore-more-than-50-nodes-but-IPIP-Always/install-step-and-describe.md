@@ -131,7 +131,26 @@ kubectl apply -f calico-typha.yaml
 ## 1.4 安装后相关资源对象的查看及说明
 **相关的crd**
 ```
-kubectl get crd | grep calico
+root@deploy:~#
+root@deploy:~# kubectl get crd | grep calico.org
+bgpconfigurations.crd.projectcalico.org               2025-06-17T12:09:49Z
+bgpfilters.crd.projectcalico.org                      2025-06-17T12:09:49Z
+bgppeers.crd.projectcalico.org                        2025-06-17T12:09:49Z
+blockaffinities.crd.projectcalico.org                 2025-06-17T12:09:49Z
+caliconodestatuses.crd.projectcalico.org              2025-06-17T12:09:49Z
+clusterinformations.crd.projectcalico.org             2025-06-17T12:09:49Z
+felixconfigurations.crd.projectcalico.org             2025-06-17T12:09:49Z
+globalnetworkpolicies.crd.projectcalico.org           2025-06-17T12:09:49Z
+globalnetworksets.crd.projectcalico.org               2025-06-17T12:09:49Z
+hostendpoints.crd.projectcalico.org                   2025-06-17T12:09:50Z
+ipamblocks.crd.projectcalico.org                      2025-06-17T12:09:50Z
+ipamconfigs.crd.projectcalico.org                     2025-06-17T12:09:50Z
+ipamhandles.crd.projectcalico.org                     2025-06-17T12:09:50Z
+ippools.crd.projectcalico.org                         2025-06-17T12:09:50Z
+ipreservations.crd.projectcalico.org                  2025-06-17T12:09:50Z
+kubecontrollersconfigurations.crd.projectcalico.org   2025-06-17T12:09:50Z
+networkpolicies.crd.projectcalico.org                 2025-06-17T12:09:50Z
+networksets.crd.projectcalico.org                     2025-06-17T12:09:50Z
 ```
 
 **calico-node**
