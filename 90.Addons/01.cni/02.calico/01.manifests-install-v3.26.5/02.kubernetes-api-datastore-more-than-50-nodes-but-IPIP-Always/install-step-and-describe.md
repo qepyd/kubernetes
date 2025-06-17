@@ -24,7 +24,7 @@
 
 ## 1.2 k8s各Worker Node当前状态为NotReady
 当前只把k8s的基本框架部署好了，就等着部署第一个addons之CNI插件了，部署好CNI插件后，
-k8s的各Worker Node状态就会Ready，但不代表"跨宿主机间Pod的通信"就一定正常。
+k8s的各Worker Node状态就会Ready，但不代表"Pod间的通信"就一定正常，你得知道去测试。
 ```
 root@deploy:~# kubectl get nodes
 NAME       STATUS                     ROLES    AGE   VERSION
