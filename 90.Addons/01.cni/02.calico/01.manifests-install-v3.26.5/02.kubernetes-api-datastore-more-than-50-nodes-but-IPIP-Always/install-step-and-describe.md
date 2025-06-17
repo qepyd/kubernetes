@@ -33,19 +33,6 @@ master02   NotReady,SchedulingDisabled   master   14d   v1.24.4
 node01     NotReady                      node     14d   v1.24.4
 node02     NotReady                      node     14d   v1.24.4
 ```
-k8s给各Worker Node基于Pod网络分配的子网，它是根据Worker Node加入控制平面的顺序并按照从0开始的顺序分配未
-被占用的子网(**了解一下**)。
-```
-root@deploy:~# kubectl describe nodes | grep -E "Name:|PodCIDRs:"
-Name:               master01
-PodCIDRs:                     10.0.0.0/24
-Name:               master02
-PodCIDRs:                     10.0.1.0/24
-Name:               node01
-PodCIDRs:                     10.0.2.0/24
-Name:               node02
-PodCIDRs:                     10.0.3.0/24
-```
 
 ## 1.3 k8s中安装CNI插件Calico IPIP Always
 **Clico模式选择**
