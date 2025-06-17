@@ -122,8 +122,79 @@ grep image: calico-typha.yaml  | sort| uniq
    sed  -i "s#docker.io/calico/typha:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5#g"                        calico-typha.yaml
 ```
 
+**应用manifests**
+```
+kubectl apply -f calico-typha.yaml --dry-run=client
+kubectl apply -f calico-typha.yaml
+```
+
+## 1.4 安装后相关资源对象的查看及说明
+**相关的crd**
+```
+kubectl get crd | grep calico
+```
+
+**calico-node**
+```
+## 列出ds/calico-node对象
+kubectl -n kube-system get ds/calico-node
+
+## 列出ds/calico-node对象所编排的Pod
+kubectl -n kube-system get pods -o wide | grep calico-node
+```
+
+**calico-typha**
+```
+## 列出deploy/calico-typha对象
+kubectl -n kube-system get deploy/calico-typha
+
+## 列出deploy/calico-typha对象所编排的Pod
+kubectl -n kube-system get pods -o wide | grep calico-typha
+```
+
+**列出ippools资源对象**
+```
+## 列出ippools资源对象
+root@deploy:~# kubectl get ippools
+NAME                  AGE
+default-ipv4-ippool   21m
+
+## 查看ipoools/default-ipv4-ippool对象的在线manifests
+root@deploy:~# kubectl get ippools -o yaml
+apiVersion: v1
+items:
+- apiVersion: crd.projectcalico.org/v1
+  kind: IPPool
+  metadata:
+    annotations:
+      projectcalico.org/metadata: '{"uid":"e6b4d437-05d2-4a12-b491-040b19deb7ac","creationTimestamp":"2025-06-11T16:49:59Z"}'
+    creationTimestamp: "2025-06-11T16:49:59Z"
+    generation: 1
+    name: default-ipv4-ippool
+    resourceVersion: "20161"
+    uid: 6471c2b4-0e82-4348-9334-a5b7e82feca6
+  spec:
+    allowedUses:
+    - Workload
+    - Tunnel
+    blockSize: 24                # <== 从IPv4CIDR中分配子网时,其子网的大小,在安装calico时我修改成了24。
+    cidr: 10.0.0.0/8             # <== IPv4的CIDR,在安装Calico时修改成了10.0.0.0/8。
+    ipipMode: Always             # <== Calico IPIP模式之Always机制，在安装calico时只开启了IPIP,其机制为Always。
+    natOutgoing: true
+    nodeSelector: all()          # <== 选择所有的worker node。
+    vxlanMode: Never             # <== Calico VXLAN模式，Never表示禁用，在安装calico时我禁用了的。
+kind: List
+metadata:
+  resourceVersion: ""
+```
 
 
+
+## 1.5 修改Worker Node从Pod网络得到的Subnet(为了学习)
+
+
+<br>
+<br>
 
 # 2.Calico IPIP模式之Always的相关说明
 ## 2.1 网络平面图
