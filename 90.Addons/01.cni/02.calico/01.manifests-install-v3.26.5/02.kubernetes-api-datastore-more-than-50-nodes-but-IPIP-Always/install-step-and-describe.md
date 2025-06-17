@@ -1,4 +1,4 @@
-# 1.安装的相关步骤
+# 1.Calico IPIP模式之Always的安装步骤
 ## 1.1 k8s集群的相关规划引入
 可以看看 "2.1 网络平面"
 ```
@@ -21,6 +21,32 @@
    集群DNS的Domain为：cluster.local
    集群DNS的应用连接：10.144.0.2
 ```
+
+## 1.2 k8s各Worker Node当前状态为NotReady
+当前只把k8s的基本框架部署好了，就等着部署第一个addons之CNI插件了，部署好CNI插件后，
+k8s的各Worker Node状态就会Ready，但不代表"跨宿主机间Pod的通信"就一定正常。
+```
+root@deploy:~# kubectl get nodes
+NAME       STATUS                     ROLES    AGE   VERSION
+master01   NotReady,SchedulingDisabled   master   14d   v1.24.4
+master02   NotReady,SchedulingDisabled   master   14d   v1.24.4
+node01     NotReady                      node     14d   v1.24.4
+node02     NotReady                      node     14d   v1.24.4
+```
+k8s给各Worker Node基于Pod网络来分配的子网(**了解一下**)。
+```
+root@deploy:~# kubectl describe nodes | grep -E "Name:|PodCIDRs:"
+Name:               master01
+PodCIDRs:                     10.244.0.0/24
+Name:               master02
+PodCIDRs:                     10.244.1.0/24
+Name:               node01
+PodCIDRs:                     10.244.2.0/24
+Name:               node02
+PodCIDRs:                     10.244.3.0/24
+```
+
+
 
 
 
