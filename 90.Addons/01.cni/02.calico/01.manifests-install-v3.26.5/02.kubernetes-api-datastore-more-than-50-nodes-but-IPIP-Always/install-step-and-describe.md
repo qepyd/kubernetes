@@ -1,3 +1,5 @@
+<image src="./picture/calico-ipip-always-plan.jpg" style="width: 100%; height: auto;">
+
 # 1.Calico IPIP模式之Always的安装步骤
 ## 1.1 k8s集群的相关规划引入
 注意：可以看看 "2.1 网络平面"
