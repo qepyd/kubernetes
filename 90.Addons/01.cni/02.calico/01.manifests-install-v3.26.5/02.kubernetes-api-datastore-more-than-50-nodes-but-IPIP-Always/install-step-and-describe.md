@@ -33,7 +33,7 @@ master02   NotReady,SchedulingDisabled   master   14d   v1.24.4
 node01     NotReady                      node     14d   v1.24.4
 node02     NotReady                      node     14d   v1.24.4
 ```
-k8s给各Worker Node基于Pod网络来分配的子网(**了解一下**)。
+k8s给各Worker Node基于Pod网络分配的子网，它是根据Worker Node加入控制平面的顺序并按照从0开始的顺序分配子网(**了解一下**)。
 ```
 root@deploy:~# kubectl describe nodes | grep -E "Name:|PodCIDRs:"
 Name:               master01
