@@ -14,12 +14,12 @@
     node01    172.31.1.1
     node02    172.31.1.2
 
-## Pod网络：10.244.0.0/16
+## Pod网络：10.0.0.0/8
    kubernetes的kube-controller-manager组件实例其--cluster-cidr参数有指定
 
-## Svc网络：10.144.0.0/16
+## Svc网络：11.0.0.0/8
    集群DNS的Domain为：cluster.local
-   集群DNS的应用连接：10.144.0.2
+   集群DNS的应用连接：10.0.0.2
 ```
 
 ## 1.2 k8s各Worker Node当前状态为NotReady
@@ -37,17 +37,14 @@ k8s给各Worker Node基于Pod网络分配的子网，它是根据Worker Node加�
 ```
 root@deploy:~# kubectl describe nodes | grep -E "Name:|PodCIDRs:"
 Name:               master01
-PodCIDRs:                     10.244.0.0/24
+PodCIDRs:                     10.0.0.0/24
 Name:               master02
-PodCIDRs:                     10.244.1.0/24
+PodCIDRs:                     10.0.1.0/24
 Name:               node01
-PodCIDRs:                     10.244.2.0/24
+PodCIDRs:                     10.0.2.0/24
 Name:               node02
-PodCIDRs:                     10.244.3.0/24
+PodCIDRs:                     10.0.3.0/24
 ```
-
-
-
 
 
 
