@@ -98,7 +98,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 <br>
 
 
-# 2.安装的相关步骤
+# 2.Flannel之vxlan(DirectRouting)的安装步骤
 ## 2.1 下载manifests
 ```
 ## 在线可读
@@ -139,7 +139,6 @@ root@deploy:~# grep "docker.io" kube-flannel.yml
         image: docker.io/flannel/flannel-cni-plugin:v1.2.0
         image: docker.io/flannel/flannel:v0.22.3
         image: docker.io/flannel/flannel:v0.22.3
-
 
 ## 把镜像放在自己的镜像仓库中
 我已将相关镜像放在我个人的镜像仓库中并公开（pull时不用认证）。
