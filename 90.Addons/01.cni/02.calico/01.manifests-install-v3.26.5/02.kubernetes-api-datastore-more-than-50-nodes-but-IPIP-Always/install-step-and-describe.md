@@ -122,7 +122,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 ## Svc网络：11.0.0.0/8
    集群DNS的Domain为：cluster.local
-   集群DNS的应用连接：10.0.0.2
+   集群DNS的应用连接：11.0.0.2
 ```
 
 ## 2.2 k8s各Worker Node当前状态为NotReady
