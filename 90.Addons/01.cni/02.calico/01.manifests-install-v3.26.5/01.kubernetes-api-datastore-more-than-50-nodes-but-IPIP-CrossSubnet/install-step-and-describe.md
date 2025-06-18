@@ -90,8 +90,8 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 ..........      ............    255.255.255.0   UG    0      0        0 tunl0
 10.0.251.0      172.31.0.252    255.255.255.0   UG    0      0        0 tunl0               # node253宿主机所在Node网绺下其Subnet之外Subnet中相关宿主机从Pod网络分得subnet的路由 
 
-0.0.0.0         172.31.1.253    0.0.0.0         UG    0      0        0 eth0                # node255到所处Node网络下Subnet其网关的路由
-172.31.1.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0                # node255到所处Node网络下Subnet其网关的路由
+0.0.0.0         172.31.1.253    0.0.0.0         UG    0      0        0 eth0                # node253到所处Node网络下Subnet其网关的路由
+172.31.1.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0                # node253到所处Node网络下Subnet其网关的路由
 ```
 
 ## 1.3 同宿主机上Pod间的通信
