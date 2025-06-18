@@ -19,6 +19,9 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 ..........      ............    255.255.255.0   UG    0      0        0 eth0                
 10.0.251.0      172.31.0.252    255.255.255.0   UG    0      0        0 eth0                # node01宿主机所在Node网络下其Sbunet中其它宿主机从Pod网分得subnet的路由 
 
+0.0.0.0         172.31.0.253    0.0.0.0         UG    0      0        0 eth0                # node01到所处Node网络下Subnet其网关的路由
+172.31.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0                # node01到所处Node网络下Subnet其网关的路由
+
 10.0.252.0      172.31.1.1      255.255.255.0   UG    0      0        0 tunl0
 10.0.253.0      172.31.1.2      255.255.255.0   UG    0      0        0 tunl0
 10.0.254.0      172.31.1.3      255.255.255.0   UG    0      0        0 tunl0
@@ -28,9 +31,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 ..........      ............    255.255.255.0   UG    0      0        0 tunl0
 ..........      ............    255.255.255.0   UG    0      0        0 tunl0
 10.1.247.0      172.31.1.252    255.255.255.0   UG    0      0        0 tunl0               # node01宿主机所在Node网绺下其Subnet之外Subnet中相关宿主机从Pod网络分得subnet的路由 
-
-0.0.0.0         172.31.0.253    0.0.0.0         UG    0      0        0 eth0                # node01到所处Node网络下Subnet其网关的路由
-172.31.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0                # node01到所处Node网络下Subnet其网关的路由
 ```
 
 **Node网络下Subnet(172.31.0.0/24)下的节点(k8s node02)**
@@ -49,6 +49,9 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 ..........      ............    255.255.255.0   UG    0      0        0 eth0
 10.0.251.0      172.31.0.252    255.255.255.0   UG    0      0        0 eth0                # node02宿主机所在Node网络下其Sbunet中其它宿主机从Pod网分得subnet的路由 
 
+0.0.0.0         172.31.0.253    0.0.0.0         UG    0      0        0 eth0                # node02到所处Node网络下Subnet其网关的路由
+172.31.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0                # node02到所处Node网络下Subnet其网关的路由
+
 10.0.252.0      172.31.1.1      255.255.255.0   UG    0      0        0 tunl0
 10.0.253.0      172.31.1.2      255.255.255.0   UG    0      0        0 tunl0
 10.0.254.0      172.31.1.3      255.255.255.0   UG    0      0        0 tunl0
@@ -58,10 +61,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 ..........      ............    255.255.255.0   UG    0      0        0 tunl0
 ..........      ............    255.255.255.0   UG    0      0        0 tunl0
 10.1.247.0      172.31.1.252    255.255.255.0   UG    0      0        0 tunl0               # node02宿主机所在Node网绺下其Subnet之外Subnet中相关宿主机从Pod网络分得subnet的路由
-
-
-0.0.0.0         172.31.0.253    0.0.0.0         UG    0      0        0 eth0                # node02到所处Node网络下Subnet其网关的路由
-172.31.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0                # node02到所处Node网络下Subnet其网关的路由
 ```
 
 **Node网络下Subnet(172.31.1.0/24)下的节点(k8s node253)**
@@ -83,15 +82,15 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 ..........      ............    255.255.255.0   UG    0      0        0 eth0
 10.1.247.0      172.31.1.252    255.255.255.0   UG    0      0        0 eth0                # node253宿主机所在Node网络下其Sbunet中其它宿主机从Pod网分得subnet的路由 
 
+0.0.0.0         172.31.1.253    0.0.0.0         UG    0      0        0 eth0                # node253到所处Node网络下Subnet其网关的路由
+172.31.1.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0                # node253到所处Node网络下Subnet其网关的路由
+
 10.0.0.0        172.31.0.1      255.255.255.0   UG    0      0        0 tunl0
 10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 tunl0
 10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 tunl0
 ..........      ............    255.255.255.0   UG    0      0        0 tunl0
 ..........      ............    255.255.255.0   UG    0      0        0 tunl0
 10.0.251.0      172.31.0.252    255.255.255.0   UG    0      0        0 tunl0               # node253宿主机所在Node网绺下其Subnet之外Subnet中相关宿主机从Pod网络分得subnet的路由 
-
-0.0.0.0         172.31.1.253    0.0.0.0         UG    0      0        0 eth0                # node253到所处Node网络下Subnet其网关的路由
-172.31.1.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0                # node253到所处Node网络下Subnet其网关的路由
 ```
 
 ## 1.3 同宿主机上Pod间的通信
