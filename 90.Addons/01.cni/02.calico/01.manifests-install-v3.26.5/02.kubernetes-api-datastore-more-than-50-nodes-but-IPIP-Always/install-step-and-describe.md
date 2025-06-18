@@ -104,6 +104,8 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 # 2.Calico IPIP模式之Always的安装步骤
 ## 2.1 k8s集群的相关规划引入
+<image src="./picture/calico-ipip-always-plan-install.jpg" style="width: 100%; height: auto;">
+
 ```
 ## Node网络：172.31.0.0/16
   交换机B-172-31-20-0-24：172.31.20.0/24
