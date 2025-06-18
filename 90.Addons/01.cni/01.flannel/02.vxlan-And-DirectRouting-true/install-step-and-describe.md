@@ -1,4 +1,4 @@
-# 1.Flannel之vxlan(DirectRouting为true)后端的相关说明
+# 1.Flannel之vxlan(DirectRouting为true)的相关说明
 ## 1.1 网络平面图
 <image src="./picture/flannel-vxlan-DirectRoute-true-plan.jpg" style="width: 100%; height: auto;">
 
