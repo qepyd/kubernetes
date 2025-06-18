@@ -297,12 +297,12 @@ items:
     allowedUses:
     - Workload
     - Tunnel
-    blockSize: 24                # <== 从IPv4CIDR中分配子网时,其子网的大小,在安装calico时我修改成了24。
-    cidr: 10.0.0.0/8             # <== IPv4的CIDR,在安装Calico时修改成了10.0.0.0/8。
-    ipipMode: Always             # <== Calico IPIP模式之Always机制，在安装calico时只开启了IPIP,其机制为Always。
+    blockSize: 24
+    cidr: 10.0.0.0/8
+    ipipMode: Always
     natOutgoing: true
-    nodeSelector: all()          # <== 选择所有的worker node。
-    vxlanMode: Never             # <== Calico VXLAN模式，Never表示禁用，在安装calico时我禁用了的。
+    nodeSelector: all()
+    vxlanMode: Never
 kind: List
 metadata:
   resourceVersion: ""

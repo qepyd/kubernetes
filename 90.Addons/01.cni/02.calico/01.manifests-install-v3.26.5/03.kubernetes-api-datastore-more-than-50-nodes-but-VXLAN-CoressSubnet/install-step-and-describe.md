@@ -28,9 +28,11 @@
 
 
 ## 1.4 跨宿主机(处于相同网关)间Pod的通信
+注意：不会经过双方宿主机上的隧道设备vxlan.calico
 
 
 ## 1.5 跨宿主机(处于不同网关)间Pod的通信
+注意：会经过双方宿主机上的隧道设备vxlan.calico
 
 <br>
 <br>
@@ -237,12 +239,12 @@ items:
     allowedUses:
     - Workload
     - Tunnel
-    blockSize: 24                # <== 从IPv4CIDR中分配子网时,其子网的大小,在安装calico时我修改成了24。
-    cidr: 10.0.0.0/8             # <== IPv4的CIDR,在安装Calico时修改成了10.0.0.0/8。
-    ipipMode: Never              # <== Calico IPIP模式被禁用了的，在安装calico时禁用的。
+    blockSize: 24
+    cidr: 10.0.0.0/8
+    ipipMode: Never
     natOutgoing: true
-    nodeSelector: all()          # <== 选择所有的worker node。
-    vxlanMode: CoressSubnet      # <== Calico VXLAN模式之CoressSubnet，我在安装calico时指定的。
+    nodeSelector: all()
+    vxlanMode: CoressSubnet
 kind: List
 metadata:
   resourceVersion: ""
