@@ -96,7 +96,180 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 ## 1.5 跨宿主机(处于不同网关)间Pod的通信
 注意：会经过双方宿主机的隧道设备tunl0
 
+<br>
+<br>
 
 
+## 2.3 k8s中安装CNI插件Calico IPIP CoressSubnet
+**Clico模式选择**
+```
+IPIP模式之CoressSubnet，我称之为Calico非纯IPIP模式。
+```
 
-# 2.安装的相关步骤
+**样式**
+```
+Policy   IPAM    CNI      Overlay   Routing                                             Database
+calico   calico  calico   ipip      calico(需要underlay网络支持bgp协议,用于路由分发)    kubernetes
+```
+
+**下载manifests**
+```
+wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.5/manifests/calico-typha.yaml
+ls -l calico-typha.yaml
+```
+
+**修改manifests**
+```
+## configmap/calico-config对象将被DaemonSet/calico-node对象引用
+# <== 设置calico后端为brid，这样各worker node上具备felix、bird、confd进程。
+calico_backend: "brid"
+
+## daemonset/calico-node对象
+# Enable IPIP
+- name: CALICO_IPV4POOL_IPIP
+  value: "CoressSubnet"
+	  
+# Enable or Disable VXLAN on the default IP pool.
+- name: CALICO_IPV4POOL_VXLAN
+  value: "Never"
+# Enable or Disable VXLAN on the default IPv6 IP pool.
+- name: CALICO_IPV6POOL_VXLAN
+  value: "Never"
+
+# Pod Network IPv4 CIDR，default 192.168.0.0/16
+- name: CALICO_IPV4POOL_CIDR
+  value: "10.0.0.0/8"
+# Pod Network IPv4 CIDR allocation subnet size，默认26
+- name: CALICO_IPV4POOL_BLOCK_SIZE
+  value: "24"
+
+## deployment/calico-typha
+其副本数默认为1，关于副本数的设置官方的建议为：
+01：官方建议每200个worker node至少设置一个副本，最多不超过20个副本。
+02：在生产环境中，我们建议至少设置三个副本，以减少滚动升级和故障的影响。
+03：副本数量应始终小于节点数量，否则滚动升级将会停滞。
+04：此外，只有当Typha实例数量少于节点数量时，Typha 才能帮助实现扩展。
+```
+
+**替换相关image**
+```
+## 所用镜像
+grep image: calico-typha.yaml  | sort| uniq
+   #
+   # 所用镜像为
+   #   image: docker.io/calico/cni:v3.26.5
+   #   image: docker.io/calico/kube-controllers:v3.26.5
+   #   image: docker.io/calico/node:v3.26.5
+   #   - image: docker.io/calico/typha:v3.26.5
+   #
+
+## 替换镜像
+我已将相关镜像放至个人镜像仓库中并公开(下载时不用认证)。
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5
+   swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5
+替换镜像
+   sed  -i 's#docker.io/calico/cni:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5#g'                            calico-typha.yaml
+   sed  -i 's#docker.io/calico/node:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5#g'                          calico-typha.yaml
+   sed  -i 's#docker.io/calico/kube-controllers:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5#g'  calico-typha.yaml
+   sed  -i "s#docker.io/calico/typha:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5#g"                        calico-typha.yaml
+```
+
+**应用manifests**
+```
+kubectl apply -f calico-typha.yaml --dry-run=client
+kubectl apply -f calico-typha.yaml
+```
+
+## 2.4 安装后相关资源对象的查看及说明
+**相关的crd**
+```
+root@deploy:~#
+root@deploy:~# kubectl get crd | grep calico.org
+bgpconfigurations.crd.projectcalico.org               2025-06-17T12:09:49Z
+bgpfilters.crd.projectcalico.org                      2025-06-17T12:09:49Z
+bgppeers.crd.projectcalico.org                        2025-06-17T12:09:49Z
+blockaffinities.crd.projectcalico.org                 2025-06-17T12:09:49Z
+caliconodestatuses.crd.projectcalico.org              2025-06-17T12:09:49Z
+clusterinformations.crd.projectcalico.org             2025-06-17T12:09:49Z
+felixconfigurations.crd.projectcalico.org             2025-06-17T12:09:49Z
+globalnetworkpolicies.crd.projectcalico.org           2025-06-17T12:09:49Z
+globalnetworksets.crd.projectcalico.org               2025-06-17T12:09:49Z
+hostendpoints.crd.projectcalico.org                   2025-06-17T12:09:50Z
+ipamblocks.crd.projectcalico.org                      2025-06-17T12:09:50Z
+ipamconfigs.crd.projectcalico.org                     2025-06-17T12:09:50Z
+ipamhandles.crd.projectcalico.org                     2025-06-17T12:09:50Z
+ippools.crd.projectcalico.org                         2025-06-17T12:09:50Z
+ipreservations.crd.projectcalico.org                  2025-06-17T12:09:50Z
+kubecontrollersconfigurations.crd.projectcalico.org   2025-06-17T12:09:50Z
+networkpolicies.crd.projectcalico.org                 2025-06-17T12:09:50Z
+networksets.crd.projectcalico.org                     2025-06-17T12:09:50Z
+```
+
+**calico-node**
+```
+## 列出ds/calico-node对象
+kubectl -n kube-system get ds/calico-node
+
+## 列出ds/calico-node对象所编排的Pod
+kubectl -n kube-system get pods -o wide | grep calico-node
+```
+
+**各worker node上相关进程**
+```
+各worker node上具备felix、bird、confd进程
+ps -ef | grep felix
+ps -ef | grep bird
+ps -ef | confd
+```
+
+**calico-typha**
+```
+## 列出deploy/calico-typha对象
+kubectl -n kube-system get deploy/calico-typha
+
+## 列出deploy/calico-typha对象所编排的Pod
+kubectl -n kube-system get pods -o wide | grep calico-typha
+```
+
+**列出ippools资源对象**
+```
+## 列出ippools资源对象
+root@deploy:~# kubectl get ippools
+NAME                  AGE
+default-ipv4-ippool   21m
+
+## 查看ipoools/default-ipv4-ippool对象的在线manifests
+root@deploy:~# kubectl get ippools -o yaml
+apiVersion: v1
+items:
+- apiVersion: crd.projectcalico.org/v1
+  kind: IPPool
+  metadata:
+    annotations:
+      projectcalico.org/metadata: '{"uid":"e6b4d437-05d2-4a12-b491-040b19deb7ac","creationTimestamp":"2025-06-11T16:49:59Z"}'
+    creationTimestamp: "2025-06-11T16:49:59Z"
+    generation: 1
+    name: default-ipv4-ippool
+    resourceVersion: "20161"
+    uid: 6471c2b4-0e82-4348-9334-a5b7e82feca6
+  spec:
+    allowedUses:
+    - Workload
+    - Tunnel
+    blockSize: 24                # <== 从IPv4CIDR中分配子网时,其子网的大小,在安装calico时我修改成了24。
+    cidr: 10.0.0.0/8             # <== IPv4的CIDR,在安装Calico时修改成了10.0.0.0/8。
+    ipipMode: CoressSubnet       # <== Calico IPIP模式之CoressSubnet机制，在安装calico时只开启了IPIP,其机制为CoressSubnet。
+    natOutgoing: true
+    nodeSelector: all()          # <== 选择所有的worker node。
+    vxlanMode: Never             # <== Calico VXLAN模式，Never表示禁用，在安装calico时我禁用了的。
+kind: List
+metadata:
+  resourceVersion: ""
+```
+
+## 2.5 修改Worker Node从Pod网络得到的Subnet(为了学习)
+注意：
+
+
