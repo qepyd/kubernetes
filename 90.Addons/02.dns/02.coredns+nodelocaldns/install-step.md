@@ -12,7 +12,7 @@ node03     Ready                      node     22h   v1.24.4
 
 ## 引入与集群内Dns相关的一些规划(在安装k8s前是有规划)
 集群内部DNS的Domain为: cluster.local
-集群三条网络之Service网络为：11.0.0.2/8
+集群三条网络之Service网络为：11.0.0.0/8
 
 ## 各worker node上其kubelet组件实例涉及的相关参数
 --cluster-dns <strings>
