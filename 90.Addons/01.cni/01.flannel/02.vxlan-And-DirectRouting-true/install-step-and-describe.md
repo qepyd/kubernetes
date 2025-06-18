@@ -98,7 +98,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 <br>
 
 
-# 2.Flannel之vxlan(DirectRouting)的安装步骤
+# 2.Flannel之vxlan(DirectRouting为true)的安装步骤
 ## 2.1 下载manifests
 ```
 ## 在线可读
