@@ -100,6 +100,41 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 <br>
 
 
+# 2.Calico IPIP模式之CoressSubnet的安装步骤
+## 2.1 k8s集群的相关规划引入
+```
+## Node网络：172.31.0.0/16
+  交换机B-172-31-20-0-24：172.31.20.0/24
+    etcd01  172.31.20.1
+    etcd02  172.31.20.2
+    etcd03  172.31.20.3
+  交换机H-172-31-0-0-24： 172.31.0.0/24
+    master01  172.31.0.1   # <== 会部署worker node相关组件
+    master02  172.31.0.2   # <== 会部署worker node相关组件
+  交换机I-172-31-1-0-24： 172.31.1.0/24
+    node01    172.31.1.1
+    node02    172.31.1.2
+
+## Pod网络：10.0.0.0/8
+   kubernetes的kube-controller-manager组件实例其--cluster-cidr参数有指定
+
+## Svc网络：11.0.0.0/8
+   集群DNS的Domain为：cluster.local
+   集群DNS的应用连接：10.0.0.2
+```
+
+## 2.2 k8s各Worker Node当前状态为NotReady
+当前只把k8s的基本框架部署好了，就等着部署第一个addons之CNI插件了，部署好CNI插件后，
+k8s的各Worker Node状态就会Ready，但不代表"Pod间的通信"就一定正常，你得知道怎么去测试。
+```
+root@deploy:~# kubectl get nodes
+NAME       STATUS                     ROLES    AGE   VERSION
+master01   NotReady,SchedulingDisabled   master   14d   v1.24.4
+master02   NotReady,SchedulingDisabled   master   14d   v1.24.4
+node01     NotReady                      node     14d   v1.24.4
+node02     NotReady                      node     14d   v1.24.4
+```
+
 ## 2.3 k8s中安装CNI插件Calico IPIP CoressSubnet
 **Clico模式选择**
 ```
@@ -108,8 +143,8 @@ IPIP模式之CoressSubnet，我称之为Calico非纯IPIP模式。
 
 **样式**
 ```
-Policy   IPAM    CNI      Overlay   Routing                                             Database
-calico   calico  calico   ipip      calico(需要underlay网络支持bgp协议,用于路由分发)    kubernetes
+Policy   IPAM    CNI      Coress-Subnet   Routing                                             Database
+calico   calico  calico   ipip            calico(需要underlay网络支持bgp协议,用于路由分发)    kubernetes
 ```
 
 **下载manifests**
