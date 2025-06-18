@@ -12,7 +12,7 @@ node03     Ready                      node     22h   v1.24.4
 
 ## 引入与集群内Dns相关的一些规划(在安装k8s前是有规划)
 集群内部DNS的Domain为: cluster.local
-集群三条网络之Service网络为：10.144.0.0/16
+集群三条网络之Service网络为：11.0.0.2/8
 
 ## 各worker node上其kubelet组件实例涉及的相关参数
 --cluster-dns <strings>
@@ -88,9 +88,9 @@ sed -i 's#__DNS__MEMORY__LIMIT__#512Mi#g'  ./01.coredns.yaml
 ## 修改service/kube-dns对象
 注意：此对象的name可不要去修改
 
-固定其clusterIP的地址,其固定的IP得来自于service网络,我这里就固定成10.144.0.2
-sed    's#__DNS__SERVER__#10.144.0.2#g'  ./01.coredns.yaml  | grep 10.144.0.2
-sed -i 's#__DNS__SERVER__#10.144.0.2#g'  ./01.coredns.yaml
+固定其clusterIP的地址,其固定的IP得来自于service网络,我这里就固定成11.0.0.2
+sed    's#__DNS__SERVER__#11.0.0.2#g'  ./01.coredns.yaml  | grep 11.0.0.2
+sed -i 's#__DNS__SERVER__#11.0.0.2#g'  ./01.coredns.yaml
 ```
 
 # 4.修改nodelocaldns的manifests
@@ -120,9 +120,9 @@ grep "image:" ./02.nodelocaldns.yaml
 sed    's#k8s.gcr.io/dns/k8s-dns-node-cache:1.21.1#swr.cn-north-1.myhuaweicloud.com/qepyd/k8s-dns-node-cache:1.21.1#g'  ./02.nodelocaldns.yaml | grep image:
 sed -i 's#k8s.gcr.io/dns/k8s-dns-node-cache:1.21.1#swr.cn-north-1.myhuaweicloud.com/qepyd/k8s-dns-node-cache:1.21.1#g'  ./02.nodelocaldns.yaml
 
-## 替换__PILLAR__DNS__SERVER__变量,即设置所要连接dns之coredns服务地址(前面设置的是10.144.0.2)
-sed    's#__PILLAR__DNS__SERVER__#10.144.0.2#g'   ./02.nodelocaldns.yaml  | grep "10.144.0.2"
-sed -i 's#__PILLAR__DNS__SERVER__#10.144.0.2#g'   ./02.nodelocaldns.yaml 
+## 替换__PILLAR__DNS__SERVER__变量,即设置所要连接dns之coredns服务地址(前面设置的是11.0.0.2)
+sed    's#__PILLAR__DNS__SERVER__#11.0.0.2#g'   ./02.nodelocaldns.yaml  | grep "11.0.0.2"
+sed -i 's#__PILLAR__DNS__SERVER__#11.0.0.2#g'   ./02.nodelocaldns.yaml 
 
 ## 替换__PILLAR__DNS__DOMAIN__,即设置k8s集群内dns的domain之cluster.local
 sed    's#__PILLAR__DNS__DOMAIN__#cluster.local#g'  ./02.nodelocaldns.yaml  | grep cluster.local
@@ -164,7 +164,7 @@ kubectl -n kube-system logs -f pods/$OnePod
 
 kubectl -n kube-system get svc/kube-dns
    #
-   # 列出其svc资源对象,检查其clusterIP是否是前面指定的10.144.0.2
+   # 列出其svc资源对象,检查其clusterIP是否是前面指定的11.0.0.2
    #
 ```
 

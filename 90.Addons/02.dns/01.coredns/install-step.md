@@ -12,13 +12,13 @@ node03     Ready                      node     22h   v1.24.4
 
 ## 引入与集群内Dns相关的一些规划(在安装k8s前是有规划)
 集群内部DNS的Domain为: cluster.local
-集群三条网络之Service网络为：10.144.0.0/16
+集群三条网络之Service网络为：11.0.0.0/8
 
 ## 各worker node上其kubelet组件实例涉及的相关参数
 --cluster-dns <strings>
    #
    # 用于指定k8s集群内DNS的连接地址(来自于Service网络)
-   # 当前的值为：10.144.0.2
+   # 当前的值为：11.0.0.2
    # 
 
 --cluster-domain <strings>
@@ -84,9 +84,9 @@ sed -i 's#__DNS__MEMORY__LIMIT__#512Mi#g'  ./coredns.yaml
 ## 修改service/kube-dns对象
 注意：此对象的name可不要去修改
 
-固定其clusterIP的地址,其固定的值为10.144.0.2(为啥是它,回看 1.当前k8s环境 )
-sed    's#__DNS__SERVER__#10.144.0.2#g'  ./coredns.yaml  | grep 10.144.0.2
-sed -i 's#__DNS__SERVER__#10.144.0.2#g'  ./coredns.yaml
+固定其clusterIP的地址,其固定的值为11.0.0.2(为啥是它,回看 1.当前k8s环境 )
+sed    's#__DNS__SERVER__#11.0.0.2#g'  ./coredns.yaml  | grep 11.0.0.2
+sed -i 's#__DNS__SERVER__#11.0.0.2#g'  ./coredns.yaml
 ```
 
 # 4.应用manifests并检查
@@ -120,7 +120,7 @@ kubectl -n kube-system logs -f pods/$OnePod
 
 kubectl -n kube-system get svc/kube-dns
    #
-   # 列出其svc资源对象,检查其clusterIP是否是前面指定的10.144.0.2
+   # 列出其svc资源对象,检查其clusterIP是否是前面指定的11.0.0.2
    #
 ```
 
