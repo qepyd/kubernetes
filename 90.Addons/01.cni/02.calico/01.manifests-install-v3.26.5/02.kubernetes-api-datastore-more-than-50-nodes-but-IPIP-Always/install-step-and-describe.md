@@ -153,8 +153,8 @@ IPIP模式之Always，我称之为Calico纯IPIP模式。
 
 **样式**
 ```
-Policy   IPAM    CNI      Overlay   Routing                                             Database
-calico   calico  calico   ipip      calico(需要underlay网络支持bgp协议,用于路由分发)    kubernetes
+Policy   IPAM    CNI      Overlay   Routing     Database
+calico   calico  calico   ipip      bgp         kubernetes
 ```
 
 **下载manifests**
