@@ -119,6 +119,8 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 ```
 ## Node网络：172.31.0.0/16
+  它是物理网络。underlay。
+
   交换机B-172-31-20-0-24：172.31.20.0/24
     etcd01  172.31.20.1
     etcd02  172.31.20.2
@@ -131,9 +133,12 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
     node02    172.31.1.2
 
 ## Pod网络：10.0.0.0/8
+   它是个虚拟网络。overlay。
    kubernetes的kube-controller-manager组件实例其--cluster-cidr参数有指定
 
 ## Svc网络：11.0.0.0/8
+   它是个虚拟网络。overlay。
+   在k8s中被称为cluster network。
    集群DNS的Domain为：cluster.local
    集群DNS的应用连接：11.0.0.2
 ```
