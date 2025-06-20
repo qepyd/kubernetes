@@ -8,71 +8,77 @@
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.0.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
 
-10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 eth0        # 与node01处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0        # 与node01处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-10.0.3.0        172.31.0.4      255.255.255.0   UG    0      0        0 eth0        # 与node01处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-..........      ............    255.255.255.0   UG    0      0        0 eth0        # 与node01处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-..........      ............    255.255.255.0   UG    0      0        0 eth0        # 与node01处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-10.0.253.0      172.31.0.254    255.255.255.0   UG    0      0        0 eth0        # 与node01处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
+10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 eth0        
+10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0       
+10.0.3.0        172.31.0.4      255.255.255.0   UG    0      0        0 eth0      
+..........      ............    255.255.255.0   UG    0      0        0 eth0     
+..........      ............    255.255.255.0   UG    0      0        0 eth0    
+10.0.251.0      172.31.0.252    255.255.255.0   UG    0      0        0 eth0        # node01宿主机所在Node网络下其Sbunet中其它宿主机从Pod网分得subnet的路由
 
-0.0.0.0         172.31.0.255    0.0.0.0         UG    0      0        0 eth0        # node01到到所处Node下Subnet其网关的路由 
-172.31.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0        # node01到到所处Node下Subnet其网关的路由 
+0.0.0.0         172.31.0.253    0.0.0.0         UG    0      0        0 eth0        # node01到所处Node网络下Subnet其网关的路由 
+172.31.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0        # node01到所处Node网络下Subnet其网关的路由 
 
-10.0.254.0      10.0.254.0      255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-10.0.255.0      10.0.255.0      255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-10.1.0.0        10.1.0.0        255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-10.1.1.0        10.1.1.0        255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-............    ............    255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-............    ............    255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-10.1.251.0      10.1.251.0      255.255.255.0   UG    0      0        0 flannel.1   # 与node01处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
+10.0.252.0      10.0.252.0      255.255.255.0   UG    0      0        0 flannel.1   
+10.0.253.0      10.0.253.0      255.255.255.0   UG    0      0        0 flannel.1   
+10.0.254.0      10.0.254.0      255.255.255.0   UG    0      0        0 flannel.1   
+10.0.255.0      10.0.255.0      255.255.255.0   UG    0      0        0 flannel.1   
+10.1.0.0        10.1.0.0        255.255.255.0   UG    0      0        0 flannel.1   
+10.1.1.0        10.1.1.0        255.255.255.0   UG    0      0        0 flannel.1  
+............    ............    255.255.255.0   UG    0      0        0 flannel.1 
+............    ............    255.255.255.0   UG    0      0        0 flannel.1
+10.1.247.0      10.1.247.0      255.255.255.0   UG    0      0        0 flannel.1   # node01宿主机所在Node网绺下其Subnet之外Subnet中相关宿主机从Pod网络分得subnet的路由
 ```
 
 **Node网络下Subnet(172.31.0.0/24)下的节点(k8s node02)**
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-10.0.1.0        0.0.0.0         255.255.255.0   UG    0      0        0 cni0
+10.0.1.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
 
-10.0.0.0        172.31.0.1      255.255.255.0   UG    0      0        0 eth0         # 与node02处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由        
-10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0         # 与node02处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由     
-10.0.3.0        172.31.0.4      255.255.255.0   UG    0      0        0 eth0         # 与node02处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由     
-..........      ............    255.255.255.0   UG    0      0        0 eth0         # 与node02处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由     
-..........      ............    255.255.255.0   UG    0      0        0 eth0         # 与node02处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由     
-10.0.253.0      172.31.0.254    255.255.255.0   UG    0      0        0 eth0         # 与node02处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由     
+10.0.0.0        172.31.0.1      255.255.255.0   UG    0      0        0 eth0
+10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0
+10.0.3.0        172.31.0.4      255.255.255.0   UG    0      0        0 eth0
+..........      ............    255.255.255.0   UG    0      0        0 eth0
+..........      ............    255.255.255.0   UG    0      0        0 eth0        
+10.0.251.0      172.31.0.252    255.255.255.0   UG    0      0        0 eth0        # node02宿主机所在Node网络下其Sbunet中其它宿主机从Pod网分得subnet的路由
 
-0.0.0.0         172.31.0.255    0.0.0.0         UG    0      0        0 eth0         # node02到到所处Node下Subnet其网关的路由 
-172.31.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0         # node02到到所处Node下Subnet其网关的路由 
+0.0.0.0         172.31.0.253    0.0.0.0         UG    0      0        0 eth0        # node02到所处Node网络下Subnet其网关的路由
+172.31.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0        # node02到所处Node网络下Subnet其网关的路由
 
-10.0.254.0      10.0.254.0      255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-10.0.255.0      10.0.255.0      255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-10.1.0.0        10.1.0.0        255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-10.1.1.0        10.1.1.0        255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-............    ............    255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-............    ............    255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-10.1.251.0      10.1.251.0      255.255.255.0   UG    0      0        0 flannel.1    # 与node02处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
+10.0.252.0      10.0.252.0      255.255.255.0   UG    0      0        0 flannel.1   
+10.0.253.0      10.0.253.0      255.255.255.0   UG    0      0        0 flannel.1
+10.0.254.0      10.0.254.0      255.255.255.0   UG    0      0        0 flannel.1
+10.0.255.0      10.0.255.0      255.255.255.0   UG    0      0        0 flannel.1   
+10.1.0.0        10.1.0.0        255.255.255.0   UG    0      0        0 flannel.1   
+10.1.1.0        10.1.1.0        255.255.255.0   UG    0      0        0 flannel.1   
+............    ............    255.255.255.0   UG    0      0        0 flannel.1   
+............    ............    255.255.255.0   UG    0      0        0 flannel.1   
+10.1.247.0      10.1.247.0      255.255.255.0   UG    0      0        0 flannel.1   # node02宿主机所在Node网绺下其Subnet之外Subnet中相关宿主机从Pod网络分得subnet的路由
 ```
 
-**Node网络下Subnet(172.31.1.0/24)下的节点(k8s node255)**
+**Node网络下Subnet(172.31.1.0/24)下的节点(k8s node253)**
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-10.0.254.0      0.0.0.0         255.255.255.0   UG    0      0        0 cni0          
+10.0.252.0      0.0.0.0         255.255.255.0   UG    0      0        0 cni0        
 
-10.0.255.0      172.31.1.2      255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-10.1.0.0        172.31.1.3      255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-10.1.1.0        172.31.1.4      255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-..........      ............    255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-..........      ............    255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
-10.1.251.0      172.31.1.254    255.255.255.0   UG    0      0        0 eth0          # 与node255处于Node网络下相同Subnet中各node从Pod网络得到的subnet,相关路由
+10.0.253.0      172.31.1.2      255.255.255.0   UG    0      0        0 eth0  
+10.0.254.0      172.31.1.3      255.255.255.0   UG    0      0        0 eth0  
+10.0.255.0      172.31.1.4      255.255.255.0   UG    0      0        0 eth0  
+10.1.0.0        172.31.1.5      255.255.255.0   UG    0      0        0 eth0 
+10.1.1.0        172.31.1.6      255.255.255.0   UG    0      0        0 eth0
+..........      ............    255.255.255.0   UG    0      0        0 eth0
+..........      ............    255.255.255.0   UG    0      0        0 eth0
+10.1.247.0      172.31.1.252    255.255.255.0   UG    0      0        0 eth0        # node253宿主机所在Node网络下其Sbunet中其它宿主机从Pod网分得subnet的路由 
 
-0.0.0.0         172.31.1.255    0.0.0.0         UG    0      0        0 eth0          # node255到到所处Node下Subnet其网关的路由 
-172.31.1.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0          # node255到到所处Node下Subnet其网关的路由 
+0.0.0.0         172.31.1.253    0.0.0.0         UG    0      0        0 eth0        # node253到所处Node网络下Subnet其网关的路由
+172.31.1.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0        # node253到所处Node网络下Subnet其网关的路由
 
-10.0.0.0        10.0.0.0        255.255.255.0   UG    0      0        0 flannel.1     # 与node255处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
-10.0.1.0        10.0.1.0        255.255.255.0   UG    0      0        0 flannel.1     # 与node255处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由   
-10.0.2.0        10.0.2.0        255.255.255.0   UG    0      0        0 flannel.1     # 与node255处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由    
-10.0.3.0        10.0.3.0        255.255.255.0   UG    0      0        0 flannel.1     # 与node255处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由    
-..........      ..........      255.255.255.0   UG    0      0        0 flannel.1     # 与node255处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由  
-..........      ..........      255.255.255.0   UG    0      0        0 flannel.1     # 与node255处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由 
-10.0.253.0      10.0.253.0      255.255.255.0   UG    0      0        0 flannel.1     # 与node255处于Node网络下不同Subnet中各node从Pod网络得到的subnet,相关路由
+10.0.0.0        10.0.0.0        255.255.255.0   UG    0      0        0 flannel.1  
+10.0.1.0        10.0.1.0        255.255.255.0   UG    0      0        0 flannel.1 
+10.0.2.0        10.0.2.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.3.0        10.0.3.0        255.255.255.0   UG    0      0        0 flannel.1
+..........      ..........      255.255.255.0   UG    0      0        0 flannel.1 
+..........      ..........      255.255.255.0   UG    0      0        0 flannel.1 
+10.0.252.0      10.0.252.0      255.255.255.0   UG    0      0        0 flannel.1   # node253宿主机所在Node网绺下其Subnet之外Subnet中相关宿主机从Pod网络分得subnet的路由
 ```
 
 ## 1.3 同宿主机上Pod间的通信
