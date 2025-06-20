@@ -104,7 +104,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 <br>
 
 
-# 2.Flannel之vxlan(DirectRouting为true)的安装步骤
+# 2.Flannel之vxlan(DirectRouting为false)的安装步骤
 ## 2.1 k8s集群的相关规划引入
 <image src="./picture/flannel-vxlan-DirectRoute-false-plan-install.jpg" style="width: 100%; height: auto;">
 
