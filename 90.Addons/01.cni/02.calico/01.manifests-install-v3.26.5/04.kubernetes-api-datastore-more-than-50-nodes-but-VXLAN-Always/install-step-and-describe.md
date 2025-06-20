@@ -128,9 +128,11 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
   交换机H-172-31-0-0-24： 172.31.0.0/24
     master01  172.31.0.1   # <== 会部署worker node相关组件
     master02  172.31.0.2   # <== 会部署worker node相关组件
+    master03  172.31.0.3   # <== 会部署worker node相关组件
   交换机I-172-31-1-0-24： 172.31.1.0/24
     node01    172.31.1.1
     node02    172.31.1.2
+    node03    172.31.1.3
 
 ## Pod网络：10.0.0.0/8
    它是个虚拟网络。overlay。
