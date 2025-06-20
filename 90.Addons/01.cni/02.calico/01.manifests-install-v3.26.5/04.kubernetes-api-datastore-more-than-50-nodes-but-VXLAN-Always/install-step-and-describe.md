@@ -157,8 +157,26 @@ root@deploy:~# kubectl get nodes
 NAME       STATUS                     ROLES    AGE   VERSION
 master01   NotReady,SchedulingDisabled   master   14d   v1.24.4
 master02   NotReady,SchedulingDisabled   master   14d   v1.24.4
+master03   NotReady,SchedulingDisabled   master   14d   v1.24.4
 node01     NotReady                      node     14d   v1.24.4
 node02     NotReady                      node     14d   v1.24.4
+node03     NotReady                      node     14d   v1.24.4
+```
+kube-controller-manager组件从Pod网络给各worker node分配的PodCIDRs信息为如下所示:
+```
+root@deploy:~# kubectl describe nodes | grep -E "Name:|PodCIDRs:"
+Name:               master01
+PodCIDRs:                     10.0.0.0/24
+Name:               master02
+PodCIDRs:                     10.0.1.0/24
+Name:               master03
+PodCIDRs:                     10.0.2.0/24
+Name:               node01
+PodCIDRs:                     10.0.3.0/24
+Name:               node02
+PodCIDRs:                     10.0.4.0/24
+Name:               node03
+PodCIDRs:                     10.0.5.0/24
 ```
 
 ## 2.3 k8s中安装CNI插件Calico vxlan Always
