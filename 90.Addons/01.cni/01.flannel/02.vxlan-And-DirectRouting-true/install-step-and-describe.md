@@ -78,7 +78,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.3.0        10.0.3.0        255.255.255.0   UG    0      0        0 flannel.1
 ..........      ..........      255.255.255.0   UG    0      0        0 flannel.1 
 ..........      ..........      255.255.255.0   UG    0      0        0 flannel.1 
-10.0.252.0      10.0.252.0      255.255.255.0   UG    0      0        0 flannel.1   # node253宿主机所在Node网绺下其Subnet之外Subnet中相关宿主机从Pod网络分得subnet的路由
+10.0.251.0      10.0.251.0      255.255.255.0   UG    0      0        0 flannel.1   # node253宿主机所在Node网绺下其Subnet之外Subnet中相关宿主机从Pod网络分得subnet的路由
 ```
 
 ## 1.3 同宿主机上Pod间的通信
