@@ -3,19 +3,19 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   namespace: default
-  name: client 
+  name: pod-in-container-visit-ipv4
 spec:
   selector:
     matchLabels:
-      app: client 
+      app: pod-in-container-visit-ipv4 
   template:
     metadata:
       labels:
-        app: client 
+        app: pod-in-container-visit-ipv4 
     spec:
       containers:
       - name: admin-toolbox
         image: swr.cn-north-1.myhuaweicloud.com/chenliang/admin-toolbox:v1.0
         imagePullPolicy: IfNotPresent
         args:
-        - "sleep 1000000000"
+        - "ping -c 2  223.5.5.5 && sleep 100000000"
