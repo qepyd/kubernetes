@@ -137,8 +137,8 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
    它是个虚拟网络。overlay。
    kubernetes的kube-controller-manager组件实例其--cluster-cidr参数有指定
 
-## Svc网络：11.0.0.0/8
-   它是个虚拟网络。overlay。
+## Svc网络：11.0.0.0/12
+   它是个虚拟网络。overlay。 网络地址>=12，不然kube-apiserver启动报错
    在k8s中被称为cluster network。
    集群DNS的Domain为：cluster.local
    集群DNS的应用连接：11.0.0.2
