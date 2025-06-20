@@ -106,7 +106,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 # 2.Flannel之vxlan(DirectRouting为true)的安装步骤
 ## 2.1 k8s集群的相关规划引入
-<image src="./picture/calico-ipip-coresssubnet-plan-install.jpg" style="width: 100%; height: auto;">
+<image src="./picture/flannel-vxlan-DirectRoute-true-plan-install.jpg" style="width: 100%; height: auto;">
 
 ```
 ## Node网络：172.31.0.0/16
@@ -136,8 +136,8 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 ## Svc网络：11.0.0.0/12
    它是个虚拟网络。overlay。网络地址得 >=12，不然kube-apiserver启动报错
    在k8s中被称为cluster network。
-   集群DNS的Domain为：cluster.local
-   集群DNS的应用连接：11.0.0.2
+   集群中DNS应用(Pod)对应的svc使用的ClusterIP地址为：11.0.0.2
+   集群中DNS的Domain为：cluster.local
 ```
 
 ## 2.2 k8s各Worker Node当前状态为NotReady
