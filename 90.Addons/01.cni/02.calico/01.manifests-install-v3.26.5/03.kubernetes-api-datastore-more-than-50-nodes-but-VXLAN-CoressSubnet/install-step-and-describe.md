@@ -137,13 +137,17 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 ## Pod网络：10.0.0.0/8
    它是个虚拟网络。overlay。
-   kubernetes的kube-controller-manager组件实例其--cluster-cidr参数有指定
+   kubernetes的kube-controller-manager组件实例
+     --cluster-cidr参数指定值为10.0.0.0/8
+     --node-cidr-mask-size参数指定值为24
+        会按24位网络地址分配subnet,给到worker nodes,
+        我们可以kubectl describe nodes <NodeName> 看其PodCIDRS:字段
 
 ## Svc网络：11.0.0.0/12
-   它是个虚拟网络。overlay。 网络地址得 >=12，不然kube-apiserver启动报错
+   它是个虚拟网络。overlay。网络地址得 >=12，不然kube-apiserver启动报错
    在k8s中被称为cluster network。
-   集群DNS的Domain为：cluster.local
-   集群DNS的应用连接：11.0.0.2
+   集群中DNS应用(Pod)对应的svc使用的ClusterIP地址为：11.0.0.2
+   集群中DNS的Domain为：cluster.local
 ```
 
 ## 2.2 k8s各Worker Node当前状态为NotReady
