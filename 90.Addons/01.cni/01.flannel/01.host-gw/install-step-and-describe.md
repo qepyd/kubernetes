@@ -247,7 +247,7 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
 
 **跨宿主机(Node网络下不同subnet，L3通信)间Pod的通信**
 ```
-........是能够通信的。
+........是不能够通信的。
 ```
 <br>
 <br>
