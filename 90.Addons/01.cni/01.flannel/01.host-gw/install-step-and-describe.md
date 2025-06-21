@@ -198,7 +198,7 @@ sed -i 's#docker.io/flannel/flannel:v0.22.3#swr.cn-north-1.myhuaweicloud.com/qep
 将 "Network": "10.244.0.0/16"  修改成  "Network": "10.0.0.0/8"
   #
   # 得和kubernetes实际指定的Pod网络CIDR保持一致。
-  #   即看kube-controller-manager组件实例的--cluster-cidrc参数。
+  #   即看kube-controller-manager组件实例的--cluster-cidr参数。
   # Flannel不支持在部署时人为另外指定CIDR。
   #
 
@@ -209,6 +209,8 @@ sed -i 's#docker.io/flannel/flannel:v0.22.3#swr.cn-north-1.myhuaweicloud.com/qep
 这样会从kube-apiserver中获取各worker node从Pod网络所得到的Subnet。
    kubernetes基于Pod网络分配Subnet给worker node时，其大小根据kube-controller-manager组件实例
    其--node-cidr-mask-size参数的值。
+其args中可以用--iface指定worker node上的物理网卡,例如eth0
+   --iface=eth0
 ```
 
 **应用manifests**
