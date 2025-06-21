@@ -196,7 +196,19 @@ sed -i 's#docker.io/flannel/flannel:v0.22.3#swr.cn-north-1.myhuaweicloud.com/qep
 #### configmaps/kube-flannel-cfg对象
 # <== data字段中的 net-conf.json 键相关值的更改
 将 "Network": "10.244.0.0/16"  修改成  "Network": "10.0.0.0/8"
-将 "Type": "vxlan"             修改成  "Type": "host-gw"
+  #
+  # 得和kubernetes实际指定的Pod网络CIDR保持一致。
+  #   即看kube-controller-manager组件实例的--cluster-cidrc参数。
+  # Flannel不支持在部署时人为另外指定CIDR。
+  #
+
+将 "Type": "vxlan"             修改成  "Type": "host-gw" 
+
+#### daemonset/kube-flannel-ds对象的主容器之kube-flannel
+其args得包含--kube-subnet-mgr参数。
+这样会从kube-apiserver中获取各worker node从Pod网络所得到的Subnet。
+   kubernetes基于Pod网络分配Subnet给worker node时，其大小根据kube-controller-manager组件实例
+   其--node-cidr-mask-size参数的值。
 ```
 
 **应用manifests**
