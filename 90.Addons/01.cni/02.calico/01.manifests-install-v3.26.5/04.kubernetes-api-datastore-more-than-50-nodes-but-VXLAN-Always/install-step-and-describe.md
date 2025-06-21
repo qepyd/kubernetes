@@ -144,9 +144,14 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 ## Svc网络：11.0.0.0/12
    它是个虚拟网络。overlay。网络地址得 >=12，不然kube-apiserver启动报错
-   在k8s中被称为cluster network。
-   集群中DNS应用(Pod)对应的svc使用的ClusterIP地址为：11.0.0.2
-   集群中DNS的Domain为：cluster.local
+   kube-apiserver组件实例:
+      --service-cluster-ip-range参数进行指定
+   kube-controller-manager组件实例:
+      --service-cluster-ip-range参数进行指定
+   集群中DNS应用(Pod)对应的svc使用的ClusterIP地址为 11.0.0.2
+      kubelet组件实例的 --cluster-dns 参数指定
+   集群中DNS的Domain规划为 cluster.local
+      kubelet组件实例的 --cluster-domain 参数指定。
 ```
 
 ## 2.2 k8s各Worker Node当前状态为NotReady
