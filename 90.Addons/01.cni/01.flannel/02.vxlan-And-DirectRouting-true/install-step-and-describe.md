@@ -225,24 +225,20 @@ sed -i 's#docker.io/flannel/flannel-cni-plugin:v1.2.0#swr.cn-north-1.myhuaweiclo
 sed    's#docker.io/flannel/flannel:v0.22.3#swr.cn-north-1.myhuaweicloud.com/qepyd/flannel:v0.22.3#g'   kube-flannel.yml  | grep "image:"
 sed -i 's#docker.io/flannel/flannel:v0.22.3#swr.cn-north-1.myhuaweicloud.com/qepyd/flannel:v0.22.3#g'   kube-flannel.yml
 
+
 #### configmaps/kube-flannel-cfg对象
 # <== data字段中的 net-conf.json 键相关值的更改
 将 "Network": "10.244.0.0/16"  修改成  "Network": "10.0.0.0/8"
-  #
-  # 得和kubernetes实际指定的Pod网络CIDR保持一致。
-  #   即看kube-controller-manager组件实例的--cluster-cidr参数。
-  # Flannel不支持在部署时人为另外指定CIDR。
-  # 
+  因为daemonset/kube-flannel-ds对象中Pod模板里面的主容器kube-flannel其args字段拥有--kube-subnet-mgr参数，
+  从而会连接kube-apiserver获取各worker node从Pod网络处得到的Subnet,而非etcd。
+  所以得将 "Network": "10.244.0.0/16"  修改成  "Network": "kube-controller-manager组件其--cluster-cidr参数的值"。
+  也无需用SubnetLen来指定大小。
 
-将 "Type": "vxlan"             修改成  "Type": "vxlan", 并在同级别下面添加 "DirectRouting": true
+修改 "Type": "vxlan"             修改成  "Type": "vxlan", 并在同级别下面添加 "DirectRouting": true
 
 #### daemonset/kube-flannel-ds对象的主容器之kube-flannel
-其args得包含--kube-subnet-mgr参数。
-这样会从kube-apiserver中获取各worker node从Pod网络所得到的Subnet。
-   kubernetes基于Pod网络分配Subnet给worker node时，其大小根据kube-controller-manager组件实例
-   其--node-cidr-mask-size参数的值。
-其args中可以用--iface指定worker node上的物理网卡,例如eth0
-   --iface=eth0
+其args得包含--ip-masq、--kube-subnet-mgr参数。
+其args可拥有--iface指定worker node上的物理网卡,例如eth0
 ```
 
 **应用manifests**
