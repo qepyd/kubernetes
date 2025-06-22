@@ -299,6 +299,24 @@ mv calicoctl /usr/local/bin/
 which calicoctl
 ```
 
+## 2.4 测试Pod访问互联网IPv4
+当然k8s的worker node得要能够访问互联网。
+```
+https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_pod-in-container-visit-ipv4.yaml
+```
+
+## 2.5 测试Pod访问互联网FQDN
+**安装coredns**
+```
+参考 https://github.com/qepyd/kubernetes/tree/main/90.Addons/02.dns/01.coredns
+```
+
+**测试Pod访问互联网FQDN**
+```
+https://github.com/qepyd/kubernetes/blob/main/90.Addons/02.dns/ds_pod-in-container-visit-fqdn.yaml
+```
+
+
 # 3.Calico安装后的相关说明
 ## 3.1 基本的一些
 **相关的crd**
