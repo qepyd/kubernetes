@@ -824,6 +824,12 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 kubectl label node  master01 route-reflector=true
 kubectl label node  master02 route-reflector=true
 kubectl label node  master03 route-reflector=true
+  #
+  # 取消标签的命令为
+  #   kubectl label node  master01 route-reflector-
+  #   kubectl label node  master02 route-reflector-
+  #   kubectl label node  master03 route-reflector-
+  #
 ```
 
 **创建BGPPeer资源对象**
@@ -1027,3 +1033,11 @@ No IPv6 peers found.
 ## 是否影响Pod间的通信
 不会影响。同宿主机上Pod间的通信、跨宿主机(Node网络下相同Subnet)间Pod的通信、跨宿主机(Node网络下不同Subnet)间Pod的通信
 ```
+
+**若想恢复BGP全网状**
+```
+kubectl delete -f 02.bgpconfigurations_default.yaml
+kubectl delete -f 01.bgppeer_node-as-route-reflectors.yaml
+取消所选worker node上的标签
+```
+
