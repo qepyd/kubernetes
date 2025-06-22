@@ -108,7 +108,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 # 2.Calico IPIP模式之CoressSubnet的安装步骤
 ## 2.1 k8s集群的相关规划引入
-
 <image src="./picture/calico-ipip-coresssubnet-plan-install.jpg" style="width: 100%; height: auto;">
 
 ```
@@ -198,50 +197,28 @@ ls -l calico-typha.yaml
 
 **修改manifests**
 ```
-## configmap/calico-config对象将被DaemonSet/calico-node对象引用
-# <== 设置calico后端为brid，这样各worker node上具备felix、bird、confd进程。
-calico_backend: "brid"
+#### 查看所用namespace
+grep "namespace:" calico-typha.yaml
+  #
+  # 用到的ns资源对象为kube-system
+  #
 
-## daemonset/calico-node对象
-# Enable IPIP
-- name: CALICO_IPV4POOL_IPIP
-  value: "CoressSubnet"
-	  
-# Enable or Disable VXLAN on the default IP pool.
-- name: CALICO_IPV4POOL_VXLAN
-  value: "Never"
-# Enable or Disable VXLAN on the default IPv6 IP pool.
-- name: CALICO_IPV6POOL_VXLAN
-  value: "Never"
+#### 查看是否包含ns/kube-system对象的manifests
+grep "^kind: Namespace" calico-typha.yaml
+  #
+  # 没有任何ns资源对象其manifests的存在
+  #
 
-# Pod Network IPv4 CIDR，default 192.168.0.0/16
-- name: CALICO_IPV4POOL_CIDR
-  value: "10.0.0.0/8"
-# Pod Network IPv4 CIDR allocation subnet size，默认26
-- name: CALICO_IPV4POOL_BLOCK_SIZE
-  value: "24"
+#### 查看所用到的imge
+grep "image:" calico-typha.yaml
+  #
+  # 所用到的镜像为：
+  #   image: docker.io/calico/cni:v3.26.5
+  #   image: docker.io/calico/kube-controllers:v3.26.5
+  #   image: docker.io/calico/node:v3.26.5
+  #   - image: docker.io/calico/typha:v3.26.5
 
-## deployment/calico-typha
-其副本数默认为1，关于副本数的设置官方的建议为：
-01：官方建议每200个worker node至少设置一个副本，最多不超过20个副本。
-02：在生产环境中，我们建议至少设置三个副本，以减少滚动升级和故障的影响。
-03：副本数量应始终小于节点数量，否则滚动升级将会停滞。
-04：此外，只有当Typha实例数量少于节点数量时，Typha 才能帮助实现扩展。
-```
-
-**替换相关image**
-```
-## 所用镜像
-grep image: calico-typha.yaml  | sort| uniq
-   #
-   # 所用镜像为
-   #   image: docker.io/calico/cni:v3.26.5
-   #   image: docker.io/calico/kube-controllers:v3.26.5
-   #   image: docker.io/calico/node:v3.26.5
-   #   - image: docker.io/calico/typha:v3.26.5
-   #
-
-## 替换镜像
+#### 替换镜像
 我已将相关镜像放至个人镜像仓库中并公开(下载时不用认证)。
    swr.cn-north-1.myhuaweicloud.com/qepyd/calico-cni:v3.26.5
    swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5
@@ -252,6 +229,49 @@ grep image: calico-typha.yaml  | sort| uniq
    sed  -i 's#docker.io/calico/node:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-node:v3.26.5#g'                          calico-typha.yaml
    sed  -i 's#docker.io/calico/kube-controllers:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-kube-controllers:v3.26.5#g'  calico-typha.yaml
    sed  -i "s#docker.io/calico/typha:v3.26.5#swr.cn-north-1.myhuaweicloud.com/qepyd/calico-typha:v3.26.5#g"                        calico-typha.yaml
+
+#### ConfigMap/calico-config对象
+# 设置calico后端为brid，这样各worker node上具备bird、confd进程
+# 各worker node上的felix进程一定是有的
+calico_backend: "brid"
+
+#### DaemonSet/calico-node对象其Pod模板中的主容器之calico-node
+# 配置calico的数据存储位置,默认为kubernetes(即连接kube-apiserver)
+# 当Calico配置为使用Kubernetes API作为数据存储时，用于BGP配置的环
+# 境将被忽略[这包括节点AS编号(AS)的选择和所有IP选择选项（IP、IP6、
+# IP_AUTODETECTION_METHOD、IP6_AUTODETECTION_METHOD）]
+- name: DATASTORE_TYPE
+  value: "kubernetes"
+
+# 开启或关闭IPIP模式,Never表示关闭,Always是其机制，CoressSubnet是其机制。
+- name: CALICO_IPV4POOL_IPIP
+  value: "CoressSubnet"
+	  
+# 开启或关闭IPv4下VXLAN模式,Never表示关闭,Always是其机制,CoressSubnet是其机制。
+- name: CALICO_IPV4POOL_VXLAN
+  value: "Never"
+# 开启或关闭IPv6下VXLAN模式,Never表示关闭,Always是其机制,CoressSubnet是其机制。
+- name: CALICO_IPV6POOL_VXLAN
+  value: "Never"
+
+# Pod Network IPv4 CIDR，默认为192.168.0.0/16，可以不和kubernetes所规划的Pod网
+# 络保持一致(即你可以另外指定一个网络,overlay)
+- name: CALICO_IPV4POOL_CIDR
+  value: "10.0.0.0/8"
+
+# 基于Pod网络在给各worker node分配子网时其子网的大小,默认26位网络地址(理论上可用主机IP数为
+# IP数62(1~62)个,但在此场景下可用主机数是63(1~63)个),当某worker node上的子网其IP数被占用完
+# 以后,calico还会再基于Pod网络给某worker node分配子网。
+# 我这时修改成了24
+- name: CALICO_IPV4POOL_BLOCK_SIZE
+  value: "24"
+
+#### deployment/calico-typha
+其副本数默认为1，关于副本数的设置官方的建议为：
+01：官方建议每200个worker node至少设置一个副本，最多不超过20个副本。
+02：在生产环境中，我们建议至少设置三个副本，以减少滚动升级和故障的影响。
+03：副本数量应始终小于节点数量，否则滚动升级将会停滞。
+04：此外，只有当Typha实例数量少于节点数量时，Typha 才能帮助实现扩展。
 ```
 
 **应用manifests**
