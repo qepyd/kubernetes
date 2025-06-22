@@ -3,7 +3,7 @@
 <image src="./picture/flannel-host-gw-plan.jpg" style="width: 100%; height: auto;">
 
 ## 1.2 各宿主机上的路由 
-所有宿主机(worker node)上的路由均遵循以下node01、node02、node255上的路由规律  
+所有宿主机(worker node)上的路由均遵循以下node01、node02、node253上的路由规律  
 **Node网络下Subnet(172.31.0.0/24)下的节点(k8s node01)**
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
