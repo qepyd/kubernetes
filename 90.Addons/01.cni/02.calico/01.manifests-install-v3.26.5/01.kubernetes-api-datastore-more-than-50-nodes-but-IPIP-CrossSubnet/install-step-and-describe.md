@@ -819,6 +819,211 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 
 # 5.修改全网状的内部BGP(iBGP)成"使用某些节点作为路由反射器"
+**挑选几个Worker Node作为来作为路由反射器，给其打上标签**
+```
+kubectl label node  master01 route-reflector=true
+kubectl label node  master02 route-reflector=true
+kubectl label node  master03 route-reflector=true
+```
+
+**创建BGPPeer资源对象**
+```
+## 编写manifests
+cat >./01.bgppeer_node-as-route-reflectors.yaml<<'EOF'
+kind: BGPPeer
+apiVersion: crd.projectcalico.org/v1
+metadata:
+  name: node-as-route-reflectors
+spec:
+  nodeSelector: all()
+  peerSelector: route-reflector == 'true'
+EOF
+
+## 应用manifests
+kubectl apply -f 01.bgppeer_node-as-route-reflectors.yaml --dry-run=client
+kubectl apply -f 01.bgppeer_node-as-route-reflectors.yaml
+
+## 各worker node上的BGP连接状态为(以master01、node02的来展示)
+root@master01:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 172.31.1.1   | node-to-node mesh | up    | 20:22:51 | Established |
+| 172.31.1.2   | node-to-node mesh | up    | 20:22:52 | Established |
+| 172.31.1.3   | node-to-node mesh | up    | 20:22:52 | Established |
+| 172.31.0.2   | node-to-node mesh | up    | 20:22:52 | Established |
+| 172.31.0.3   | node-to-node mesh | up    | 20:22:53 | Established |
+| 172.31.0.2   | node specific     | start | 20:26:37 | Idle        |
+| 172.31.0.3   | node specific     | start | 20:26:37 | Idle        |
+| 172.31.1.1   | node specific     | start | 20:26:37 | Idle        |
+| 172.31.1.2   | node specific     | start | 20:26:37 | Idle        |
+| 172.31.1.3   | node specific     | start | 20:26:37 | Idle        |
++--------------+-------------------+-------+----------+-------------+
+
+IPv6 BGP status
+No IPv6 peers found.
+
+root@node01:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 172.31.1.2   | node-to-node mesh | up    | 15:40:13 | Established |
+| 172.31.1.3   | node-to-node mesh | up    | 15:40:13 | Established |
+| 172.31.0.1   | node-to-node mesh | up    | 20:22:52 | Established |
+| 172.31.0.2   | node-to-node mesh | up    | 20:22:53 | Established |
+| 172.31.0.3   | node-to-node mesh | up    | 20:22:54 | Established |
+| 172.31.0.1   | node specific     | start | 20:26:37 | Idle        |
+| 172.31.0.2   | node specific     | start | 20:26:37 | Idle        |
+| 172.31.0.3   | node specific     | start | 20:26:37 | Idle        |
++--------------+-------------------+-------+----------+-------------+
+
+IPv6 BGP status
+No IPv6 peers found.
 
 
+## 是否影响Pod间的通信
+不会影响。同宿主机上Pod间的通信、跨宿主机(Node网络下相同Subnet)间Pod的通信、跨宿主机(Node网络下不同Subnet)间Pod的通信
+```
 
+**创建bgpconfigurations/default对象**
+```
+## 编写manifests
+cat >./02.bgpconfigurations_default.yaml<<'EOF'
+apiVersion: crd.projectcalico.org/v1
+kind: BGPConfiguration
+metadata:
+  # 名字必须得是default,不然关闭不了
+  name: default 
+spec:
+  logSeverityScreen: Info
+  # 修改成了false
+  nodeToNodeMeshEnabled: false
+  asNumber: 64512
+EOF
+
+## 应用manifests
+kubectl apply -f 02.bgpconfigurations_default.yaml  --dry-run=client
+kubectl apply -f 02.bgpconfigurations_default.yaml
+
+## 各worker node上BGP的连接状态展示
+root@master01:~#
+root@master01:~#
+root@master01:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+---------------+-------+----------+-------------+
+| PEER ADDRESS |   PEER TYPE   | STATE |  SINCE   |    INFO     |
++--------------+---------------+-------+----------+-------------+
+| 172.31.0.2   | node specific | up    | 20:36:05 | Established |
+| 172.31.0.3   | node specific | up    | 20:36:05 | Established |
+| 172.31.1.1   | node specific | up    | 20:36:05 | Established |
+| 172.31.1.2   | node specific | up    | 20:36:05 | Established |
+| 172.31.1.3   | node specific | up    | 20:36:05 | Established |
++--------------+---------------+-------+----------+-------------+  # 它作为路由反射器(rr),肯定是要有其它所有worker node的连接
+
+IPv6 BGP status
+No IPv6 peers found.
+
+root@master02:~#
+root@master02:~#
+root@master02:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+---------------+-------+----------+-------------+
+| PEER ADDRESS |   PEER TYPE   | STATE |  SINCE   |    INFO     |
++--------------+---------------+-------+----------+-------------+
+| 172.31.0.3   | node specific | up    | 20:43:52 | Established |
+| 172.31.0.1   | node specific | up    | 20:43:50 | Established |
+| 172.31.1.1   | node specific | up    | 20:43:51 | Established |
+| 172.31.1.2   | node specific | up    | 20:43:51 | Established |
+| 172.31.1.3   | node specific | up    | 20:43:50 | Established |
++--------------+---------------+-------+----------+-------------+  # 它作为路由反射器(rr),肯定是要有其它所有worker node的连接
+
+IPv6 BGP status
+No IPv6 peers found.
+
+root@master03:~#
+root@master03:~#
+root@master03:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+---------------+-------+----------+-------------+
+| PEER ADDRESS |   PEER TYPE   | STATE |  SINCE   |    INFO     |
++--------------+---------------+-------+----------+-------------+
+| 172.31.0.1   | node specific | up    | 20:43:51 | Established |
+| 172.31.0.2   | node specific | up    | 20:43:51 | Established |
+| 172.31.1.1   | node specific | up    | 20:43:51 | Established |
+| 172.31.1.2   | node specific | up    | 20:43:51 | Established |
+| 172.31.1.3   | node specific | up    | 20:43:51 | Established |
++--------------+---------------+-------+----------+-------------+ # 它作为路由反射器(rr),肯定是要有其它所有worker node的连接
+
+IPv6 BGP status
+No IPv6 peers found.
+
+
+root@node01:~#
+root@node01:~#
+root@node01:~# calicoctl  node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+---------------+-------+----------+-------------+
+| PEER ADDRESS |   PEER TYPE   | STATE |  SINCE   |    INFO     |
++--------------+---------------+-------+----------+-------------+
+| 172.31.0.1   | node specific | up    | 20:36:05 | Established |
+| 172.31.0.2   | node specific | up    | 20:36:06 | Established |
+| 172.31.0.3   | node specific | up    | 20:36:06 | Established |
++--------------+---------------+-------+----------+-------------+   # 它会到作为路由反身器(rr)的节点上去建立bgp连接
+
+IPv6 BGP status
+No IPv6 peers found.
+
+
+root@node02:~# 
+root@node02:~# 
+root@node02:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+---------------+-------+----------+-------------+
+| PEER ADDRESS |   PEER TYPE   | STATE |  SINCE   |    INFO     |
++--------------+---------------+-------+----------+-------------+
+| 172.31.0.1   | node specific | up    | 20:43:50 | Established |
+| 172.31.0.2   | node specific | up    | 20:43:51 | Established |
+| 172.31.0.3   | node specific | up    | 20:43:52 | Established |
++--------------+---------------+-------+----------+-------------+  # 它会到作为路由反身器(rr)的节点上去建立bgp连接
+
+IPv6 BGP status
+No IPv6 peers found.
+
+
+root@node03:~# 
+root@node03:~# 
+root@node03:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+---------------+-------+----------+-------------+
+| PEER ADDRESS |   PEER TYPE   | STATE |  SINCE   |    INFO     |
++--------------+---------------+-------+----------+-------------+
+| 172.31.0.1   | node specific | up    | 20:43:50 | Established |
+| 172.31.0.2   | node specific | up    | 20:43:51 | Established |
+| 172.31.0.3   | node specific | up    | 20:43:52 | Established |
++--------------+---------------+-------+----------+-------------+  # 它会到作为路由反身器(rr)的节点上去建立bgp连接
+
+IPv6 BGP status
+No IPv6 peers found.
+
+
+## 是否影响Pod间的通信
+不会影响。同宿主机上Pod间的通信、跨宿主机(Node网络下相同Subnet)间Pod的通信、跨宿主机(Node网络下不同Subnet)间Pod的通信
+```
