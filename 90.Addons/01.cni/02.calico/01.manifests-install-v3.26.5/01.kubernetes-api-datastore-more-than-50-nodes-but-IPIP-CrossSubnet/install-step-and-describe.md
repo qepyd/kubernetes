@@ -1034,7 +1034,8 @@ No IPv6 peers found.
 不会影响。同宿主机上Pod间的通信、跨宿主机(Node网络下相同Subnet)间Pod的通信、跨宿主机(Node网络下不同Subnet)间Pod的通信
 ```
 
-**若想恢复BGP全网状**
+**若想恢复BGP全网状**  
+即上述操作反着来
 ```
 kubectl delete -f 02.bgpconfigurations_default.yaml
 kubectl delete -f 01.bgppeer_node-as-route-reflectors.yaml
