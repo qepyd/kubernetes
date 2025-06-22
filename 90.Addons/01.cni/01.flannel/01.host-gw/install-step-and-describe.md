@@ -319,7 +319,8 @@ master01宿主机上的 client-dtlrx  10.0.0.5  访问  node01上的 server-xfk9
 kubectl -n default exec -it pods/client-dtlrx  -- curl 10.0.3.6
   #
   # 是无法通信的
-  # 
+  # 若想实现通信，只有在Underlay网络(Node网络)的路由器处添加条目
+  #  
 ```
 
 ## 2.7 再看看各worker node上相关的路由
