@@ -624,3 +624,201 @@ NAME      AGE
 default   17h
 ```
 
+# 4.Pod间通信的测试及再看各worker node上的Route
+## 4.1 Pod间通信的测试(必要)
+**创建ClientPod**  
+https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_client.yaml
+```
+## 应用manifests
+kubectl apply -f https://raw.githubusercontent.com/qepyd/kubernetes/refs/heads/main/90.Addons/01.cni/ds_client.yaml
+
+## 相关Pod副本
+root@deploy:~# kubectl -n default get pods -o wide | grep client | sort -k 7
+client-f5qrv   1/1     Running   0          15s   10.86.170.5    master01   <none>           <none>
+client-p8ljb   1/1     Running   0          15s   10.223.71.5    master02   <none>           <none>
+client-mlzr2   1/1     Running   0          15s   10.83.172.5    master03   <none>           <none>
+client-m8gl2   1/1     Running   0          15s   10.214.66.6    node01     <none>           <none>
+client-w9bzq   1/1     Running   0          15s   10.126.231.5   node02     <none>           <none>
+client-dcgr9   1/1     Running   0          15s   10.130.186.6   node03     <none>           <none>
+```
+
+**创建ServerPod**  
+https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
+```
+## 应用manifests
+kubectl apply -f  https://raw.githubusercontent.com/qepyd/kubernetes/refs/heads/main/90.Addons/01.cni/ds_server.yaml
+
+## 相关Pod副本
+root@deploy:~# kubectl -n default get pods -o wide | grep server | sort -k 7
+server-sbwwl   1/1     Running   0          37s   10.86.170.6    master01   <none>           <none>
+server-wrh24   1/1     Running   0          37s   10.223.71.6    master02   <none>           <none>
+server-mljq5   1/1     Running   0          37s   10.83.172.6    master03   <none>           <none>
+server-s8s49   1/1     Running   0          37s   10.214.66.7    node01     <none>           <none>
+server-t2m74   1/1     Running   0          37s   10.126.231.6   node02     <none>           <none>
+server-2xjrs   1/1     Running   0          37s   10.130.186.7   node03     <none>           <none>
+```
+
+**宿主机上Pod间的通信**
+```
+## 说明
+master01宿主机上的 client-f5qrv  10.86.170.5  访问  master01上的 server-sbwwl   10.86.170.6
+
+## 操作
+kubectl -n default exec -it pods/client-f5qrv  -- curl 10.86.170.6
+  #
+  # 是可以通信的
+  #
+```
+
+**跨宿主机(Node网络下相同subnet，L2通信)间Pod的通信**
+```
+## 说明
+master01宿主机上的 client-f5qrv  10.86.170.5  访问  master02上的 server-wrh24  10.223.71.6
+
+## 操作
+kubectl -n default exec -it pods/client-f5qrv  -- curl 10.223.71.6
+  #
+  # 是可以通信的
+  #
+```
+
+**跨宿主机(Node网络下不同subnet，L3通信)间Pod的通信**
+```
+## 说明
+master01宿主机上的 client-f5qrv  10.86.170.5  访问  node01上的 server-s8s49 10.214.66.7
+
+## 操作
+kubectl -n default exec -it pods/client-f5qrv  -- curl 10.214.66.7
+  #
+  # 是可以通信的
+  #  
+```
+
+## 4.2 再看各worker node上的Route
+**Node网络下Subnet(172.31.0.0/24)中的节点(k8s master01)**
+```
+root@master01:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.86.170.0     0.0.0.0         255.255.255.0   U     0      0        0 *
+10.86.170.5     0.0.0.0         255.255.255.255 UH    0      0        0 cali33620437125
+10.86.170.6     0.0.0.0         255.255.255.255 UH    0      0        0 cali19e819f5bf4
+
+10.223.71.0     172.31.0.2      255.255.255.0   UG    0      0        0 eth0
+10.83.172.0     172.31.0.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.0.253    0.0.0.0         UG    100    0        0 eth0
+172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.214.66.0     172.31.1.1      255.255.255.0   UG    0      0        0 tunl0
+10.126.231.0    172.31.1.2      255.255.255.0   UG    0      0        0 tunl0
+10.130.186.0    172.31.1.3      255.255.255.0   UG    0      0        0 tunl0
+```
+
+**Node网络下Subnet(172.31.0.0/24)中的节点(k8s master02)**
+```
+root@master02:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.223.71.0     0.0.0.0         255.255.255.0   U     0      0        0 *
+10.223.71.5     0.0.0.0         255.255.255.255 UH    0      0        0 cali6173badad92
+10.223.71.6     0.0.0.0         255.255.255.255 UH    0      0        0 cali245d3089aa6
+
+10.86.170.0     172.31.0.1      255.255.255.0   UG    0      0        0 eth0
+10.83.172.0     172.31.0.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.0.253    0.0.0.0         UG    100    0        0 eth0
+172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.214.66.0     172.31.1.1      255.255.255.0   UG    0      0        0 tunl0
+10.126.231.0    172.31.1.2      255.255.255.0   UG    0      0        0 tunl0
+10.130.186.0    172.31.1.3      255.255.255.0   UG    0      0        0 tunl0
+```
+
+**Node网络下Subnet(172.31.0.0/24)中的节点(k8s master03)**
+```
+root@master03:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.83.172.0     0.0.0.0         255.255.255.0   U     0      0        0 *
+10.83.172.5     0.0.0.0         255.255.255.255 UH    0      0        0 calidedf6f47bd2
+10.83.172.6     0.0.0.0         255.255.255.255 UH    0      0        0 calid9186ac80bc
+
+10.86.170.0     172.31.0.1      255.255.255.0   UG    0      0        0 eth0
+10.223.71.0     172.31.0.2      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.0.253    0.0.0.0         UG    100    0        0 eth0
+172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.214.66.0     172.31.1.1      255.255.255.0   UG    0      0        0 tunl0
+10.126.231.0    172.31.1.2      255.255.255.0   UG    0      0        0 tunl0
+10.130.186.0    172.31.1.3      255.255.255.0   UG    0      0        0 tunl0
+```
+
+**Node网络下Subnet(172.31.1.0/24)中的节点(k8s node01)**
+```
+root@node01:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.214.66.0     0.0.0.0         255.255.255.0   U     0      0        0 *
+10.214.66.1     0.0.0.0         255.255.255.255 UH    0      0        0 calid3390188c44
+10.214.66.6     0.0.0.0         255.255.255.255 UH    0      0        0 calie1035b9645d
+10.214.66.7     0.0.0.0         255.255.255.255 UH    0      0        0 cali3157a7c9bef
+
+10.126.231.0    172.31.1.2      255.255.255.0   UG    0      0        0 eth0
+10.130.186.0    172.31.1.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.1.253    0.0.0.0         UG    100    0        0 eth0
+172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.86.170.0     172.31.0.1      255.255.255.0   UG    0      0        0 tunl0
+10.223.71.0     172.31.0.2      255.255.255.0   UG    0      0        0 tunl0
+10.83.172.0     172.31.0.3      255.255.255.0   UG    0      0        0 tunl0
+```
+
+**Node网络下Subnet(172.31.1.0/24)中的节点(k8s node02)**
+```
+root@node02:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.126.231.0    0.0.0.0         255.255.255.0   U     0      0        0 *
+10.126.231.5    0.0.0.0         255.255.255.255 UH    0      0        0 cali13b6e8ed029
+10.126.231.6    0.0.0.0         255.255.255.255 UH    0      0        0 calie1d47d54d77
+
+10.214.66.0     172.31.1.1      255.255.255.0   UG    0      0        0 eth0
+10.130.186.0    172.31.1.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.1.253    0.0.0.0         UG    100    0        0 eth0
+172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.86.170.0     172.31.0.1      255.255.255.0   UG    0      0        0 tunl0
+10.223.71.0     172.31.0.2      255.255.255.0   UG    0      0        0 tunl0
+10.83.172.0     172.31.0.3      255.255.255.0   UG    0      0        0 tunl0
+```
+
+**Node网络下Subnet(172.31.1.0/24)中的节点(k8s node03)**
+```
+root@node03:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.130.186.0    0.0.0.0         255.255.255.0   U     0      0        0 *
+10.130.186.2    0.0.0.0         255.255.255.255 UH    0      0        0 cali34c221551ac
+10.130.186.6    0.0.0.0         255.255.255.255 UH    0      0        0 calia38057c4a26
+10.130.186.7    0.0.0.0         255.255.255.255 UH    0      0        0 cali3567303470a
+
+10.214.66.0     172.31.1.1      255.255.255.0   UG    0      0        0 eth0
+10.126.231.0    172.31.1.2      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.1.253    0.0.0.0         UG    100    0        0 eth0
+172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.86.170.0     172.31.0.1      255.255.255.0   UG    0      0        0 tunl0
+10.223.71.0     172.31.0.2      255.255.255.0   UG    0      0        0 tunl0
+10.83.172.0     172.31.0.3      255.255.255.0   UG    0      0        0 tunl0
+```
+
+
+# 5.修改全网状的内部BGP(iBGP)成"使用某些节点作为路由反射器"
+
+
+
