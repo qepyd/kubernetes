@@ -4,7 +4,7 @@
 
 ## 1.2 各宿主机上的路由 
 所有宿主机(worker node)上的路由均遵循以下node01、node02、node255上的路由规律  
-**Node网络下Subnet(172.31.0.0/16)下的节点(k8s node01)**
+**Node网络下Subnet(172.31.0.0/24)下的节点(k8s node01)**
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.0.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
@@ -14,13 +14,18 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.3.0        172.31.0.4      255.255.255.0   UG    0      0        0 eth0
 ............    ..............  255.255.255.0   UG    0      0        0 eth0
 ............    ..............  255.255.255.0   UG    0      0        0 eth0
-10.255.254.0    172.31.255.254  255.255.255.0   UG    0      0        0 eth0
+10.0.251.0      172.31.0.252    255.255.255.0   UG    0      0        0 eth0
 
-0.0.0.0         172.31.0.255    0.0.0.0         UG    0      0        0 eth0   # Node网络其第一个子网的路由 
+0.0.0.0         172.31.0.253    0.0.0.0         UG    0      0        0 eth0   # Node网络其第一个子网的路由 
 172.31.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0   # Node网络其第一个子网的路由
+
+........没到到达Node网络下另外Subnet(172.31.1.0/24)相关宿主机的路由........
+........没到到达Node网络下另外Subnet(172.31.1.0/24)相关宿主机的路由........
+........没到到达Node网络下另外Subnet(172.31.1.0/24)相关宿主机的路由........
+........没到到达Node网络下另外Subnet(172.31.1.0/24)相关宿主机的路由........
 ```
 
-**Node网络下Subnet(172.31.0.0/16)下的节点(k8s node02)**
+**Node网络下Subnet(172.31.0.0/24)下的节点(k8s node02)**
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.1.0        0.0.0.0         255.255.255.0   UG    0      0        0 cni0
@@ -30,29 +35,39 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.3.0        172.31.0.4      255.255.255.0   UG    0      0        0 eth0
 ............    ..............  255.255.255.0   UG    0      0        0 eth0
 ............    ..............  255.255.255.0   UG    0      0        0 eth0
-10.255.254.0    172.31.255.254  255.255.255.0   UG    0      0        0 eth0
+10.0.251.0      172.31.0.252    255.255.255.0   UG    0      0        0 eth0
 
-0.0.0.0         172.31.0.255    0.0.0.0         UG    0      0        0 eth0  # Node网络其第一个子网的路由
+0.0.0.0         172.31.0.253    0.0.0.0         UG    0      0        0 eth0  # Node网络其第一个子网的路由
 172.31.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0  # Node网络其第一个子网的路由
+
+........没到到达Node网络下另外Subnet(172.31.1.0/24)相关宿主机的路由........
+........没到到达Node网络下另外Subnet(172.31.1.0/24)相关宿主机的路由........
+........没到到达Node网络下另外Subnet(172.31.1.0/24)相关宿主机的路由........
+........没到到达Node网络下另外Subnet(172.31.1.0/24)相关宿主机的路由........
 ```
 
-**Node网络下Subnet(172.31.0.0/16)下的节点(k8s node255)**
+**Node网络下Subnet(172.31.1.0/24)下的节点(k8s node253)**
 ```
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-10.0.254.0      0.0.0.0         255.255.255.0   UG    0      0        0 cni0
+10.0.252.0      0.0.0.0         255.255.255.0   UG    0      0        0 cni0
 
-10.0.0.0        172.31.0.1      255.255.255.0   UG    0      0        0 eth0
-10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 eth0
-10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0
-10.0.3.0        172.31.0.4      255.255.255.0   UG    0      0        0 eth0
+10.0.253.0      172.31.1.2      255.255.255.0   UG    0      0        0 eth0
+10.0.254.0      172.31.1.3      255.255.255.0   UG    0      0        0 eth0
+10.0.255.0      172.31.1.4      255.255.255.0   UG    0      0        0 eth0
+10.1.0.0        172.31.1.5      255.255.255.0   UG    0      0        0 eth0
+10.1.1.0        172.31.1.6      255.255.255.0   UG    0      0        0 eth0
 ............    ..............  255.255.255.0   UG    0      0        0 eth0
 ............    ..............  255.255.255.0   UG    0      0        0 eth0
-10.255.254.0    172.31.255.254  255.255.255.0   UG    0      0        0 eth0
+10.1.247.0      172.31.1.252    255.255.255.0   UG    0      0        0 eth0
 
-0.0.0.0         172.31.1.255    0.0.0.0         UG    0      0        0 eth0  # Node网络其第二个子网的路由 
+0.0.0.0         172.31.1.253    0.0.0.0         UG    0      0        0 eth0  # Node网络其第二个子网的路由 
 172.31.1.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0  # Node网络其第二个子网的路由  
-```
 
+........没到到达Node网络下另外Subnet(172.31.0.0/24)相关宿主机的路由........
+........没到到达Node网络下另外Subnet(172.31.0.0/24)相关宿主机的路由........
+........没到到达Node网络下另外Subnet(172.31.0.0/24)相关宿主机的路由........
+........没到到达Node网络下另外Subnet(172.31.0.0/24)相关宿主机的路由.......
+```
 
 ## 1.3 同宿主机上Pod间的通信
 注意：直接通过cni0网关就进行转发了
@@ -239,29 +254,157 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/02.dns/ds_pod-in-contain
 ```
 
 ## 2.6 Pod间的通信测试(必要的)
-**创建ClientPod**
-```
+**创建ClientPod**  
 https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_client.yaml
 ```
+## 应用manifests
+kubectl apply -f https://raw.githubusercontent.com/qepyd/kubernetes/refs/heads/main/90.Addons/01.cni/ds_client.yaml
 
-**创建ServerPod**
+## 相关Pod副本
+root@deploy:~# kubectl -n default get pods -o wide | grep client | sort -k 7
+client-dtlrx   1/1     Running   0          44s   10.0.0.5   master01   <none>           <none>
+client-vs8tn   1/1     Running   0          44s   10.0.1.5   master02   <none>           <none>
+client-r5t7v   1/1     Running   0          44s   10.0.2.5   master03   <none>           <none>
+client-lwkl9   1/1     Running   0          44s   10.0.3.5   node01     <none>           <none>
+client-d79t2   1/1     Running   0          44s   10.0.4.6   node02     <none>           <none>
+client-lz2pd   1/1     Running   0          44s   10.0.5.5   node03     <none>           <none>
 ```
+
+**创建ServerPod**  
 https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
+```
+## 应用manifests
+kubectl apply -f  https://raw.githubusercontent.com/qepyd/kubernetes/refs/heads/main/90.Addons/01.cni/ds_server.yaml
+
+## 相关Pod副本
+root@deploy:~# kubectl -n default get pods -o wide | grep server | sort -k 7
+server-wbgn7   1/1     Running   0          31s   10.0.0.6   master01   <none>           <none>
+server-r76fz   1/1     Running   0          31s   10.0.1.6   master02   <none>           <none>
+server-vw76k   1/1     Running   0          31s   10.0.2.6   master03   <none>           <none>
+server-xfk92   1/1     Running   0          31s   10.0.3.6   node01     <none>           <none>
+server-cbchq   1/1     Running   0          31s   10.0.4.7   node02     <none>           <none>
+server-wldwv   1/1     Running   0          31s   10.0.5.6   node03     <none>           <none>
 ```
 
 **宿主机上Pod间的通信**
 ```
-........是能够通信的。
+## 说明
+master01宿主机上的 client-dtlrx  10.0.0.5  访问  master01上的 server-wbgn7 10.0.0.6
+
+## 操作
+kubectl -n default exec -it pods/client-dtlrx  -- curl 10.0.0.6
+  #
+  # 是可以通信的
+  #
 ```
 
 **跨宿主机(Node网络下相同subnet，L2通信)间Pod的通信**
 ```
-........是能够通信的。
+## 说明
+master01宿主机上的 client-dtlrx  10.0.0.5  访问  master02上的 server-r76fz 10.0.1.6
+
+## 操作
+kubectl -n default exec -it pods/client-dtlrx  -- curl 10.0.1.6
+  #
+  # 是可以通信的
+  #
 ```
 
 **跨宿主机(Node网络下不同subnet，L3通信)间Pod的通信**
 ```
-........是不能够通信的。
+## 说明
+master01宿主机上的 client-dtlrx  10.0.0.5  访问  node01上的 server-xfk92 10.0.3.6
+
+## 操作
+kubectl -n default exec -it pods/client-dtlrx  -- curl 10.0.3.6
+  #
+  # 是无法通信的
+  # 
+```
+
+2.7 再看看各worker node上相关的路由
+**Node网络下Subnet(172.31.0.0/24)下的节点(k8s master01)**
+```
+root@master01:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.0.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 eth0
+10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.0.253    0.0.0.0         UG    100    0        0 eth0
+172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+```
+
+**Node网络下Subnet(172.31.0.0/24)下的节点(k8s master02)**
+```
+root@master02:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.1.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.0.0        172.31.0.1      255.255.255.0   UG    0      0        0 eth0
+10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.0.253    0.0.0.0         UG    100    0        0 eth0
+172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+```
+
+**Node网络下Subnet(172.31.0.0/24)下的节点(k8s master03)**
+```
+root@master03:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.2.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.0.0        172.31.0.1      255.255.255.0   UG    0      0        0 eth0
+10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.0.253    0.0.0.0         UG    100    0        0 eth0
+172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+```
+
+**Node网络下Subnet(172.31.1.0/24)下的节点(k8s node01)**
+```
+root@node01:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.3.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.4.0        172.31.1.2      255.255.255.0   UG    0      0        0 eth0
+10.0.5.0        172.31.1.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.1.253    0.0.0.0         UG    100    0        0 eth0
+172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+```
+
+**Node网络下Subnet(172.31.1.0/24)下的节点(k8s node02)**
+```
+root@node02:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.4.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.3.0        172.31.1.1      255.255.255.0   UG    0      0        0 eth0
+10.0.5.0        172.31.1.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.1.253    0.0.0.0         UG    100    0        0 eth0
+172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+```
+
+**Node网络下Subnet(172.31.1.0/24)下的节点(k8s node03)**
+```
+root@node03:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.3.0        172.31.1.1      255.255.255.0   UG    0      0        0 eth0
+10.0.4.0        172.31.1.2      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.1.253    0.0.0.0         UG    100    0        0 eth0
+172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
 ```
 <br>
 <br>
