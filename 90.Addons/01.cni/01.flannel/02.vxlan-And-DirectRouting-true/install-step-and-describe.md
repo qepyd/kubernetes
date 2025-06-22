@@ -345,8 +345,7 @@ kubectl -n default exec -it pods/client-m4pgm  -- curl 10.0.3.6
 ## 2.7 再看看各worker node上相关的路由
 **Node网络下Subnet(172.31.0.0/24)中的节点(k8s master01)**
 ```
-
-t@master01:~# route -n
+root@master01:~# route -n
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.0.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
@@ -364,8 +363,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 **Node网络下Subnet(172.31.0.0/24)中的节点(k8s master02)**
 ```
-
-t@master02:~# route -n
+root@master02:~# route -n
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.1.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
@@ -401,8 +399,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 **Node网络下Subnet(172.31.1.0/24)中的节点(k8s node01)**
 ```
-
-t@node01:~# route -n
+root@node01:~# route -n
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.0.3.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
