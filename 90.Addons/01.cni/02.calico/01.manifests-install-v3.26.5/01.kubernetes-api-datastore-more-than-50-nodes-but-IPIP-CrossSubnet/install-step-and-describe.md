@@ -276,14 +276,34 @@ calico_backend: "brid"
 
 **应用manifests**
 ```
+## 应用manifests
 kubectl apply -f calico-typha.yaml --dry-run=client
 kubectl apply -f calico-typha.yaml
+
+## 列出相关的Pod
+kubectl -n kube-system get ds/calico-node
+kubectl -n kube-system get pods | grep calico-node
+
+## 查看当前k8s中worker node的状态
+kubectl get nodes
+  #
+  # 此时各worker node的状态为包含Ready即为正常
+  #
 ```
 
-## 2.4 安装后相关资源对象的查看及说明
+**到各worker node、管理机(具备当前k8s集群kubectl工具后用kubeconfig)上安装client工具calicoctl**
+```
+curl -L https://github.com/projectcalico/calico/releases/download/v3.26.5/calicoctl-linux-amd64 -o calicoctl
+chmod +x calicoctl
+mv calicoctl /usr/local/bin/
+which calicoctl
+```
+
+# 3.Calico安装后的相关说明
+## 3.1 基本的一些
 **相关的crd**
 ```
-root@deploy:~#
+root@deploy:~# 
 root@deploy:~# kubectl get crd | grep calico.org
 bgpconfigurations.crd.projectcalico.org               2025-06-17T12:09:49Z
 bgpfilters.crd.projectcalico.org                      2025-06-17T12:09:49Z
@@ -303,9 +323,30 @@ ipreservations.crd.projectcalico.org                  2025-06-17T12:09:50Z
 kubecontrollersconfigurations.crd.projectcalico.org   2025-06-17T12:09:50Z
 networkpolicies.crd.projectcalico.org                 2025-06-17T12:09:50Z
 networksets.crd.projectcalico.org                     2025-06-17T12:09:50Z
+root@deploy:~# 
+root@deploy:~# 
+root@deploy:~# kubectl api-resources  | grep crd.projectcalico.org
+bgpconfigurations                              crd.projectcalico.org/v1               false        BGPConfiguration
+bgpfilters                                     crd.projectcalico.org/v1               false        BGPFilter
+bgppeers                                       crd.projectcalico.org/v1               false        BGPPeer
+blockaffinities                                crd.projectcalico.org/v1               false        BlockAffinity
+caliconodestatuses                             crd.projectcalico.org/v1               false        CalicoNodeStatus
+clusterinformations                            crd.projectcalico.org/v1               false        ClusterInformation
+felixconfigurations                            crd.projectcalico.org/v1               false        FelixConfiguration
+globalnetworkpolicies                          crd.projectcalico.org/v1               false        GlobalNetworkPolicy
+globalnetworksets                              crd.projectcalico.org/v1               false        GlobalNetworkSet
+hostendpoints                                  crd.projectcalico.org/v1               false        HostEndpoint
+ipamblocks                                     crd.projectcalico.org/v1               false        IPAMBlock
+ipamconfigs                                    crd.projectcalico.org/v1               false        IPAMConfig
+ipamhandles                                    crd.projectcalico.org/v1               false        IPAMHandle
+ippools                                        crd.projectcalico.org/v1               false        IPPool
+ipreservations                                 crd.projectcalico.org/v1               false        IPReservation
+kubecontrollersconfigurations                  crd.projectcalico.org/v1               false        KubeControllersConfiguration
+networkpolicies                                crd.projectcalico.org/v1               true         NetworkPolicy
+networksets                                    crd.projectcalico.org/v1               true         NetworkSet
 ```
 
-**calico-node**
+**ds/calico-node**
 ```
 ## 列出ds/calico-node对象
 kubectl -n kube-system get ds/calico-node
@@ -314,9 +355,9 @@ kubectl -n kube-system get ds/calico-node
 kubectl -n kube-system get pods -o wide | grep calico-node
 ```
 
-**各worker node上相关进程**
+**各worker node上相关进程**  
+到各worker node上具备felix、bird、confd进程
 ```
-各worker node上具备felix、bird、confd进程
 ps -ef | grep felix
 ps -ef | grep bird
 ps -ef | confd
@@ -331,6 +372,134 @@ kubectl -n kube-system get deploy/calico-typha
 kubectl -n kube-system get pods -o wide | grep calico-typha
 ```
 
+## 3.2 BGP相关的
+**各worker node上bgp的连接状态**
+```
+## 说明
+启用BGP后，Calico 的默认行为是创建一个全网状的内部 BGP (iBGP) 连接，其中每个节点彼此对等。
+
+## worker node之master01上的BGP连接情况
+root@master01:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 172.31.0.2   | node-to-node mesh | up    | 16:36:34 | Established |
+| 172.31.0.3   | node-to-node mesh | up    | 17:43:34 | Established |
+| 172.31.1.1   | node-to-node mesh | up    | 16:36:33 | Established |
+| 172.31.1.2   | node-to-node mesh | up    | 16:36:34 | Established |
+| 172.31.1.3   | node-to-node mesh | up    | 16:36:34 | Established |
++--------------+-------------------+-------+----------+-------------+   # 除了自己之外
+
+IPv6 BGP status
+No IPv6 peers found.
+
+## worker node之master02上的BGP连接情况
+root@master02:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 172.31.0.1   | node-to-node mesh | up    | 16:36:34 | Established |
+| 172.31.0.3   | node-to-node mesh | up    | 17:43:34 | Established |
+| 172.31.1.1   | node-to-node mesh | up    | 15:40:15 | Established |
+| 172.31.1.2   | node-to-node mesh | up    | 14:54:23 | Established |
+| 172.31.1.3   | node-to-node mesh | up    | 15:10:03 | Established |
++--------------+-------------------+-------+----------+-------------+  # 除了自己之外
+
+IPv6 BGP status
+No IPv6 peers found.
+
+## worker node之master03上的BGP连接情况
+root@master03:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 172.31.0.1   | node-to-node mesh | up    | 17:43:34 | Established |
+| 172.31.0.2   | node-to-node mesh | up    | 17:43:34 | Established |
+| 172.31.1.1   | node-to-node mesh | up    | 17:43:33 | Established |
+| 172.31.1.2   | node-to-node mesh | up    | 17:43:33 | Established |
+| 172.31.1.3   | node-to-node mesh | up    | 17:43:33 | Established |
++--------------+-------------------+-------+----------+-------------+  # 除了自己之外
+
+IPv6 BGP status
+No IPv6 peers found.
+
+## worker node之node01上的BGP连接情况
+root@node01:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 172.31.0.1   | node-to-node mesh | up    | 16:36:32 | Established |
+| 172.31.0.2   | node-to-node mesh | up    | 15:40:15 | Established |
+| 172.31.0.3   | node-to-node mesh | up    | 17:43:34 | Established |
+| 172.31.1.2   | node-to-node mesh | up    | 15:40:13 | Established |
+| 172.31.1.3   | node-to-node mesh | up    | 15:40:13 | Established |
++--------------+-------------------+-------+----------+-------------+  # 除了自己之外
+
+IPv6 BGP status
+No IPv6 peers found.
+
+## worker node之node02上的BGP连接情况
+root@node02:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 172.31.0.1   | node-to-node mesh | up    | 16:36:34 | Established |
+| 172.31.0.2   | node-to-node mesh | up    | 14:54:24 | Established |
+| 172.31.0.3   | node-to-node mesh | up    | 17:43:34 | Established |
+| 172.31.1.1   | node-to-node mesh | up    | 15:40:14 | Established |
+| 172.31.1.3   | node-to-node mesh | up    | 15:10:04 | Established |
++--------------+-------------------+-------+----------+-------------+  # 除了自己之外
+
+IPv6 BGP status
+No IPv6 peers found.
+
+## worker Node之node03上的BGP连接情况
+root@node03:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 172.31.0.1   | node-to-node mesh | up    | 16:36:34 | Established |
+| 172.31.0.2   | node-to-node mesh | up    | 15:10:04 | Established |
+| 172.31.0.3   | node-to-node mesh | up    | 17:43:34 | Established |
+| 172.31.1.1   | node-to-node mesh | up    | 15:40:14 | Established |
+| 172.31.1.2   | node-to-node mesh | up    | 15:10:04 | Established |
++--------------+-------------------+-------+----------+-------------+ # 除了自己之外
+
+IPv6 BGP status
+No IPv6 peers found.
+```
+
+**AS编号(默认64512)**
+```
+root@deploy:~# calicoctl get nodes -o wide
+NAME       ASN       IPV4            IPV6   
+master01   (64512)   172.31.0.1/24          
+master02   (64512)   172.31.0.2/24          
+master03   (64512)   172.31.0.3/24          
+node01     (64512)   172.31.1.1/24          
+node02     (64512)   172.31.1.2/24          
+node03     (64512)   172.31.1.3/24    
+```
+
+## 3.3 相关crd的对象
 **列出ippools资源对象**
 ```
 ## 列出ippools资源对象
@@ -356,18 +525,84 @@ items:
     allowedUses:
     - Workload
     - Tunnel
-    blockSize: 24
-    cidr: 10.0.0.0/8
-    ipipMode: CoressSubnet
-    natOutgoing: true
-    nodeSelector: all()
-    vxlanMode: Never
+    blockSize: 24           # 基于Pod网络划分子网时的大小：24
+    cidr: 10.0.0.0/8        # Pod网络：10.0.0.0/8
+    ipipMode: CoressSubnet  # IPIP模式：其机制是CoressSubnet
+    natOutgoing: true       # 
+    nodeSelector: all()     # 节点选择：所有worker node
+    vxlanMode: Never        # VXLAN模式：Never表示关闭/禁用
 kind: List
 metadata:
   resourceVersion: ""
 ```
 
-## 2.5 修改Worker Node从Pod网络得到的Subnet(为了学习)
-注意：
+**blockaffinities资源对象**
+```
+root@deploy:~# kubectl get blockaffinities
+NAME                      AGE
+master01-10-86-170-0-24   16h
+master02-10-223-71-0-24   16h
+master03-10-83-172-0-24   16h
+node01-10-214-66-0-24     16h
+node02-10-126-231-0-24    16h
+node03-10-130-186-0-24    16h
+  #
+  # 可看出各worker node当前只从Pod网络中得到了一个Subnet、Subnet的CIDR
+  #
+```
 
+**ipamconfigs资源对象**
+```
+root@deploy:~# kubectl get ipamconfigs
+NAME      AGE
+default   17h
+```
+
+**ipamblocks资源对象**  
+各资源中可看到与之关联的worker node，所关联handle_id(相关ipamhandles资源对象)，可用IP数的范围、哪些IP被占用了、哪些未被占用。
+```
+root@deploy:~# kubectl get ipamblocks
+NAME              AGE
+10-126-231-0-24   17h
+10-130-186-0-24   17h
+10-214-66-0-24    17h
+10-223-71-0-24    17h
+10-83-172-0-24    17h
+10-86-170-0-24    17h
+```
+
+**ipamhandles资源对象**
+```
+root@deploy:~# kubectl get ipamhandles
+NAME                                                                               AGE
+ipip-tunnel-addr-master01                                                          17h
+ipip-tunnel-addr-master02                                                          17h
+ipip-tunnel-addr-master03                                                          17h
+ipip-tunnel-addr-node01                                                            17h
+ipip-tunnel-addr-node02                                                            17h
+ipip-tunnel-addr-node03                                                            17h
+k8s-pod-network.98d1c733cd91f2616378083c9c3f6b53a4320774d7001748894ae5309a2cdc15   17h
+k8s-pod-network.cf18fbcbd446f6bd78af0a58d883206ae83fd10407cbd28a493f6ab6a4e0e0e6   17h
+```
+
+**felixconfigurations资源对象**
+```
+root@deploy:~# kubectl get felixconfigurations
+NAME      AGE
+default   17h
+```
+
+**kubecontrollersconfigurations资源对象**
+```
+root@deploy:~# kubectl get kubecontrollersconfigurations
+NAME      AGE
+default   17h
+```
+
+**clusterinformations资源对象**
+```
+root@deploy:~# kubectl get clusterinformations          
+NAME      AGE
+default   17h
+```
 
