@@ -322,7 +322,7 @@ kubectl -n default exec -it pods/client-dtlrx  -- curl 10.0.3.6
   # 
 ```
 
-2.7 再看看各worker node上相关的路由
+## 2.7 再看看各worker node上相关的路由
 **Node网络下Subnet(172.31.0.0/24)下的节点(k8s master01)**
 ```
 root@master01:~# route -n
