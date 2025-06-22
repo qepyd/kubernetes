@@ -323,7 +323,7 @@ kubectl -n default exec -it pods/client-dtlrx  -- curl 10.0.3.6
 ```
 
 ## 2.7 再看看各worker node上相关的路由
-**Node网络下Subnet(172.31.0.0/24)下的节点(k8s master01)**
+**Node网络下Subnet(172.31.0.0/24)中的节点(k8s master01)**
 ```
 root@master01:~# route -n
 Kernel IP routing table
@@ -337,7 +337,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
 ```
 
-**Node网络下Subnet(172.31.0.0/24)下的节点(k8s master02)**
+**Node网络下Subnet(172.31.0.0/24)中的节点(k8s master02)**
 ```
 root@master02:~# route -n
 Kernel IP routing table
@@ -351,7 +351,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
 ```
 
-**Node网络下Subnet(172.31.0.0/24)下的节点(k8s master03)**
+**Node网络下Subnet(172.31.0.0/24)中的节点(k8s master03)**
 ```
 root@master03:~# route -n
 Kernel IP routing table
@@ -365,7 +365,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
 ```
 
-**Node网络下Subnet(172.31.1.0/24)下的节点(k8s node01)**
+**Node网络下Subnet(172.31.1.0/24)中的节点(k8s node01)**
 ```
 root@node01:~# route -n
 Kernel IP routing table
@@ -379,7 +379,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
 ```
 
-**Node网络下Subnet(172.31.1.0/24)下的节点(k8s node02)**
+**Node网络下Subnet(172.31.1.0/24)中的节点(k8s node02)**
 ```
 root@node02:~# route -n
 Kernel IP routing table
@@ -393,7 +393,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
 ```
 
-**Node网络下Subnet(172.31.1.0/24)下的节点(k8s node03)**
+**Node网络下Subnet(172.31.1.0/24)中的节点(k8s node03)**
 ```
 root@node03:~# route -n
 Kernel IP routing table
