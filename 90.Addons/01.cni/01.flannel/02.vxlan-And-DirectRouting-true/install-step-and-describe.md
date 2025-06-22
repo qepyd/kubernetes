@@ -271,30 +271,187 @@ https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_pod-in-contain
 https://github.com/qepyd/kubernetes/blob/main/90.Addons/02.dns/ds_pod-in-container-visit-fqdn.yaml
 ```
 
+
 ## 2.6 Pod间的通信测试(必要的)
-**创建ClientPod**
-```
+**创建ClientPod**  
 https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_client.yaml
 ```
+## 应用manifests
+kubectl apply -f https://raw.githubusercontent.com/qepyd/kubernetes/refs/heads/main/90.Addons/01.cni/ds_client.yaml
 
-**创建ServerPod**
+## 相关Pod副本
+root@deploy:~# kubectl -n default get pods -o wide | grep client | sort -k 7
+client-m4pgm   1/1     Running   0          38s   10.0.0.4   master01   <none>           <none>
+client-nvxdf   1/1     Running   0          38s   10.0.1.4   master02   <none>           <none>
+client-84g4z   1/1     Running   0          38s   10.0.2.4   master03   <none>           <none>
+client-bzl86   1/1     Running   0          38s   10.0.3.5   node01     <none>           <none>
+client-shv8h   1/1     Running   0          38s   10.0.4.4   node02     <none>           <none>
+client-s8fpz   1/1     Running   0          38s   10.0.5.4   node03     <none>           <none>
 ```
+
+**创建ServerPod**  
 https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
+```
+## 应用manifests
+kubectl apply -f  https://raw.githubusercontent.com/qepyd/kubernetes/refs/heads/main/90.Addons/01.cni/ds_server.yaml
+
+## 相关Pod副本
+root@deploy:~# kubectl -n default get pods -o wide | grep server | sort -k 7
+server-rzk4b   1/1     Running   0          50s   10.0.0.5   master01   <none>           <none>
+server-k6rxt   1/1     Running   0          50s   10.0.1.5   master02   <none>           <none>
+server-xzrm6   1/1     Running   0          50s   10.0.2.5   master03   <none>           <none>
+server-5jdqz   1/1     Running   0          50s   10.0.3.6   node01     <none>           <none>
+server-gftd8   1/1     Running   0          50s   10.0.4.5   node02     <none>           <none>
+server-ksnpl   1/1     Running   0          50s   10.0.5.5   node03     <none>           <none>
 ```
 
 **宿主机上Pod间的通信**
 ```
-........是能够通信的。
+## 说明
+master01宿主机上的 client-m4pgm  10.0.0.4  访问  master01上的 server-rzk4b 10.0.0.5
+
+## 操作
+kubectl -n default exec -it pods/client-m4pgm  -- curl 10.0.0.5
+  #
+  # 是可以通信的
+  #
 ```
 
 **跨宿主机(Node网络下相同subnet，L2通信)间Pod的通信**
 ```
-........是能够通信的。
+## 说明
+master01宿主机上的 client-m4pgm  10.0.0.4  访问  master02上的 server-k6rxt 10.0.1.5
+
+## 操作
+kubectl -n default exec -it pods/client-m4pgm  -- curl 10.0.1.5
+  #
+  # 是可以通信的
+  #
 ```
 
 **跨宿主机(Node网络下不同subnet，L3通信)间Pod的通信**
 ```
-........是能够通信的。
+## 说明
+master01宿主机上的 client-m4pgm  10.0.0.4  访问  node01上的 server-5jdqz 10.0.3.6
+
+## 操作
+kubectl -n default exec -it pods/client-m4pgm  -- curl 10.0.3.6
+  #
+  # 是可以通信的
+  #  
+```
+
+
+## 2.7 再看看各worker node上相关的路由
+**Node网络下Subnet(172.31.0.0/24)中的节点(k8s master01)**
+```
+
+t@master01:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.0.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 eth0
+10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.0.253    0.0.0.0         UG    100    0        0 eth0
+172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.0.3.0        10.0.3.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.4.0        10.0.4.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.5.0        10.0.5.0        255.255.255.0   UG    0      0        0 flannel.1
+```
+
+**Node网络下Subnet(172.31.0.0/24)中的节点(k8s master02)**
+```
+
+t@master02:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.1.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.0.0        172.31.0.1      255.255.255.0   UG    0      0        0 eth0
+10.0.2.0        172.31.0.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.0.253    0.0.0.0         UG    100    0        0 eth0
+172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.0.3.0        10.0.3.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.4.0        10.0.4.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.5.0        10.0.5.0        255.255.255.0   UG    0      0        0 flannel.1
+```
+
+**Node网络下Subnet(172.31.0.0/24)中的节点(k8s master03)**
+```
+root@master03:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.2.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.0.0        172.31.0.1      255.255.255.0   UG    0      0        0 eth0
+10.0.1.0        172.31.0.2      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.0.253    0.0.0.0         UG    100    0        0 eth0
+172.31.0.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.0.3.0        10.0.3.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.4.0        10.0.4.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.5.0        10.0.5.0        255.255.255.0   UG    0      0        0 flannel.1
+```
+
+**Node网络下Subnet(172.31.1.0/24)中的节点(k8s node01)**
+```
+
+t@node01:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.3.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.4.0        172.31.1.2      255.255.255.0   UG    0      0        0 eth0
+10.0.5.0        172.31.1.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.1.253    0.0.0.0         UG    100    0        0 eth0
+172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.0.0.0        10.0.0.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.1.0        10.0.1.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.2.0        10.0.2.0        255.255.255.0   UG    0      0        0 flannel.1
+```
+
+**Node网络下Subnet(172.31.1.0/24)中的节点(k8s node02)**
+```
+root@node02:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.4.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.3.0        172.31.1.1      255.255.255.0   UG    0      0        0 eth0
+10.0.5.0        172.31.1.3      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.1.253    0.0.0.0         UG    100    0        0 eth0
+172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.0.0.0        10.0.0.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.1.0        10.0.1.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.2.0        10.0.2.0        255.255.255.0   UG    0      0        0 flannel.1
+```
+
+**Node网络下Subnet(172.31.1.0/24)中的节点(k8s node03)**
+```
+root@node03:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.5.0        0.0.0.0         255.255.255.0   U     0      0        0 cni0
+
+10.0.3.0        172.31.1.1      255.255.255.0   UG    0      0        0 eth0
+10.0.4.0        172.31.1.2      255.255.255.0   UG    0      0        0 eth0
+
+0.0.0.0         172.31.1.253    0.0.0.0         UG    100    0        0 eth0
+172.31.1.0      0.0.0.0         255.255.255.0   U     100    0        0 eth0
+
+10.0.0.0        10.0.0.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.1.0        10.0.1.0        255.255.255.0   UG    0      0        0 flannel.1
+10.0.2.0        10.0.2.0        255.255.255.0   UG    0      0        0 flannel.1
 ```
 <br>
 <br>
