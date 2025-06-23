@@ -266,6 +266,10 @@ calico_backend: "brid"
 - name: CALICO_IPV4POOL_BLOCK_SIZE
   value: "24"
 
+# Controls NAT Outgoing for the IPv4 Pool created at start up. [Default: true]
+- name: CALICO_IPV4POOL_NAT_OUTGOING
+  value: true
+
 #### deployment/calico-typha
 其副本数默认为1，关于副本数的设置官方的建议为：
 01：官方建议每200个worker node至少设置一个副本，最多不超过20个副本。
@@ -546,8 +550,8 @@ items:
     blockSize: 24           # 基于Pod网络划分子网时的大小：24
     cidr: 10.0.0.0/8        # Pod网络：10.0.0.0/8
     ipipMode: CoressSubnet  # IPIP模式：其机制是CoressSubnet
-    natOutgoing: true       # 
-    nodeSelector: all()     # 节点选择：所有worker node
+    natOutgoing: true       # nat传出: 由CALICO_IPV4POOL_NAT_OUTGOING变量控制(默认为true) 
+    nodeSelector: all()     # 节点选择：所有worker node，由CALICO_IPV4POOL_NODE_SELECTOR变量控制(默认为all())
     vxlanMode: Never        # VXLAN模式：Never表示关闭/禁用
 kind: List
 metadata:
