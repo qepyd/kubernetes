@@ -453,7 +453,7 @@ items:
     ipipMode: Never         # IPIP模式：Never表示关闭/禁用
     natOutgoing: true       # 
     nodeSelector: all()     # 节点选择：所有worker node
-    vxlanMode: CoressSubnet # VXLAN模式：Never表示关闭/禁用
+    vxlanMode: CoressSubnet # VXLAN模式：其机制是CoressSubnet
 kind: List
 metadata:
   resourceVersion: ""
