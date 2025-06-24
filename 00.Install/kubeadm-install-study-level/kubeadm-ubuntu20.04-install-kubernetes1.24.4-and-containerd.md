@@ -117,7 +117,7 @@ systemctl stop ufw.service
 systemctl disable ufw.service
 ```
 
-## 1.4 相关软件的安装(不操作,会面来引用)
+## 1.4 相关软件的安装(不操作,后面来引用)
 ### 1.4.1 安装部署工具kubeadm及k8s组件kubelet
 **更改apt源**
 ```
