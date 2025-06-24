@@ -517,8 +517,8 @@ nerdctl info
 
 **nerdctl拉取一下镜像**
 ```
-nerdctl pull  --namespace=k8s.io registry.aliyuncs.com/google_containers/pause:3.7
-nerdctl image  ls --namespace=k8s.io
+nerdctl image pull  --namespace=k8s.io registry.aliyuncs.com/google_containers/pause:3.7
+nerdctl image ls    --namespace=k8s.io
 ```
 
 ### 1.4.3 配置crictl连接containerd
