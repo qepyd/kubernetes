@@ -104,6 +104,9 @@ ubuntu20.04  node02   eth0      172.31.7.207
    #   kube-proxy(部署工具kubeadm会用Pod控制器之Daemonset来编排Pod,并以交付到k8s中)
    #
 ```
+
+
+
 ## 1.3 所准备服务器的优化
 ### 1.3.1 修改主机名
 请参考"1.2 所准备的相关服务器"中的信息进行设置，设置命令为:
@@ -117,7 +120,19 @@ systemctl stop ufw.service
 systemctl disable ufw.service
 ```
 
-### 1.3.3 更改apt源为阿里云的 
+### 1.3.3 选择默认的编辑器为vim
+```
+echo 'export EDITOR=/usr/bin/vi' >>/etc/profile
+source /etc/profile
+```
+
+### 1.3.4 解决apt安装软件时让其交互式设置
+```
+echo "export DEBIAN_FRONTEND=noninteractive" >>/etc/profile
+source /etc/profile
+```
+
+### 1.3.5 更改apt源为阿里云的 
 ```
 #### 更新apt源为阿里云
 cat >/etc/apt/sources.list<<'EOF'
@@ -141,10 +156,21 @@ EOF
 apt-get update
 ```
 
-### 1.3.4 定时更新系统操作时间
-修改时区为UTC，以及时间为24小时
+
+### 1.3.6 开启crond的日志
 ```
-## 安装软件 
+cat >>/etc/rsyslog.d/50-default.conf<<'EOF'
+"cron.*   /var/log/cron.log"
+EOF
+
+systemctl restart cron
+systemctl restart rsyslog
+```
+
+### 1.3.7 定时更新系统操作时间
+修改时区为CST，以及时间为24小时帛
+```
+## 安装软件
 apt update
 apt-get install -y tzdata
 
@@ -154,6 +180,7 @@ ln -svf /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
 ## 修改时间为24小时,该操作后,退出当前连接,重新连接后就会生效
 echo "LC_TIME=en_DK.UTF-8" >>/etc/default/locale
 ```
+
 定时更新系统时间
 ```
 ## 创建相关的目录
@@ -218,7 +245,7 @@ crontab -u root -l
 ```
 
 
-## 1.3.5 开启ipvs支持
+### 1.3.8 开启ipvs支持
 ```
 #### 安装ipvs
 apt update
@@ -253,7 +280,8 @@ bash /etc/profile.d/ipvs.modules.sh
 lsmod | grep -e ip_vs -e nf_conntrack_ipv4
 ```
 
-### 1.3.6 加载br_netfilter模块并设置内核参数
+
+### 1.3.9 加载br_netfilter模块并设置内核参数
 安装工具并临时加载br_netfilter模块
 ```
 chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
@@ -284,7 +312,7 @@ sysctl -p
 ```
 
 
-### 1.3.7 开启内核网络转发
+### 1.3.10 开启内核网络转发
 ```
 chattr -i /etc/sysctl.conf
 
