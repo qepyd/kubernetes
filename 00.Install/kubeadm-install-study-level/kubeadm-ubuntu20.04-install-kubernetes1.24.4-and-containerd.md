@@ -117,3 +117,45 @@ systemctl stop ufw.service
 systemctl disable ufw.service
 ```
 
+## 1.4 相关软件的安装(不操作,会面来引用)
+### 1.4.1 安装部署工具kubeadm及k8s组件kubelet
+**更改apt源**
+```
+apt-get update && apt-get install -y apt-transport-https
+
+curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add - 
+
+cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
+EOF
+
+apt-get update
+```
+**查看是否有kubeadm、kubelet相关的版本**
+```
+apt-cache madison kubeadm   | grep 1.24.4
+apt-cache madison kubelet   | grep 1.24.4
+```
+
+**安装kubeadm、kubelet相应的版本**
+```
+## 安装
+chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
+apt-get update
+apt install -y kubelet=1.24.4-00  kubeadm=1.24.4-00
+
+## 检查
+which kubeadm
+which kubelet
+
+## kubelet启动是会失败的(正常)
+systemctl status kubelet.service  # 未正常启动,是正常的
+systemctl enable kubelet.service  # 加入开机自启动
+```
+
+### 1.4.2 安装容器运行时
+
+
+
+
+
