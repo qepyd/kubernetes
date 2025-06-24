@@ -1,6 +1,6 @@
 ==============kubeadm工具在ubuntu20.04平台部署kubernetes v1.24.4,容器运行时使用containerd==============
 
-# 1.kubernetes的相关规划及准备的环境说明
+# 1.kubernetes的相关规划及准备相应环境
 ## 1.1 kubernetes基本规划
 **kubernetes基本规划**
 ```
