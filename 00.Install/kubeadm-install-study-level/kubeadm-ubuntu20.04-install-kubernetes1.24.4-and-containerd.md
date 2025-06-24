@@ -362,7 +362,7 @@ apt-cache madison cri-tools | grep 1.26.0-00
 ## 安装
 chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
 apt-get update
-apt install -y kubelet=1.24.4-00  kubeadm=1.24.4-00  cir-tools=1.26.0-00
+apt install -y kubelet=1.24.4-00  kubeadm=1.24.4-00  cri-tools=1.26.0-00
 
 ## 检查
 which kubeadm  kubectl  kubelet  crictl
