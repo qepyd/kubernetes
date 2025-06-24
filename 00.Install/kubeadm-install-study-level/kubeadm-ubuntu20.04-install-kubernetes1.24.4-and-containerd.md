@@ -117,6 +117,187 @@ systemctl stop ufw.service
 systemctl disable ufw.service
 ```
 
+### 1.3.3 更改apt源为阿里云的 
+```
+#### 更新apt源为阿里云
+cat >/etc/apt/sources.list<<'EOF'
+deb https://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+
+deb https://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+
+deb https://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+
+# deb https://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+# deb-src https://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+
+deb https://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+EOF
+
+#### 更新
+apt-get update
+```
+
+### 1.3.4 定时更新系统操作时间
+修改时区为UTC，以及时间为24小时
+```
+## 安装软件 
+apt update
+apt-get install -y tzdata
+
+## 修改时区为CST,其实默认下/etc/localtime是/usr/share/zoneinfo/Etc/UTC文件的软链接
+ln -svf /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
+
+## 修改时间为24小时,该操作后,退出当前连接,重新连接后就会生效
+echo "LC_TIME=en_DK.UTF-8" >>/etc/default/locale
+```
+定时更新系统时间
+```
+## 创建相关的目录
+mkdir -p /opt/scripts/
+ls -ld /opt/scripts
+
+## 编写脚本
+cd /opt/scripts/
+
+cat >update_os_time.sh<<'EOF'
+#!/bin/bash
+#
+# Define variables
+RETVAL=0
+Ntp_server=(
+ntp.aliyun.com
+ntp1.aliyun.com
+ntp2.aliyun.com
+ntp3.aliyun.com
+ntp4.aliyun.com
+ntp5.aliyun.com
+ntp6.aliyun.com
+ntp7.aliyun.com
+)
+ 
+# Determine the user to execute
+if [ $UID -ne $RETVAL ];then
+   echo "Must be root to run scripts"
+   exit 1
+fi
+ 
+# Install ntpdate command
+apt-get install ntpdate -y >/dev/null 2>&1
+ 
+# for loop update os time
+for((i=0;i<${#Ntp_server[*]};i++))
+do
+    /usr/sbin/ntpdate ${Ntp_server[i]} >/dev/null 2>&1 &
+    RETVAL=$?
+    if [ $RETVAL -eq 0 ];then
+       echo "Update os time success"
+       break
+      else
+       echo "Update os time fail"
+       continue
+    fi  
+done
+ 
+# Scripts return values
+exit $RTVAL
+EOF
+
+## 添加定时任务
+cat >>/var/spool/cron/crontabs/root<<EOF
+
+## crond update os time
+*/05 * * * * /bin/bash  /opt/scripts/update_os_time.sh >/dev/null 2>&1
+EOF
+
+## 检查
+crontab -u root -l
+```
+
+
+## 1.3.5 开启ipvs支持
+```
+#### 安装ipvs
+apt update
+chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
+apt -y install ipvsadm ipset sysstat conntrack
+
+#### 临时生效
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+# modprobe -- nf_conntrack_ipv4
+modprobe -- nf_conntrack
+lsmod | grep ip_vs
+
+   注意：如果出现modprobe: FATAL: Module nf_conntrack_ipv4 not found in directory 
+   /lib/modules/5.15.0-69-generic错误，这是因为使用了高内核，当前内核版本为5.15.0-69-
+   generic，在高版本内核已经把nf_conntrack_ipv4替换为nf_conntrack了。
+
+##### 让其永久生效   
+cat > /etc/profile.d/ipvs.modules.sh <<"EOF"
+#!/bin/bash
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack
+EOF
+
+chmod 755 /etc/profile.d/ipvs.modules.sh
+bash /etc/profile.d/ipvs.modules.sh
+lsmod | grep -e ip_vs -e nf_conntrack_ipv4
+```
+
+### 1.3.6 加载br_netfilter模块并设置内核参数
+安装工具并临时加载br_netfilter模块
+```
+chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
+apt-get install bridge-utils
+modprobe br_netfilter
+```
+永久加载模块
+```
+cat > /etc/profile.d/br_netfilter.sh <<'EOF'
+#!/bin/bash
+modprobe br_netfilter
+EOF
+
+chmod 755 /etc/profile.d/br_netfilter.sh
+bash /etc/profile.d/br_netfilter.sh
+```
+
+设置内核参数
+```
+chattr -i /etc/sysctl.conf
+
+cat >>/etc/sysctl.conf<<'EOF'
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+
+sysctl -p
+```
+
+
+### 1.3.7 开启内核网络转发
+```
+chattr -i /etc/sysctl.conf
+
+cat >>/etc/sysctl.conf<<'EOF'
+net.ipv4.ip_forward=1
+EOF
+
+sysctl -p
+```
+
+
+
+
 ## 1.4 相关软件的安装(不操作,后面来引用)
 ### 1.4.1 安装部署工具kubeadm及k8s组件kubelet
 **更改apt源**
