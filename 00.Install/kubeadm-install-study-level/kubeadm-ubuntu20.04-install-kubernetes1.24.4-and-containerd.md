@@ -62,6 +62,7 @@ container-resource-monitoring：
 ```
 
 ## 1.2 所准备的相关服务器
+所准备的服务器得要能够访问互联网(公网IP,FQDN)。
 ```
 操作系统     主机名   业务网卡  业务网卡IP   
 ubuntu20.04  lb01     eth0      172.31.7.201
@@ -103,5 +104,16 @@ ubuntu20.04  node02   eth0
    #   kube-proxy(部署工具kubeadm会用Pod控制器之Daemonset来编排Pod,并以交付到k8s中)
    #
 ```
+## 1.3 所准备服务器的优化
+1.3.1 主机名
+请参考"1.2 所准备的相关服务器"中的信息进行设置，设置命令为:
+```
+hostnamectl set-hostname <主机名>
+```
 
+1.3.2 停止ufw防火墙
+```
+systemctl stop ufw.service
+systemctl disable ufw.service
+```
 
