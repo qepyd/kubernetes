@@ -76,9 +76,9 @@ ubuntu20.04  lb02     eth0      172.31.7.202
    # 例如：集群外部的应用(jenkins)中的任务使用kubectl工具来连接kbue-apiserver
    # 
 
-ubuntu20.04  master01 eth0
-ubuntu20.04  master02 eth0
-ubuntu20.04  master03 eth0
+ubuntu20.04  master01 eth0      172.31.7.203
+ubuntu20.04  master02 eth0      172.31.7.204
+ubuntu20.04  master03 eth0      172.31.7.205
    #
    # 得安装部署工具
    #   kubeadm
@@ -93,8 +93,8 @@ ubuntu20.04  master03 eth0
    #   kube-controller-manager: 以静态Pod方式运行
    # 
 
-ubuntu20.04  node01   eth0
-ubuntu20.04  node02   eth0
+ubuntu20.04  node01   eth0      172.31.7.206
+ubuntu20.04  node02   eth0      172.31.7.207
    #
    # 得安装部署工具
    #   kubeadm
