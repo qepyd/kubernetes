@@ -364,17 +364,140 @@ apt-get update
 apt install -y kubelet=1.24.4-00  kubeadm=1.24.4-00
 
 ## 检查
-which kubeadm
-which kubelet
+which kubeadm  kubectl  kubelet
+kubeadm version
+kubectl version
+kubelet --version	
 
 ## kubelet启动是会失败的(正常)
 systemctl status kubelet.service  # 未正常启动,是正常的
 systemctl enable kubelet.service  # 加入开机自启动
 ```
 
+**查看会用到哪些image**
+```
+root@master01:~# kubeadm config images list   --kubernetes-version=v1.24.4
+k8s.gcr.io/kube-apiserver:v1.24.4
+k8s.gcr.io/kube-controller-manager:v1.24.4
+k8s.gcr.io/kube-scheduler:v1.24.4
+k8s.gcr.io/kube-proxy:v1.24.4
+k8s.gcr.io/pause:3.7
+k8s.gcr.io/etcd:3.5.3-0
+k8s.gcr.io/coredns/coredns:v1.8.6
+```
+
+**查看国内的云服务商是否有提供**
+```
+root@master01:~# kubeadm config images list  --kubernetes-version=v1.24.4  --image-repository=registry.aliyuncs.com/google_containers
+registry.aliyuncs.com/google_containers/kube-apiserver:v1.24.4
+registry.aliyuncs.com/google_containers/kube-controller-manager:v1.24.4
+registry.aliyuncs.com/google_containers/kube-scheduler:v1.24.4
+registry.aliyuncs.com/google_containers/kube-proxy:v1.24.4
+registry.aliyuncs.com/google_containers/pause:3.7
+registry.aliyuncs.com/google_containers/etcd:3.5.3-0
+registry.aliyuncs.com/google_containers/coredns:v1.8.6
+  #
+  # 你可以把这些镜像pull-->tag--->push到自己的镜像仓库中
+  # 我这里没有这样做,因为我们是安装kubernetes的学习环境
+  # 
+```
+
 ### 1.4.2 安装容器运行时
+**安装runc**
+```
+wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
+ls -l  runc.amd64
+mv runc.amd64  runc
+chmod +x 755 runc
+mv  runc  /usr/local/sbin/
+which runc
+runc -v
+```
+
+**安装containerd**
+```
+wget https://github.com/containerd/containerd/releases/download/v1.7.27/containerd-1.7.27-linux-amd64.tar.gz
+ls -l  containerd-1.7.27-linux-amd64.tar.gz
+tar xf containerd-1.7.27-linux-amd64.tar.gz
+cp -a bin/*  /usr/local/bin/                     # 后面systemd的service文件中其containerd命令的路径
+which containerd containerd-shim ctr
+```
+
+**配置containerd**
+```
+## 生成默认配置文件
+mkdir /etc/containerd
+containerd config default > /etc/containerd/config.toml
+cat  /etc/containerd/config.toml
+
+## 修改sandbox_image
+# <== 查看
+root@master01:~# grep "sandbox_image" /etc/containerd/config.toml 
+    sandbox_image = "registry.k8s.io/pause:3.8"
+
+# <== 修改
+sed    's#registry.k8s.io/pause:3.8#registry.aliyuncs.com/google_containers/pause:3.7#g' /etc/containerd/config.toml | grep "sandbox_image"
+sed -i 's#registry.k8s.io/pause:3.8#registry.aliyuncs.com/google_containers/pause:3.7#g' /etc/containerd/config.toml
+```
 
 
+**准备相关的containerd.service文件**
+```
+cat >/lib/systemd/system/containerd.service<<'EOF'
+# Copyright The containerd Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
+[Unit]
+Description=containerd container runtime
+Documentation=https://containerd.io
+After=network.target local-fs.target
 
+[Service]
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart=/usr/local/bin/containerd
+
+Type=notify
+Delegate=yes
+KillMode=process
+Restart=always
+RestartSec=5
+
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNPROC=infinity
+LimitCORE=infinity
+
+# Comment TasksMax if your systemd version does not supports it.
+# Only systemd 226 and above support this version.
+TasksMax=infinity
+OOMScoreAdjust=-999
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+**启动containerd**
+```
+## 重新加载
+systemctl daemon-reload
+systemctl enable --now containerd
+
+## 加入开机自启动
+systemctl start containerd.service
+systemctl status containerd.service
+systemctl enable containerd.service
+systemctl is-enabled containerd.service
+```
 
