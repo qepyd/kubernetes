@@ -163,8 +163,8 @@ cat >>/etc/rsyslog.d/50-default.conf<<'EOF'
 "cron.*   /var/log/cron.log"
 EOF
 
-systemctl restart cron
-systemctl restart rsyslog
+systemctl restart cron.service
+systemctl restart rsyslog.service
 ```
 
 ### 1.3.7 定时更新系统操作时间
