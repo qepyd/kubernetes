@@ -517,8 +517,9 @@ nerdctl info
 
 **nerdctl拉取一下镜像**
 ```
-nerdctl image pull  --namespace=k8s.io registry.aliyuncs.com/google_containers/pause:3.7
+nerdctl image pull  --namespace=k8s.io   registry.aliyuncs.com/google_containers/pause:3.7
 nerdctl image ls    --namespace=k8s.io
+nerdctl image rm    --namespace=k8s.io   registry.aliyuncs.com/google_containers/pause:3.7
 ```
 
 ### 1.4.3 配置crictl连接containerd
@@ -526,15 +527,12 @@ nerdctl image ls    --namespace=k8s.io
 ```
 cat >/etc/crictl.yaml<<'EOF'
 runtime-endpoint: unix:///run/containerd/containerd.sock
-image-endpoint: unix:///run/containerd/containerd.sock
 EOF
 ``` 
-crictl工具list出有哪些image
+crictl工具测试拉取镜像
 ```
+crictl pull registry.aliyuncs.com/google_containers/pause:3.7
 crictl image
-  #
-  # 是可以看到前面nerdctl拉取的image
-  # 
 ```
 
 
