@@ -160,7 +160,7 @@ apt-get update
 ### 1.3.6 开启crond的日志
 ```
 cat >>/etc/rsyslog.d/50-default.conf<<'EOF'
-"cron.*   /var/log/cron.log"
+cron.*   /var/log/cron.log
 EOF
 
 systemctl restart cron.service
