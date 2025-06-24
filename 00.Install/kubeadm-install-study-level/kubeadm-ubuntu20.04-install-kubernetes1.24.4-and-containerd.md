@@ -402,13 +402,13 @@ registry.aliyuncs.com/google_containers/coredns:v1.8.6
   # 
 ```
 
-### 1.4.2 安装容器运行时
+### 1.4.2 安装容器运行时containerd
 **安装runc**
 ```
 wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
 ls -l  runc.amd64
 mv runc.amd64  runc
-chmod +x 755 runc
+chmod +x  runc
 mv  runc  /usr/local/sbin/
 which runc
 runc -v
