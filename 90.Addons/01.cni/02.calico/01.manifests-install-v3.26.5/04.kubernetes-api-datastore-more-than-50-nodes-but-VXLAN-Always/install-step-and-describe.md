@@ -280,8 +280,9 @@ calico_backend: "vxlan"
   value: "24"
 
 # Controls NAT Outgoing for the IPv4 Pool created at start up. [Default: true]
+# 当Pod网络是overlay时，这里得设置成true，不然Pod中访问SvcName(FQDN)会失败(即使你安装有Dns、kube-proxy)。
 - name: CALICO_IPV4POOL_NAT_OUTGOING
-  value: true
+  value: "true"
 
 #### deployment/calico-typha
 其副本数默认为1，关于副本数的设置官方的建议为：
