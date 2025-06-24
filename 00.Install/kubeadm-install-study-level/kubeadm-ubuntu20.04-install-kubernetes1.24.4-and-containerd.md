@@ -354,6 +354,7 @@ apt-get update
 ```
 apt-cache madison kubeadm   | grep 1.24.4
 apt-cache madison kubelet   | grep 1.24.4
+apt-cache madison cri-tools | grep 1.26.0-00
 ```
 
 **安装kubeadm、kubelet相应的版本**
@@ -361,13 +362,14 @@ apt-cache madison kubelet   | grep 1.24.4
 ## 安装
 chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
 apt-get update
-apt install -y kubelet=1.24.4-00  kubeadm=1.24.4-00
+apt install -y kubelet=1.24.4-00  kubeadm=1.24.4-00  cir-tools=1.26.0-00
 
 ## 检查
-which kubeadm  kubectl  kubelet
+which kubeadm  kubectl  kubelet  crictl
 kubeadm version
 kubectl version
-kubelet --version	
+kubelet --version
+crictl  --version
 
 ## kubelet启动是会失败的(正常)
 systemctl status kubelet.service  # 未正常启动,是正常的
@@ -500,4 +502,41 @@ systemctl status containerd.service
 systemctl enable containerd.service
 systemctl is-enabled containerd.service
 ```
+
+**安装客户端工具nerdctl**
+```
+wget https://github.com/containerd/nerdctl/releases/download/v1.7.6/nerdctl-1.7.6-linux-amd64.tar.gz
+tar xf nerdctl-1.7.6-linux-amd64.tar.gz  -C /usr/local/bin/
+which nerdctl
+```
+
+**nerdctl查看一下info**
+```
+nerdctl info
+```
+
+**nerdctl拉取一下镜像**
+```
+nerdctl pull  --namespace=k8s.io registry.aliyuncs.com/google_containers/pause:3.7
+nerdctl image  ls --namespace=k8s.io
+```
+
+### 1.4.3 配置crictl连接containerd
+创建/etc/crictl.yaml文件并配置
+```
+cat >/etc/crictl.yaml<<'EOF'
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+EOF
+``` 
+crictl工具list出有哪些image
+```
+crictl image
+  #
+  # 是可以看到前面nerdctl拉取的image
+  # 
+```
+
+
+
 
