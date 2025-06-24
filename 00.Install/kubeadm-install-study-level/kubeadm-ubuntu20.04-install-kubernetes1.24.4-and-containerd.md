@@ -51,7 +51,7 @@ kubeadm介绍
      但因为不会安装CNI网络插件,所以dns(coredns)的Pod处于Pending状态
 ```
 
-**人为安装一些Addons**
+**人为安装一些Addons**  
 Addons有很多，这里因为是学习环境，只会部署学习所需要的。
 ```
 CNI：
