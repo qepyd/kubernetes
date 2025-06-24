@@ -309,18 +309,18 @@ which calicoctl
 ## 2.4 测试Pod访问互联网IPv4
 当然k8s的worker node得要能够访问互联网。
 ```
-https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_pod-in-container-visit-ipv4.yaml
+https://github.com/qepyd/kubernetes/blob/main/91.Addons/01.cni/ds_pod-in-container-visit-ipv4.yaml
 ```
 
 ## 2.5 测试Pod访问互联网FQDN
 **安装coredns**
 ```
-参考 https://github.com/qepyd/kubernetes/tree/main/90.Addons/02.dns/01.coredns
+参考 https://github.com/qepyd/kubernetes/tree/main/91.Addons/02.dns/01.coredns
 ```
 
 **测试Pod访问互联网FQDN**
 ```
-https://github.com/qepyd/kubernetes/blob/main/90.Addons/02.dns/ds_pod-in-container-visit-fqdn.yaml
+https://github.com/qepyd/kubernetes/blob/main/91.Addons/02.dns/ds_pod-in-container-visit-fqdn.yaml
 ```
 
 
@@ -634,10 +634,10 @@ default   17h
 # 4.Pod间通信的测试及再看各worker node上的Route
 ## 4.1 Pod间通信的测试(必要)
 **创建ClientPod**  
-https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_client.yaml
+https://github.com/qepyd/kubernetes/blob/main/91.Addons/01.cni/ds_client.yaml
 ```
 ## 应用manifests
-kubectl apply -f https://raw.githubusercontent.com/qepyd/kubernetes/refs/heads/main/90.Addons/01.cni/ds_client.yaml
+kubectl apply -f https://raw.githubusercontent.com/qepyd/kubernetes/refs/heads/main/91.Addons/01.cni/ds_client.yaml
 
 ## 相关Pod副本
 root@deploy:~# kubectl get pods -o wide | grep client | sort -k 7
@@ -650,10 +650,10 @@ client-6cvfc   1/1     Running   0          24s   10.130.186.4   node03     <non
 ```
 
 **创建ServerPod**  
-https://github.com/qepyd/kubernetes/blob/main/90.Addons/01.cni/ds_server.yaml
+https://github.com/qepyd/kubernetes/blob/main/91.Addons/01.cni/ds_server.yaml
 ```
 ## 应用manifests
-kubectl apply -f  https://raw.githubusercontent.com/qepyd/kubernetes/refs/heads/main/90.Addons/01.cni/ds_server.yaml
+kubectl apply -f  https://raw.githubusercontent.com/qepyd/kubernetes/refs/heads/main/91.Addons/01.cni/ds_server.yaml
 
 ## 相关Pod副本
 root@deploy:~# kubectl get pods -o wide | grep server | sort -k 7
