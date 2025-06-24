@@ -105,13 +105,13 @@ ubuntu20.04  node02   eth0
    #
 ```
 ## 1.3 所准备服务器的优化
-1.3.1 主机名
+### 1.3.1 主机名
 请参考"1.2 所准备的相关服务器"中的信息进行设置，设置命令为:
 ```
 hostnamectl set-hostname <主机名>
 ```
 
-1.3.2 停止ufw防火墙
+### 1.3.2 停止ufw防火墙
 ```
 systemctl stop ufw.service
 systemctl disable ufw.service
