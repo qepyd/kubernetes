@@ -26,7 +26,7 @@ Svc网络：
 集群内DNS的Domain:
    cluster.local
 
-集群内DNS应用其svc资源对象的ClusterIP
+集群内DNS应用(Pod)其svc资源对象的ClusterIP
    来自Svc网络,不能使用第一个可用IP(被ns/default中的svc/kubernetes所占用)
    规划地址为：11.0.0.2
 ```
