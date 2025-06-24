@@ -132,7 +132,13 @@ echo "export DEBIAN_FRONTEND=noninteractive" >>/etc/profile
 source /etc/profile
 ```
 
-### 1.3.5 更改apt源为阿里云的 
+### 1.3.5 停止自动更新软件包
+```
+systemctl stop unattended-upgrades.service 
+systemctl disable unattended-upgrades.service 
+```
+
+### 1.3.6 更改apt源为阿里云的 
 ```
 #### 更新apt源为阿里云
 cat >/etc/apt/sources.list<<'EOF'
@@ -157,9 +163,9 @@ apt-get update
 ```
 
 
-### 1.3.6 开启crond的日志
+### 1.3.7 开启crond的日志
 ```
-cat >>/etc/rsyslog.d/50-default.conf<<'EOF'
+cat >>/etc/rsyslog.d/50-default.conf<<"EOF"
 cron.*   /var/log/cron.log
 EOF
 
@@ -167,7 +173,7 @@ systemctl restart cron.service
 systemctl restart rsyslog.service
 ```
 
-### 1.3.7 定时更新系统操作时间
+### 1.3.8 定时更新系统操作时间
 修改时区为CST，以及时间为24小时帛
 ```
 ## 安装软件
@@ -245,7 +251,7 @@ crontab -u root -l
 ```
 
 
-### 1.3.8 开启ipvs支持
+### 1.3.9 开启ipvs支持
 ```
 #### 安装ipvs
 apt update
@@ -281,7 +287,7 @@ lsmod | grep -e ip_vs -e nf_conntrack_ipv4
 ```
 
 
-### 1.3.9 加载br_netfilter模块并设置内核参数
+### 1.3.10 加载br_netfilter模块并设置内核参数
 安装工具并临时加载br_netfilter模块
 ```
 chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
@@ -312,7 +318,7 @@ sysctl -p
 ```
 
 
-### 1.3.10 开启内核网络转发
+### 1.3.11 开启内核网络转发
 ```
 chattr -i /etc/sysctl.conf
 
@@ -323,6 +329,10 @@ EOF
 sysctl -p
 ```
 
+## 1.3.12 重启服务器
+```
+reboot
+```
 
 
 
