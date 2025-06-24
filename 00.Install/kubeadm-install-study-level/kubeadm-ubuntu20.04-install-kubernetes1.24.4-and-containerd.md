@@ -8,7 +8,8 @@ kubernetes版本：
    v1.24.4
 
 容器运行时品牌及版本:
-   containerd
+   https://github.com/containerd/containerd/blob/v1.7.27/RELEASES.md#kubernetes-support
+   containerd v1.7.27
 
 Nod网络：
    类型：Underlay
@@ -60,4 +61,47 @@ container-resource-monitoring：
   metrics-server
 ```
 
-## 1.2 所准备的服务器
+## 1.2 所准备的相关服务器
+```
+操作系统     主机名   业务网卡  业务网卡IP   
+ubuntu20.04  lb01     eth0      172.31.7.201
+ubuntu20.04  lb02     eth0      172.31.7.202
+   #
+   # vip01: 172.31.7.199
+   # vip02: 172.31.7.200
+   # 注意：在为kube-apiserver组件实例签发server证书时得包含这两个IP地址。
+   # 作为kubernetes其kube-apiserver组件实例的外部代理(L4)。
+   # 例如：集群管理员使用kubectl工具连接连接kube-apiserver。
+   # 例如：集群外部的应用(jenkins)中的任务使用kubectl工具来连接kbue-apiserver
+   # 
+
+ubuntu20.04  master01 eth0
+ubuntu20.04  master02 eth0
+ubuntu20.04  master03 eth0
+   #
+   # 得安装部署工具
+   #   kubeadm
+   # 得安装k8s其worker node相关组件
+   #   容器运行时之containerd
+   #   kubelet(以守护进程方式部署)
+   #   kube-proxy(部署工具kubeadm会用Pod控制器之Daemonset来编排Pod,并以交付到k8s中)
+   # 部署工具会安装k8s master相关组件
+   #   etcd：以静态Pod方式运行
+   #   kube-apiserver：以静态Pod方式运行
+   #   kube-scheduler：以静态Pod方式运行
+   #   kube-controller-manager: 以静态Pod方式运行
+   # 
+
+ubuntu20.04  node01   eth0
+ubuntu20.04  node02   eth0
+   #
+   # 得安装部署工具
+   #   kubeadm
+   # 得安装k8s worker node相关组件
+   #   kubelet(以守护进程方式部署)
+   #   kube-proxy(部署工具kubeadm会以Pod方式交付到k8s中)
+   #   kube-proxy(部署工具kubeadm会用Pod控制器之Daemonset来编排Pod,并以交付到k8s中)
+   #
+```
+
+
