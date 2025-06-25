@@ -806,6 +806,12 @@ kube-system   kube-proxy-gdhkw                   1/1     Running   0          9m
 kube-system   kube-scheduler-master01            1/1     Running   0          10m     172.31.7.203   master01   <none>           <none>
 ```
 
+## 2.5 让master02、master03成为现有控制平面组成部分
+### 2.5.1 重新生成token
+```
+kubeadm token create --print-join-command
+```
 
+### 2.5.2 
 
 
