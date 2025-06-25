@@ -945,14 +945,45 @@ cat >>/etc/hosts <<'EOF'
 EOF
 ```
 
-**加入现有控制平面,并成为控制平面**  
+**部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)**  
 会拉取image,没有那么快
 ```
+## 部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
   --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
   --node-name master02
+  #
+  # 成功后会提示如下信息
+  # To start administering your cluster from this node, you need to run the following as a regular user:
+  # 
+  #	mkdir -p $HOME/.kube
+  #  	sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  # 	sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  # 
+  # Run 'kubectl get nodes' to see this node join the cluster.
+  #
+  # 根据提示进行操作
+  # 
+
+## 列出k8s中有所有的nodes资源对象
+root@master02:~# kubectl get nodes
+NAME       STATUS     ROLES           AGE     VERSION
+master01   NotReady   control-plane   3h17m   v1.24.4
+master02   NotReady   control-plane   2m46s   v1.24.4
 ```
 
+**修改之前对/etc/hosts文件的修改**
+```
+## 修改/etc/hosts文件
+sed    's#172.31.7.203#127.0.0.1#g' /etc/hosts
+sed -i 's#172.31.7.203#127.0.0.1#g' /etc/hosts
+
+## 再列出k8s中所有的nodes资源对象
+root@master02:~# kubectl get nodes
+NAME       STATUS     ROLES           AGE     VERSION
+master01   NotReady   control-plane   3h20m   v1.24.4
+master02   NotReady   control-plane   5m30s   v1.24.4
+```
 
 ### 2.5.4 master03上操作
 **/etc/hosts解析相应域名**
@@ -962,13 +993,48 @@ cat >>/etc/hosts <<'EOF'
 EOF
 ```
 
-**加入现有控制平面,并成为控制平面**
+**部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)**
 会拉取image,没有那么快
 ```
+## 部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
   --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
   --node-name master03
+  #
+  # 成功后会提示如下信息
+  # To start administering your cluster from this node, you need to run the following as a regular user:
+  #
+  #     mkdir -p $HOME/.kube
+  #     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  #     sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  #
+  # Run 'kubectl get nodes' to see this node join the cluster.
+  #
+  # 根据提示进行操作
+  #
+
+## 列出k8s中有所有的nodes资源对象
+root@master03:~# kubectl get nodes
+NAME       STATUS     ROLES           AGE     VERSION
+master01   NotReady   control-plane   3h17m   v1.24.4
+master02   NotReady   control-plane   2m46s   v1.24.4
+master03   NotReady   control-plane   2m46s   v1.24.4
 ```
+
+**修改之前对/etc/hosts文件的修改**
+```
+## 修改/etc/hosts文件
+sed    's#172.31.7.203#127.0.0.1#g' /etc/hosts
+sed -i 's#172.31.7.203#127.0.0.1#g' /etc/hosts
+
+## 再列出k8s中所有的nodes资源对象
+root@master03:~# kubectl get nodes
+NAME       STATUS     ROLES           AGE     VERSION
+master01   NotReady   control-plane   3h20m   v1.24.4
+master02   NotReady   control-plane   5m30s   v1.24.4
+master03   NotReady   control-plane   5m30s   v1.24.4
+```
+
 
 
 
