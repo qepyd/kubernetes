@@ -1165,6 +1165,13 @@ master03   NotReady   control-plane   40m    v1.24.4   172.31.7.205   <none>    
 node01     NotReady   <none>          38s    v1.24.4   172.31.7.206   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
 node02     NotReady   <none>          6s     v1.24.4   172.31.7.207   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
 ```
+<br>
+<br>
 
 
+# 4. 安装相关的Addons
+## 4.1 安装CNI插件之Flannel vxlan
+
+
+## 4.2 安装DNS插件之Coredns 
 
