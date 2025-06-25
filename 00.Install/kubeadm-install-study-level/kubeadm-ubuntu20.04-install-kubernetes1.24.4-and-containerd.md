@@ -1170,8 +1170,16 @@ node02     NotReady   <none>          6s     v1.24.4   172.31.7.207   <none>    
 
 
 # 4. 安装相关的Addons
+在master01、master02、master03上任何一台上操作
 ## 4.1 安装CNI插件之Flannel vxlan
-
+参考  https://github.com/qepyd/kubernetes/tree/main/91.Addons/01.cni/01.flannel/03.vxlan-And-DirectRouting-false  
+根据现有k8s集群的规划，直接应用里面的 kube-flannel.yml 这个manifests
 
 ## 4.2 安装DNS插件之Coredns 
+参考 https://github.com/qepyd/kubernetes/tree/main/91.Addons/02.dns/01.coredns  
+根据现有k8s集群的规划，直接应用里面的 coredns.yaml 这个manifests
+
+## 4.3 安装container-resource-monitoring插件之metrics-server
+参考  https://github.com/qepyd/kubernetes/tree/main/91.Addons/04.container-resource-monitoring/metrics-server/v0.6.4  
+直接应用里面的 components.yaml 这个manifests
 
