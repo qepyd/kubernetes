@@ -696,8 +696,7 @@ mode: "ipvs"
 
 ### 2.4.3 初始化控制平面
 **利用/etc/hosts做dns解析(127.0.0.1 k8s01-component-connection-kubeapi.local.io)**  
-前面为初始化准备的配置文件中具备 k8s01-component-connection-kubeapi.local.io 域名。  
-kube-apiserver组件的client之kube-controller-manager、kube-scheduler的kubeconfig文件中其连接地址为 https://本机IPv4:6443
+前面为初始化准备的配置文件中具备 k8s01-component-connection-kubeapi.local.io 域名。kube-apiserver组件的client之kube-controller-manager、kube-scheduler的kubeconfig文件中其连接地址为 https://本机IPv4:6443
 kube-apiserver组件的client之kubelet、kubectl的kubeconfig文件中其连接地址为 https://k8s01-component-connection-kubeapi.local.io:6443
 ```
 cat >>/etc/hosts<<'EOF'
