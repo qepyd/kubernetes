@@ -865,7 +865,7 @@ kube-system   kube-proxy-gdhkw                   1/1     Running   0          9m
 kube-system   kube-scheduler-master01            1/1     Running   0          10m     172.31.7.203   master01   <none>           <none>
 ```
 
-## 2.5 实现现在控制平面的高可用
+## 2.5 实现其现在控制平面的高可用
 ### 2.5.1 master01上操作,生成certificate-key和token
 **生成certificate**  
 创建一个manifests文件,内容来自于kube-system名称空间中cm/kubeadm-config对象中其data字段下ClusterConfiguration键的值。
