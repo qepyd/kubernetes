@@ -440,6 +440,15 @@ root@master01:~# grep "sandbox_image" /etc/containerd/config.toml
 # <== 修改
 sed    's#registry.k8s.io/pause:3.8#registry.aliyuncs.com/google_containers/pause:3.7#g' /etc/containerd/config.toml | grep "sandbox_image"
 sed -i 's#registry.k8s.io/pause:3.8#registry.aliyuncs.com/google_containers/pause:3.7#g' /etc/containerd/config.toml
+
+## 开启SystemdCgroup
+# <== 查看
+root@master01:~# grep SystemdCgroup /etc/containerd/config.toml 
+            SystemdCgroup = false
+
+# <== 修改
+sed    's#SystemdCgroup = false#SystemdCgroup = true#g'  /etc/containerd/config.toml | grep SystemdCgroup
+sed -i 's#SystemdCgroup = false#SystemdCgroup = true#g'  /etc/containerd/config.toml
 ```
 
 
@@ -535,6 +544,147 @@ crictl pull registry.aliyuncs.com/google_containers/pause:3.7
 crictl image
 ```
 
+# 2.kubernetes控制平面高可用的部署
+**涉及master01、master02、master03服务器**
 
+## 2.1 安装安装部署工具kubeadm及k8s组件kubelet
+参考 "1.4.1 安装部署工具kubeadm及k8s组件kubelet"
+
+## 2.2 安装容器运行时containerd
+参考 "1.4.2 安装容器运行时containerd"
+
+## 2.3 配置crictl连接containerd
+参考 "1.4.3 配置crictl连接containerd"
+
+## 2.4 拉取一个控制平面(master01上操作)
+### 2.4.1 先下载好镜像
+```
+## 下载镜像
+kubeadm config images pull \
+  --image-repository=registry.aliyuncs.com/google_containers \
+  --kubernetes-version=v1.24.4
+
+## 列出镜像
+cri image
+```
+
+
+### 2.4.2 生成配置文件
+创建kubeadm-config.yaml文件,内容如下所示
+```
+--- 
+#### 参考
+# https://kubernetes.io/zh-cn/docs/reference/config-api/kubeadm-config.v1beta3/#kubeadm-k8s-io-v1beta3-InitConfiguration
+#
+#### 初始化配置
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+bootstrapTokens:
+  - token: "9a08jv.c0izixklcxtmnze7"
+    description: "kubeadm bootstrap token"
+    ttl: "24h"
+  - token: "783bde.3f89s0fje9f38fhf"
+    description: "another bootstrap token"
+    usages:
+    - authentication
+    - signing
+    groups:
+    - system:bootstrappers:kubeadm:default-node-token
+# 当前kube-apiserver的端点
+localAPIEndpoint:
+  advertiseAddress: 172.31.7.203
+  bindPort: 6443
+# 节点登记
+nodeRegistration:
+  name: master01
+  criSocket: unix:///run/containerd/containerd.sock
+  imagePullPolicy: IfNotPresent
+  taints: 
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
+  kubeletExtraArgs:
+    v: 2
+# 跳过的阶段(我这里不让其安装Addons之coredns)
+# 可用kubeadm inist --help看一看
+skipPhases:
+  - addon/coredns
+---
+
+
+---
+#### 参考
+# https://kubernetes.io/zh-cn/docs/reference/config-api/kubeadm-config.v1beta3/#kubeadm-k8s-io-v1beta3-ClusterConfiguration
+#
+#### 集群配置
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+# 设置用来拉取镜像的容器仓库,如果此字段为空,默认使用 registry.k8s.io
+imageRepository: registry.aliyuncs.com/google_containers
+# 设置在何处存放或者查找所需证书
+certificatesDir: /etc/kubernetes/pki
+# ETCD的配置
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+# K8s版本
+kubernetesVersion: v1.24.4
+# K8s集群的版本和名称
+clusterName: kubernetes
+# 网络的配置
+networking:
+  podSubnet: 10.0.0.0/8
+  serviceSubnet: 11.0.0.0/12
+  dnsDomain: cluster.local
+# kube-apiserver相关的配置
+controlPlaneEndpoint: "127.0.0.1:6443"
+apiServer:
+  extraArgs:
+    authorization-mode: "Node,RBAC"
+    bind-address: "0.0.0.0"
+  certSANs:
+  - "127.0.0.1"
+  - "172.31.7.199"
+  - "172.31.7.200"
+  timeoutForControlPlane: 6m0s
+# controller-manager相关的配置
+controllerManager:
+  extraArgs:
+    "node-cidr-mask-size": "24"
+    "bind-address": "0.0.0.0"
+# scheduler相关的配置
+scheduler: 
+  extraArgs:
+    bind-address: "0.0.0.0"
+---
+
+---
+#### 参考
+# https://kubernetes.io/zh-cn/docs/reference/config-api/kubelet-config.v1beta1/#kubelet-config-k8s-io-v1beta1-KubeletConfiguration
+# 
+#### kubelet的相关配置
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+# 来自于Svc网络,给集群内DNS应用(Pod)其svc资源对象所规划的ClusterIP
+clusterDNS: 11.0.0.2
+# k8s集群内DNS的的Domain
+clusterDomain: cluster.local
+# 设置cgroup的驱动为systemd,默认为cgroupfs
+cgroupDriver: systemd
+# 设置各woker node上的最大Pod数,默认为110
+maxPods: 110
+---
+
+
+---
+#### 参考
+# https://kubernetes.io/zh-cn/docs/reference/config-api/kube-proxy-config.v1alpha1/#kubeproxy-config-k8s-io-v1alpha1-KubeProxyConfiguration
+#
+#### kube-proxy的配置,InitConfiguration处我可没有跳过kubeadm所认为addons之kube-proxy
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+# 用于配置kube-proxy上为Service指定的代理模式，默认为iptables；
+mode: "ipvs"
+---
+```
 
 
