@@ -558,18 +558,19 @@ crictl image
 ```
 
 # 2.kubernetes控制平面高可用的部署
-**涉及master01、master02、master03服务器**
-
 ## 2.1 安装安装部署工具kubeadm及k8s组件kubelet
-参考 "1.4.1 安装部署工具kubeadm及k8s组件kubelet"
+master01、master02、master03上操作。  
+参考 "1.4.1 安装部署工具kubeadm及k8s组件kubelet"。
 
 ## 2.2 安装容器运行时containerd
+master01、master02、master03上操作。  
 参考 "1.4.2 安装容器运行时containerd"
 
 ## 2.3 配置crictl连接containerd
+master01、master02、master03上操作。  
 参考 "1.4.3 配置crictl连接containerd"
 
-## 2.4 拉取一个控制平面(master01上操作)
+## 2.4 拉取控制平面(master01上操作)
 ### 2.4.1 先下载好镜像
 ```
 ## 下载镜像
@@ -580,7 +581,6 @@ kubeadm config images pull \
 ## 列出镜像
 crictl image
 ```
-
 
 ### 2.4.2 生成配置文件
 创建kubeadm-config.yaml文件,内容如下所示
