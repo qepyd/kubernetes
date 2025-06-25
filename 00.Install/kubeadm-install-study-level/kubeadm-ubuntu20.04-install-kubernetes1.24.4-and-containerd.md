@@ -945,12 +945,14 @@ cat >>/etc/hosts <<'EOF'
 EOF
 ```
 
-**加入现有控制平面,并成为控制平面**
+**加入现有控制平面,并成为控制平面**  
+会拉取image,没有那么快
 ```
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
   --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
   --node-name master02
 ```
+
 
 ### 2.5.4 master03上操作
 **/etc/hosts解析相应域名**
@@ -961,6 +963,7 @@ EOF
 ```
 
 **加入现有控制平面,并成为控制平面**
+会拉取image,没有那么快
 ```
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
   --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
