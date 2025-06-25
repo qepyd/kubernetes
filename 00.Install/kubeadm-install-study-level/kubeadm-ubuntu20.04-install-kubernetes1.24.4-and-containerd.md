@@ -792,10 +792,10 @@ master01   NotReady   control-plane   5m28s   v1.24.4
   #
 ```
 
-**列出当前所有的Pod有中**
-首先，没有看到coredns相平面的Pod，这是因为忽略了其安装，后期我们自己安装。
-ns/kube-system中ds/kube-proxy对象所编排的Pod(以kube-proxy为前缀)共享所在worker node的网络名称空间。
-ns/kube-system中Pod etcd-master01 kube-apiserver-master01 kube-controller-manager-master01 kube-scheduler-master01是静态Pod。
+**列出当前所有的Pod有中**  
+首先，没有看到coredns相平面的Pod，这是因为忽略了其安装，后期我们自己安装。  
+ns/kube-system中ds/kube-proxy对象所编排的Pod(以kube-proxy为前缀)共享所在worker node的网络名称空间。  
+ns/kube-system中Pod etcd-master01 kube-apiserver-master01 kube-controller-manager-master01 kube-scheduler-master01是静态Pod。  
 ```
 root@master01:~# kubectl get pods -o wide -A
 NAMESPACE     NAME                               READY   STATUS    RESTARTS   AGE     IP             NODE       NOMINATED NODE   READINESS GATES
