@@ -1158,12 +1158,12 @@ kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4
 在master01、master02、master03上操作均可
 ```
 root@master01:~# kubectl get nodes -o wide
-NAME       STATUS     ROLES           AGE     VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
-master01   NotReady   control-plane   3h52m   v1.24.4   172.31.7.203   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
-master02   NotReady   control-plane   37m     v1.24.4   172.31.7.204   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
-master03   NotReady   control-plane   23m     v1.24.4   172.31.7.205   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
-node01     NotReady   control-plane   23m     v1.24.4   172.31.7.206   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
-node02     NotReady   control-plane   23m     v1.24.4   172.31.7.207   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+NAME       STATUS     ROLES           AGE    VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+master01   NotReady   control-plane   4h9m   v1.24.4   172.31.7.203   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+master02   NotReady   control-plane   54m    v1.24.4   172.31.7.204   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+master03   NotReady   control-plane   40m    v1.24.4   172.31.7.205   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+node01     NotReady   <none>          38s    v1.24.4   172.31.7.206   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+node02     NotReady   <none>          6s     v1.24.4   172.31.7.207   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
 ```
 
 
