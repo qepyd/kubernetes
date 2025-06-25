@@ -865,13 +865,109 @@ kube-system   kube-proxy-gdhkw                   1/1     Running   0          9m
 kube-system   kube-scheduler-master01            1/1     Running   0          10m     172.31.7.203   master01   <none>           <none>
 ```
 
-## 2.5 让master02、master03成为现有控制平面组成部分
-### 2.5.1 
+## 2.5 让master02、master03成为现有控制平面的一部分
+### 2.5.1 master01上操作,生成相应的certificate-key和token
+**生成certificate**  
+需要用到最开始初始化控制平面时其 kubeadm-config.yaml 中的 ClusterConfiguration 部分，如果找不到的话，可以参考 ns/kube-system 中其 cm/kubeadm-config 中的 data 字段中 键 ClusterConfiguration 对应的值。
+```
+## 生成相应的manifests
+cat >/tmp/kubeadm_clusterconfiguration.yaml<<'EOF'
+##### 以下内容来自 ns/kube-system 中 
+#     其 cm/kubeadm-config对象data字段
+#     ClusterConfiguration 键的值
+apiServer:
+  certSANs:
+  - 127.0.0.1
+  - 172.31.7.199
+  - 172.31.7.200
+  extraArgs:
+    authorization-mode: Node,RBAC
+    bind-address: 0.0.0.0
+  timeoutForControlPlane: 6m0s
+apiVersion: kubeadm.k8s.io/v1beta3
+certificatesDir: /etc/kubernetes/pki
+clusterName: kubernetes
+controlPlaneEndpoint: k8s01-component-connection-kubeapi.local.io:6443
+controllerManager:
+  extraArgs:
+    bind-address: 0.0.0.0
+    node-cidr-mask-size: "24"
+dns: {}
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+imageRepository: registry.aliyuncs.com/google_containers
+kind: ClusterConfiguration
+kubernetesVersion: v1.24.4
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 10.0.0.0/8
+  serviceSubnet: 11.0.0.0/12
+scheduler:
+  extraArgs:
+    bind-address: 0.0.0.0
+EOF
 
-```
+## 生成certificate
+root@master01:~# kubeadm init phase upload-certs --upload-certs --config  /tmp/kubeadm_clusterconfiguration.yaml
+[upload-certs] Storing the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
+[upload-certs] Using certificate key:
+e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b
 ```
 
-### 2.5.2 
+**生成worker node加入控制平面的token**
+```
+root@master01:~# kubeadm token create --print-join-command   # 这是命令
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 
+```
 
+
+### 2.5.2 将token与certificate进行组合
+**master02的(先不要操作)**
 ```
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
+  --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
+  --node-name master02
 ```
+
+**master03的(先不要操作)***
+```
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
+  --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
+  --node-name master03
+```
+
+
+### 2.5.3 master02上操作
+**/etc/hosts解析相应域名**
+```
+cat >>/etc/hosts <<'EOF'
+172.31.7.203  k8s01-component-connection-kubeapi.local.io
+EOF
+```
+
+**加入现有控制平面,并成为控制平面**
+```
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
+  --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
+  --node-name master02
+```
+
+### 2.5.4 master03上操作
+**/etc/hosts解析相应域名**
+```
+cat >>/etc/hosts <<'EOF'
+172.31.7.203  k8s01-component-connection-kubeapi.local.io
+EOF
+```
+
+**加入现有控制平面,并成为控制平面**
+```
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
+  --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
+  --node-name master03
+```
+
+
+
+
