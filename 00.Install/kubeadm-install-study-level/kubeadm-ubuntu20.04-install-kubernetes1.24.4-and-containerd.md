@@ -329,11 +329,24 @@ EOF
 sysctl -p
 ```
 
-### 1.3.12 重启服务器
+### 1.3.12 关闭交换分区
+```
+#### 设置vm.swappiness=0
+chattr -i /etc/sysctl.conf
+echo "vm.swappiness=0" >>/etc/sysctl.conf
+sysctl -p 
+
+#### 关闭swap
+chattr -i /etc/fstab
+swapoff -a
+sed    '/swap/'d /etc/fstab
+sed -i '/swap/'d /etc/fstab
+```
+
+### 1.3.13 重启服务器
 ```
 reboot
 ```
-
 
 
 ## 1.4 相关软件的安装(不操作,后面来引用)
