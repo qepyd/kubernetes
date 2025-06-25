@@ -1,7 +1,20 @@
 ==============kubeadm工具在ubuntu20.04平台部署kubernetes v1.24.4,容器运行时使用containerd==============
 
 # 1.kubernetes的相关规划及准备相应环境
-## 1.1 kubernetes基本规划
+## 1.1 我的需求
+```
+使用kubeadm工具部署k8s基本框架
+   etcd
+   kube-apiserver、kube-scheduler、kube-controller-manager
+   kubelet、kube-proxy。
+   实现控制平面(master)高可用。
+   不用部署kubeadm安装任何的Addons
+
+使用kubeadm工具部署k8s学习环境
+   人为安装一些基本的Addons(cni、dns)
+```
+
+## 1.2 kubernetes基本规划
 **kubernetes基本规划**
 ```
 kubernetes版本：
@@ -61,7 +74,7 @@ container-resource-monitoring：
   metrics-server
 ```
 
-## 1.2 所准备的相关服务器
+## 1.3 所准备的相关服务器
 所准备的服务器得要能够访问互联网(公网IP,FQDN)。
 ```
 操作系统     主机名   业务网卡  业务网卡IP   
@@ -107,38 +120,38 @@ ubuntu20.04  node02   eth0      172.31.7.207
 
 
 
-## 1.3 所准备服务器的优化
-### 1.3.1 修改主机名
+## 1.4 所准备服务器的优化
+### 1.4.1 修改主机名
 请参考"1.2 所准备的相关服务器"中的信息进行设置，设置命令为:
 ```
 hostnamectl set-hostname <主机名>
 ```
 
-### 1.3.2 停止ufw防火墙
+### 1.4.2 停止ufw防火墙
 ```
 systemctl stop ufw.service
 systemctl disable ufw.service
 ```
 
-### 1.3.3 选择默认的编辑器为vim
+### 1.4.3 选择默认的编辑器为vim
 ```
 echo 'export EDITOR=/usr/bin/vi' >>/etc/profile
 source /etc/profile
 ```
 
-### 1.3.4 解决apt安装软件时让其交互式设置
+### 1.4.4 解决apt安装软件时让其交互式设置
 ```
 echo "export DEBIAN_FRONTEND=noninteractive" >>/etc/profile
 source /etc/profile
 ```
 
-### 1.3.5 停止自动更新软件包
+### 1.4.5 停止自动更新软件包
 ```
 systemctl stop unattended-upgrades.service 
 systemctl disable unattended-upgrades.service 
 ```
 
-### 1.3.6 更改apt源为阿里云的 
+### 1.4.6 更改apt源为阿里云的 
 ```
 #### 更新apt源为阿里云
 cat >/etc/apt/sources.list<<'EOF'
@@ -163,7 +176,7 @@ apt-get update
 ```
 
 
-### 1.3.7 开启crond的日志
+### 1.4.7 开启crond的日志
 ```
 cat >>/etc/rsyslog.d/50-default.conf<<"EOF"
 cron.*   /var/log/cron.log
@@ -173,7 +186,7 @@ systemctl restart cron.service
 systemctl restart rsyslog.service
 ```
 
-### 1.3.8 定时更新系统操作时间
+### 1.4.8 定时更新系统操作时间
 修改时区为CST，以及时间为24小时帛
 ```
 ## 安装软件
@@ -251,7 +264,7 @@ crontab -u root -l
 ```
 
 
-### 1.3.9 开启ipvs支持
+### 1.4.9 开启ipvs支持
 ```
 #### 安装ipvs
 apt update
@@ -287,7 +300,7 @@ lsmod | grep -e ip_vs -e nf_conntrack_ipv4
 ```
 
 
-### 1.3.10 加载br_netfilter模块并设置内核参数
+### 1.4.10 加载br_netfilter模块并设置内核参数
 安装工具并临时加载br_netfilter模块
 ```
 chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
@@ -318,7 +331,7 @@ sysctl -p
 ```
 
 
-### 1.3.11 开启内核网络转发
+### 1.4.11 开启内核网络转发
 ```
 chattr -i /etc/sysctl.conf
 
@@ -329,7 +342,7 @@ EOF
 sysctl -p
 ```
 
-### 1.3.12 关闭交换分区
+### 1.4.12 关闭交换分区
 ```
 #### 设置vm.swappiness=0
 chattr -i /etc/sysctl.conf
@@ -343,14 +356,14 @@ sed    '/swap/'d /etc/fstab
 sed -i '/swap/'d /etc/fstab
 ```
 
-### 1.3.13 重启服务器
+### 1.4.13 重启服务器
 ```
 reboot
 ```
 
 
-## 1.4 相关软件的安装(不操作,后面来引用)
-### 1.4.1 安装部署工具kubeadm及k8s组件kubelet
+## 1.5 相关软件的安装(不操作,后面来引用)
+### 1.5.1 安装部署工具kubeadm及k8s组件kubelet
 **更改apt源**
 ```
 apt-get update && apt-get install -y apt-transport-https
@@ -417,7 +430,7 @@ registry.aliyuncs.com/google_containers/coredns:v1.8.6
   # 
 ```
 
-### 1.4.2 安装容器运行时containerd
+### 1.5.2 安装容器运行时containerd
 **安装runc**
 ```
 wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
@@ -544,7 +557,7 @@ nerdctl image ls    --namespace=k8s.io
 nerdctl image rm    --namespace=k8s.io   registry.aliyuncs.com/google_containers/pause:3.7
 ```
 
-### 1.4.3 配置crictl连接containerd
+### 1.5.3 配置crictl连接containerd
 创建/etc/crictl.yaml文件并配置
 ```
 cat >/etc/crictl.yaml<<'EOF'
@@ -560,15 +573,15 @@ crictl image
 # 2.kubernetes控制平面高可用的部署
 ## 2.1 安装安装部署工具kubeadm及k8s组件kubelet
 master01、master02、master03上操作。  
-参考 "1.4.1 安装部署工具kubeadm及k8s组件kubelet"。
+参考 "1.5.1 安装部署工具kubeadm及k8s组件kubelet"。
 
 ## 2.2 安装容器运行时containerd
 master01、master02、master03上操作。  
-参考 "1.4.2 安装容器运行时containerd"
+参考 "1.5.2 安装容器运行时containerd"
 
 ## 2.3 配置crictl连接containerd
 master01、master02、master03上操作。  
-参考 "1.4.3 配置crictl连接containerd"
+参考 "1.5.3 配置crictl连接containerd"
 
 ## 2.4 拉取控制平面(master01上操作)
 ### 2.4.1 先下载好镜像
