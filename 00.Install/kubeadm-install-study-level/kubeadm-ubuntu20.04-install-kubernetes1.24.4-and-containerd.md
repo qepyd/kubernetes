@@ -807,11 +807,12 @@ kube-system   kube-scheduler-master01            1/1     Running   0          10
 ```
 
 ## 2.5 让master02、master03成为现有控制平面组成部分
-### 2.5.1 重新生成token
+### 2.5.1 
+
 ```
-kubeadm token create --print-join-command
 ```
 
 ### 2.5.2 
 
-
+```
+```
