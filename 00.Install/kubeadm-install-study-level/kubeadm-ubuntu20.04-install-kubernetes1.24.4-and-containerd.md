@@ -646,7 +646,7 @@ networking:
   serviceSubnet: 11.0.0.0/12
   dnsDomain: cluster.local
 # kube-apiserver相关的配置
-controlPlaneEndpoint: "127.0.0.1:6443"
+controlPlaneEndpoint: "k8s01-component-connection-kubeapi.local.io:6443"
 apiServer:
   extraArgs:
     authorization-mode: "Node,RBAC"
