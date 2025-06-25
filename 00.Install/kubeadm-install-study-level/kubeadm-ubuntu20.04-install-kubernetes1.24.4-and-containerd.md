@@ -565,7 +565,7 @@ kubeadm config images pull \
   --kubernetes-version=v1.24.4
 
 ## 列出镜像
-cri image
+crictl image
 ```
 
 
