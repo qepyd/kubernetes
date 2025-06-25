@@ -1039,10 +1039,11 @@ master03   NotReady   control-plane   5m30s   v1.24.4
 其实这个时候就可以安装一些Addons了(先安装cni-->dns-->....)。但这里我就不在这里来安装Addons。之所以这么说，是因为现在
 k8s是有worker node（master01、master02、master03）的，只不过具备污点（Taints），之所以有污点，是因为其所在宿主机
 运行有k8s master相关组件，也为了不让业务Pod调度到上面，安装组件我可以让其容忍污点。
+<br>
+<br>
 
 
-
-# 3.现有控制平面加入纯worker node
+# 3.加入worker node到现有控制平面
 ## 3.1 安装安装部署工具kubeadm及k8s组件kubelet
 node01、node02上操作。
 参考 "1.5.1 安装部署工具kubeadm及k8s组件kubelet"。
