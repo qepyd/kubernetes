@@ -602,13 +602,10 @@ nodeRegistration:
   taints: 
   - effect: NoSchedule
     key: node-role.kubernetes.io/control-plane
-  kubeletExtraArgs:
-    v: 2
 # 跳过的阶段(我这里不让其安装Addons之coredns)
 # 可用kubeadm inist --help看一看
 skipPhases:
   - addon/coredns
----
 
 
 ---
@@ -655,7 +652,7 @@ controllerManager:
 scheduler: 
   extraArgs:
     bind-address: "0.0.0.0"
----
+
 
 ---
 #### 参考
@@ -665,14 +662,14 @@ scheduler:
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
 # 来自于Svc网络,给集群内DNS应用(Pod)其svc资源对象所规划的ClusterIP
-clusterDNS: 11.0.0.2
+clusterDNS: 
+ - "11.0.0.2"
 # k8s集群内DNS的的Domain
-clusterDomain: cluster.local
+clusterDomain: "cluster.local"
 # 设置cgroup的驱动为systemd,默认为cgroupfs
-cgroupDriver: systemd
+cgroupDriver: "systemd"
 # 设置各woker node上的最大Pod数,默认为110
 maxPods: 110
----
 
 
 ---
@@ -684,7 +681,6 @@ apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
 # 用于配置kube-proxy上为Service指定的代理模式，默认为iptables；
 mode: "ipvs"
----
 ```
 
 
