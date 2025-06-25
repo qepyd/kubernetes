@@ -1036,14 +1036,134 @@ master03   NotReady   control-plane   5m30s   v1.24.4
 ```
 
 ### 2.5.4 引入一下
-其实这个时候就可以安装一些Addons了(先安装cni-->dns-->....)。但这里我就不在这里插入了。之所以这么说，是因为现在
+其实这个时候就可以安装一些Addons了(先安装cni-->dns-->....)。但这里我就不在这里来安装Addons。之所以这么说，是因为现在
 k8s是有worker node（master01、master02、master03）的，只不过具备污点（Taints），之所以有污点，是因为其所在宿主机
-运行有k8s master相关组件，也为了不让业务Pod调度到上面。
+运行有k8s master相关组件，也为了不让业务Pod调度到上面，安装组件我可以让其容忍污点。
 
 
 
+# 3.现有控制平面加入纯worker node
+## 3.1 安装安装部署工具kubeadm及k8s组件kubelet
+node01、node02上操作。
+参考 "1.5.1 安装部署工具kubeadm及k8s组件kubelet"。
 
+## 3.2 安装容器运行时containerd
+node01、node02上操作。
+参考 "1.5.2 安装容器运行时containerd"
 
+## 3.3 配置crictl连接containerd
+node01、node02上操作。
+参考 "1.5.3 配置crictl连接containerd"
+
+## 3.4 安装nginx(L4代理)
+node01、node02上操作。
+**安装nginx**
+```
+## 安装nginx
+sudo apt update
+sudo chattr -i /etc/passwd /etc/group /etc/shadow /etc/gshadow
+sudo apt install -y nginx
+sudo systemctl status nginx.service
+sudo systemctl enable nginx.service
+
+## 查看是否有stream模块
+nginx -V
+
+## 备份nginx配置文件
+cp -a /etc/nginx/nginx.conf{,.defaults}
+
+## 精简nginx配置文件
+grep  -Ev "#|^$" /etc/nginx/nginx.conf.defaults  >/etc/nginx/nginx.conf
+
+## 启动并开机自启动
+systemctl restart nginx.service
+systemctl enable nginx.service
+```
+
+**配置nginx**
+```
+udo bash -c "cat >/etc/nginx/nginx.conf"<<'EOF'
+## main
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
+
+## events
+events {
+    worker_connections 1024;
+}
+
+## stream
+stream {
+    # apisrevers
+    upstream k8s01-apiservers {
+        server 172.31.7.203:6443 max_fails=2 fail_timeout=30s;
+        server 172.31.7.204:6443 max_fails=2 fail_timeout=30s;
+        server 172.31.7.205:6443 max_fails=2 fail_timeout=30s;
+    }
+    server {
+        listen 127.0.0.1:6443;
+        proxy_pass k8s01-apiservers;
+    }
+}
+EOF
+```
+
+**平面启动**
+```
+sudo nginx -t
+sudo nginx -s reload
+sudo ss -lntup | grep -w 6443
+```
+
+## 3.5 控制平面生成token
+
+**控制平面生成token(我就在master01上操作了)**
+```
+root@master01:~# kubeadm token create --print-join-command
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 
+```
+
+## 3.6 node01加入控制平面
+**利用/etc/hosts做DNS解析**
+```
+cat >>/etc/hosts<<'EOF'
+127.0.0.1  k8s01-component-connection-kubeapi.local.io
+EOF
+```
+
+**加入控制平面**
+```
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5  \
+   --node-name node01
+```
+
+## 3.7 node02加入控制平面
+**利用/etc/hosts做DNS解析**
+```
+cat >>/etc/hosts<<'EOF'
+127.0.0.1  k8s01-component-connection-kubeapi.local.io
+EOF
+```
+
+**加入控制平面**
+```
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5  \
+   --node-name node02
+```
+
+## 3.8 查看现有nodes资源对象
+在master01、master02、master03上操作均可
+```
+root@master01:~# kubectl get nodes -o wide
+NAME       STATUS     ROLES           AGE     VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+master01   NotReady   control-plane   3h52m   v1.24.4   172.31.7.203   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+master02   NotReady   control-plane   37m     v1.24.4   172.31.7.204   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+master03   NotReady   control-plane   23m     v1.24.4   172.31.7.205   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+node01     NotReady   control-plane   23m     v1.24.4   172.31.7.206   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+node02     NotReady   control-plane   23m     v1.24.4   172.31.7.207   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+```
 
 
 
