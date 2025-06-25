@@ -695,6 +695,16 @@ mode: "ipvs"
 ```
 
 ### 2.4.3 初始化控制平面
+**利用/etc/hosts做dns解析(127.0.0.1 k8s01-component-connection-kubeapi.local.io)**  
+前面为初始化准备的配置文件中具备 k8s01-component-connection-kubeapi.local.io 域名。  
+kube-apiserver组件的client之kube-controller-manager、kube-scheduler的kubeconfig文件中其连接地址为 https://本机IPv4:6443
+kube-apiserver组件的client之kubelet、kubectl的kubeconfig文件中其连接地址为 https://k8s01-component-connection-kubeapi.local.io:6443
+```
+cat >>/etc/hosts<<'EOF'
+127.0.0.1   k8s01-component-connection-kubeapi.local.io
+EOF
+```
+
 **初始化**
 ```
 kubeadm init --config kubeadm-config.yaml --upload-certs
@@ -719,9 +729,9 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 
 You can now join any number of the control-plane node running the following command on each as root:
 
-  kubeadm join 127.0.0.1:6443 --token 783bde.3f89s0fje9f38fhf \
-	--discovery-token-ca-cert-hash sha256:1cd744ca98e0af2b04b7b8d3b21936cca125de76c179e5e5be010d7908216708 \
-	--control-plane --certificate-key 269f82dce937d9b2e84e332dae90e53fe8e0dd5fe624aa40e606fd65687ccb2f
+  kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token 9a08jv.c0izixklcxtmnze7 \
+	--discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
+	--control-plane --certificate-key 8f1597900c304ee2290deaf2525fed5059f38151f82da07948cd3d2ca877935e
 
 Please note that the certificate-key gives access to cluster sensitive data, keep it secret!
 As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you can use
@@ -729,11 +739,42 @@ As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you c
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 127.0.0.1:6443 --token 783bde.3f89s0fje9f38fhf \
-	--discovery-token-ca-cert-hash sha256:1cd744ca98e0af2b04b7b8d3b21936cca125de76c179e5e5be010d7908216708 
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token 9a08jv.c0izixklcxtmnze7 \
+	--discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of the control-plane node running the following command on each as root:
+
+  kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token 783bde.3f89s0fje9f38fhf \
+	--discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
+	--control-plane --certificate-key 8f1597900c304ee2290deaf2525fed5059f38151f82da07948cd3d2ca877935e
+
+Please note that the certificate-key gives access to cluster sensitive data, keep it secret!
+As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you can use
+"kubeadm init phase upload-certs --upload-certs" to reload certs afterward.
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token 783bde.3f89s0fje9f38fhf \
+	--discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 
 ```
 
-**创建目录,并复制kubectl所要用到的kubeconfig***
+**创建目录,并复制kubectl所要用到的kubeconfig**
 ```
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -745,6 +786,27 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 root@master01:~# kubectl get nodes
 NAME       STATUS     ROLES           AGE     VERSION
 master01   NotReady   control-plane   5m28s   v1.24.4
+  #
+  #
+  # 可用 kubectl describe ndoes/master01 看到
+  #   NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized
+  #
 ```
+
+**列出当前所有的Pod有中**
+首先，没有看到coredns相平面的Pod，这是因为忽略了其安装，后期我们自己安装。
+ns/kube-system中ds/kube-proxy对象所编排的Pod(以kube-proxy为前缀)共享所在worker node的网络名称空间。
+ns/kube-system中Pod etcd-master01 kube-apiserver-master01 kube-controller-manager-master01 kube-scheduler-master01是静态Pod。
+```
+root@master01:~# kubectl get pods -o wide -A
+NAMESPACE     NAME                               READY   STATUS    RESTARTS   AGE     IP             NODE       NOMINATED NODE   READINESS GATES
+kube-system   etcd-master01                      1/1     Running   1          10m     172.31.7.203   master01   <none>           <none>
+kube-system   kube-apiserver-master01            1/1     Running   0          10m     172.31.7.203   master01   <none>           <none>
+kube-system   kube-controller-manager-master01   1/1     Running   1          10m     172.31.7.203   master01   <none>           <none>
+kube-system   kube-proxy-gdhkw                   1/1     Running   0          9m52s   172.31.7.203   master01   <none>           <none>
+kube-system   kube-scheduler-master01            1/1     Running   0          10m     172.31.7.203   master01   <none>           <none>
+```
+
+
 
 
