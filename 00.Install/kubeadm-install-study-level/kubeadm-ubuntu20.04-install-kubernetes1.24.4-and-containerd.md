@@ -615,7 +615,7 @@ crictl image
 ```
 
 # 2.kubernetes控制平面高可用的部署
-## 2.1 安装安装部署工具kubeadm及k8s组件kubelet
+## 2.1 安装部署工具kubeadm及k8s组件kubelet
 master01、master02、master03上操作。  
 参考 "1.5.1 安装部署工具kubeadm及k8s组件kubelet"。
 
@@ -1044,7 +1044,7 @@ k8s是有worker node（master01、master02、master03）的，只不过具备污
 
 
 # 3.加入worker node到现有控制平面
-## 3.1 安装安装部署工具kubeadm及k8s组件kubelet
+## 3.1 安装部署工具kubeadm及k8s组件kubelet
 node01、node02上操作。
 参考 "1.5.1 安装部署工具kubeadm及k8s组件kubelet"。
 
