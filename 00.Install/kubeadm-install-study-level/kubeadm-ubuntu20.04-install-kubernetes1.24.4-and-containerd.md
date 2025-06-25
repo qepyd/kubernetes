@@ -613,6 +613,9 @@ crictl工具测试拉取镜像
 crictl pull registry.aliyuncs.com/google_containers/pause:3.7
 crictl image
 ```
+<br>
+<br>
+
 
 # 2.kubernetes控制平面高可用的部署
 ## 2.1 安装部署工具kubeadm及k8s组件kubelet
