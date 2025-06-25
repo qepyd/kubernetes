@@ -1057,7 +1057,7 @@ node01、node02上操作。
 参考 "1.5.3 配置crictl连接containerd"
 
 ## 3.4 安装nginx(L4代理)
-node01、node02上操作。
+node01、node02上操作。  
 **安装nginx**
 ```
 ## 安装nginx
@@ -1083,7 +1083,7 @@ systemctl enable nginx.service
 
 **配置nginx**
 ```
-udo bash -c "cat >/etc/nginx/nginx.conf"<<'EOF'
+sudo bash -c "cat >/etc/nginx/nginx.conf"<<'EOF'
 ## main
 user www-data;
 worker_processes auto;
