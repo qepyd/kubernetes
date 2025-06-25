@@ -16,8 +16,8 @@
 ```
 
 **我们来看一看kubeadm工具在初始时有哪些阶段**  
-kubeadm init --help  # 当然现在没有安装,后面回头看
-我后面在初始化时就会把addon阶段的coredns(dns addons的一种)忽略。
+我后面在初始化时就会把addon阶段的coredns(dns addons的一种)忽略。  
+以下信息可在安装有kubeadm工具的服务器上通过 kubeadm init --help 看到。
 ```
 preflight                    Run pre-flight checks
 certs                        Certificate generation
