@@ -1035,6 +1035,14 @@ master02   NotReady   control-plane   5m30s   v1.24.4
 master03   NotReady   control-plane   5m30s   v1.24.4
 ```
 
+### 2.5.4 引入一下
+其实这个时候就可以安装一些Addons了(先安装cni-->dns-->....)。但这里我就不在这里插入了。之所以这么说，是因为现在
+k8s是有worker node（master01、master02、master03）的，只不过具备污点（Taints），之所以有污点，是因为其所在宿主机
+运行有k8s master相关组件，也为了不让业务Pod调度到上面。
+
+
+
+
 
 
 
