@@ -627,7 +627,7 @@ master01、master02、master03上操作。
 master01、master02、master03上操作。  
 参考 "1.5.3 配置crictl连接containerd"
 
-## 2.4 拉取控制平面(master01上操作)
+## 2.4 拉起控制平面(master01上操作)
 ### 2.4.1 先下载好镜像
 ```
 ## 下载镜像
@@ -672,7 +672,7 @@ nodeRegistration:
   taints: 
   - effect: NoSchedule
     key: node-role.kubernetes.io/control-plane
-# 跳过的阶段(我这里不让其安装Addons之coredns)
+# 注意：跳过的阶段(根据我的需求我路过addon阶段之coredns的安装)
 # 可用kubeadm inist --help看一看
 skipPhases:
   - addon/coredns
