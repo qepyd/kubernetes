@@ -652,8 +652,6 @@ controllerManager:
 scheduler: 
   extraArgs:
     bind-address: "0.0.0.0"
-
-
 ---
 #### 参考
 # https://kubernetes.io/zh-cn/docs/reference/config-api/kubelet-config.v1beta1/#kubelet-config-k8s-io-v1beta1-KubeletConfiguration
@@ -681,6 +679,59 @@ apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
 # 用于配置kube-proxy上为Service指定的代理模式，默认为iptables；
 mode: "ipvs"
+```
+
+### 2.4.3 初始化控制平面
+**初始化**
+```
+kubeadm init --config kubeadm-config.yaml --upload-certs
+```
+**成功结果展示**
+```
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of the control-plane node running the following command on each as root:
+
+  kubeadm join 127.0.0.1:6443 --token 783bde.3f89s0fje9f38fhf \
+	--discovery-token-ca-cert-hash sha256:1cd744ca98e0af2b04b7b8d3b21936cca125de76c179e5e5be010d7908216708 \
+	--control-plane --certificate-key 269f82dce937d9b2e84e332dae90e53fe8e0dd5fe624aa40e606fd65687ccb2f
+
+Please note that the certificate-key gives access to cluster sensitive data, keep it secret!
+As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you can use
+"kubeadm init phase upload-certs --upload-certs" to reload certs afterward.
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 127.0.0.1:6443 --token 783bde.3f89s0fje9f38fhf \
+	--discovery-token-ca-cert-hash sha256:1cd744ca98e0af2b04b7b8d3b21936cca125de76c179e5e5be010d7908216708 
+```
+
+**创建目录,并复制kubectl所要用到的kubeconfig***
+```
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+**列出有中些nodes资源对象**
+```
+root@master01:~# kubectl get nodes
+NAME       STATUS     ROLES           AGE     VERSION
+master01   NotReady   control-plane   5m28s   v1.24.4
 ```
 
 
