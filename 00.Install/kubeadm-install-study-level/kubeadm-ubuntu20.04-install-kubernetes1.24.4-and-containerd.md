@@ -865,10 +865,10 @@ kube-system   kube-proxy-gdhkw                   1/1     Running   0          9m
 kube-system   kube-scheduler-master01            1/1     Running   0          10m     172.31.7.203   master01   <none>           <none>
 ```
 
-## 2.5 让master02、master03成为现有控制平面的一部分
-### 2.5.1 master01上操作,生成相应的certificate-key和token
+## 2.5 实现现在控制平面的高可用
+### 2.5.1 master01上操作,生成certificate-key和token
 **生成certificate**  
-需要用到最开始初始化控制平面时其 kubeadm-config.yaml 中的 ClusterConfiguration 部分，如果找不到的话，可以参考 ns/kube-system 中其 cm/kubeadm-config 中的 data 字段中 键 ClusterConfiguration 对应的值。
+创建一个manifests文件,内容来自于kube-system名称空间中cm/kubeadm-config对象中其data字段下ClusterConfiguration键的值。
 ```
 ## 生成相应的manifests
 cat >/tmp/kubeadm_clusterconfiguration.yaml<<'EOF'
@@ -920,7 +920,6 @@ e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b
 root@master01:~# kubeadm token create --print-join-command   # 这是命令
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 
 ```
-
 
 ### 2.5.2 将token与certificate进行组合
 **master02的(先不要操作)**
