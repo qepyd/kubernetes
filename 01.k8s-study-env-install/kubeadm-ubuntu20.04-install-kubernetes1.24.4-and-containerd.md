@@ -813,7 +813,7 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-**列出有中些nodes资源对象**
+**列出k8s中所有的nodes资源对象**
 ```
 root@master01:~# kubectl get nodes
 NAME       STATUS     ROLES           AGE     VERSION
@@ -823,17 +823,6 @@ master01   NotReady   control-plane   5m28s   v1.24.4
   # 可用 kubectl describe ndoes/master01 看到
   #   NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized
   #
-```
-
-**crictl列出有哪些容器**
-```
-root@master01:~# crictl ps
-CONTAINER           IMAGE               CREATED             STATE               NAME                      ATTEMPT             POD ID              POD
-8349d746025ba       7a53d1e08ef58       2 minutes ago       Running             kube-proxy                0                   7a91783b77e0f       kube-proxy-m8tbz
-20c0eedcbc26d       aebe758cef4cd       2 minutes ago       Running             etcd                      0                   b6ee0b5a6da54       etcd-master01
-72a80eea8b286       6cab9d1bed1be       2 minutes ago       Running             kube-apiserver            0                   d9a8d045c6a24       kube-apiserver-master01
-ca932b06ec3f7       03fa22539fc1c       2 minutes ago       Running             kube-scheduler            0                   4fb8b69bf56f6       kube-scheduler-master01
-80c4a50412137       1f99cb6da9a82       2 minutes ago       Running             kube-controller-manager   0                   24061ebb2fcce       kube-controller-manager-master01
 ```
 
 **列出k8s中所有的Pod**  
@@ -849,6 +838,17 @@ kube-system   kube-apiserver-master01            1/1     Running   0          10
 kube-system   kube-controller-manager-master01   1/1     Running   1          10m     172.31.7.203   master01   <none>           <none>
 kube-system   kube-proxy-gdhkw                   1/1     Running   0          9m52s   172.31.7.203   master01   <none>           <none>
 kube-system   kube-scheduler-master01            1/1     Running   0          10m     172.31.7.203   master01   <none>           <none>
+```
+
+**crictl列出有哪些容器**
+```
+root@master01:~# crictl ps
+CONTAINER           IMAGE               CREATED             STATE               NAME                      ATTEMPT             POD ID              POD
+8349d746025ba       7a53d1e08ef58       2 minutes ago       Running             kube-proxy                0                   7a91783b77e0f       kube-proxy-m8tbz
+20c0eedcbc26d       aebe758cef4cd       2 minutes ago       Running             etcd                      0                   b6ee0b5a6da54       etcd-master01
+72a80eea8b286       6cab9d1bed1be       2 minutes ago       Running             kube-apiserver            0                   d9a8d045c6a24       kube-apiserver-master01
+ca932b06ec3f7       03fa22539fc1c       2 minutes ago       Running             kube-scheduler            0                   4fb8b69bf56f6       kube-scheduler-master01
+80c4a50412137       1f99cb6da9a82       2 minutes ago       Running             kube-controller-manager   0                   24061ebb2fcce       kube-controller-manager-master01
 ```
 
 ## 2.5 实现其现在控制平面的高可用
