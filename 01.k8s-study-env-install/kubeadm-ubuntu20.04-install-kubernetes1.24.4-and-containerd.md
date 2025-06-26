@@ -424,7 +424,6 @@ apt-get update
 ```
 apt-cache madison kubeadm   | grep 1.24.4
 apt-cache madison kubelet   | grep 1.24.4
-apt-cache madison cri-tools | grep 1.26.0-00
 ```
 
 **安装kubeadm、kubelet相应的版本**
@@ -432,14 +431,27 @@ apt-cache madison cri-tools | grep 1.26.0-00
 ## 安装
 chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
 apt-get update
-apt install -y kubelet=1.24.4-00  kubeadm=1.24.4-00  cri-tools=1.26.0-00
+apt install -y kubeadm=1.24.4-00
+   #
+   # 还会额外安装
+   #  kubectl
+   #  cri-tools
+   #  
+   # 
+apt install -y kubelet=1.24.4-00
+   #
+   # 还会额外安装
+   #   ebtables
+   #   kubernetes-cni
+   #   socat
+   # 
 
 ## 检查
-which kubeadm  kubectl  kubelet  crictl
+which  kubeadm  kubectl crictl  kubelet  
 kubeadm version
 kubectl version
-kubelet --version
 crictl  --version
+kubelet --version
 
 ## kubelet启动是会失败的(正常)
 systemctl status kubelet.service  # 未正常启动,是正常的
