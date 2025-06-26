@@ -1,18 +1,9 @@
-# 1.namespaces资源的介绍
+# 1.namespaces资源的基本介绍
 ```
-namespaces资源(简写ns)是kubernetes中的标准资源(只要安装好kubernetes后就有)。
-namespaces资源可实例化出多个对象(例如：ns/dev-wyc，ns test-wyc wyc)。
-
-kubernetes中的所有resources(标准的、使用operater扩展kubernetes时所添加的)可分为:
-  namespace级别
-    用 kubectl api-resources --namespaced=true 列出相关resources
-    注 这些resources的API规范中其metadata.namespace字段是必选,指定所属ns资源对象
-    
-  非namespace级别(也称cluster级别)
-    用 kubectl api-resources --namespaced=false 列出相关resources
-    注 这些resources的API规范可能会有metadat.namespace字段,你指定ns资源对象也没用
-
-那么namespace级别的resources所实例化出来的对象就得放在ns资源对象(namespaces资源实例化出的对象)中。
+01:namespaces资源(简写ns)是kubernetes中的标准资源(只要安装好kubernetes后就有)。
+02:namespaces资源可实例化出多个对象，例如：
+   ns/dev-wyc  ns/test-wyc
+   ns dev-wyc  test-wyc
 ```
 
 # 2.kubectl工具创建ns资源对象
