@@ -652,17 +652,6 @@ crictl image
 #### 初始化配置
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: InitConfiguration
-bootstrapTokens:
-  - token: "9a08jv.c0izixklcxtmnze7"
-    description: "kubeadm bootstrap token"
-    ttl: "24h"
-  - token: "783bde.3f89s0fje9f38fhf"
-    description: "another bootstrap token"
-    usages:
-    - authentication
-    - signing
-    groups:
-    - system:bootstrappers:kubeadm:default-node-token
 # 当前kube-apiserver的端点
 localAPIEndpoint:
   advertiseAddress: 172.31.7.203
