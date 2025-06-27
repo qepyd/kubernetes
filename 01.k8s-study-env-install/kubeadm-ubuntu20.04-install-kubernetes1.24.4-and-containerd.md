@@ -925,18 +925,18 @@ kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg
 ```
 
 ### 2.5.3 master02上操作
-**/etc/hosts解析相应域名**
-```
-cat >>/etc/hosts <<'EOF'
-172.31.7.203  k8s01-component-connection-kubeapi.local.io
-EOF
-```
-
 **先拉取好镜像**
 ```
 kubeadm config images pull \
   --image-repository=registry.aliyuncs.com/google_containers \
   --kubernetes-version=v1.24.4
+```
+
+**/etc/hosts解析相应域名**
+```
+cat >>/etc/hosts <<'EOF'
+172.31.7.203  k8s01-component-connection-kubeapi.local.io
+EOF
 ```
 
 **部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)**  
@@ -980,18 +980,18 @@ master02   NotReady   control-plane   5m30s   v1.24.4
 ```
 
 ### 2.5.4 master03上操作
-**/etc/hosts解析相应域名**
-```
-cat >>/etc/hosts <<'EOF'
-172.31.7.203  k8s01-component-connection-kubeapi.local.io
-EOF
-```
-
 **先拉取好镜像**
 ```
 kubeadm config images pull \
   --image-repository=registry.aliyuncs.com/google_containers \
   --kubernetes-version=v1.24.4
+```
+
+**/etc/hosts解析相应域名**
+```
+cat >>/etc/hosts <<'EOF'
+172.31.7.203  k8s01-component-connection-kubeapi.local.io
+EOF
 ```
 
 **部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)**
