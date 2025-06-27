@@ -1008,7 +1008,7 @@ EOF
 ## 试运行一下
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
    --control-plane  --certificate-key  302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855  \
-   --node-name master02  --dry-run=client
+   --node-name master02  --dry-run
 
 ## 正式运行一下
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
