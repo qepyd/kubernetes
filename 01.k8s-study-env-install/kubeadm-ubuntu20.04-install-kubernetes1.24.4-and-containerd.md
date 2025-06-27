@@ -885,9 +885,9 @@ ca932b06ec3f7       03fa22539fc1c       2 minutes ago       Running             
 ```
 
 ## 2.5 实现其现在控制平面的高可用
-### 2.5.1 master01上操作,生成certificate-key和token
-**准备clusterconfiguration**
-生成解密集群证书的certificate-key
+### 2.5.1 生成certificate-key和token(master01上操作)
+**准备clusterconfiguration**  
+为了后面生成certificate-key而准备
 ```
 ## 生成相应的manifests
 cat >/tmp/kubeadm_clusterconfiguration.yaml<<'EOF'
