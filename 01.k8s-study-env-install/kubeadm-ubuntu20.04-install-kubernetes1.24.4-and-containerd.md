@@ -9,7 +9,7 @@
    kube-apiserver、kube-scheduler、kube-controller-manager
    kubelet、kube-proxy。
    实现控制平面(master)高可用。
-   不用部署kubeadm安装任何的Addons
+   不用部署工具kubeadm安装任何的Addons
 
 使用kubeadm工具部署k8s学习环境
    人为安装一些基本的Addons(cni、dns)
