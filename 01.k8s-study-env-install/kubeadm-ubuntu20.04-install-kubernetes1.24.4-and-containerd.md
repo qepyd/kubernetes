@@ -672,18 +672,7 @@ master01、master02、master03上操作。
 参考 "1.6.3 配置crictl连接containerd"
 
 ## 2.4 拉起控制平面(master01上操作)
-### 2.4.1 先下载好镜像
-```
-## 下载镜像
-kubeadm config images pull \
-  --image-repository=registry.aliyuncs.com/google_containers \
-  --kubernetes-version=v1.24.4
-
-## 列出镜像
-crictl image
-```
-
-### 2.4.2 生成配置文件
+### 2.4.1 生成配置文件
 创建kubeadm-config.yaml文件,内容如下所示
 ```
 --- 
@@ -784,6 +773,15 @@ apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
 # 用于配置kube-proxy上为Service指定的代理模式，默认为iptables；
 mode: "ipvs"
+```
+
+### 2.4.2 下载好镜像
+```
+## 下载镜像
+kubeadm config images pull --config kubeadm-config.yaml
+
+## 列出镜像
+crictl image
 ```
 
 ### 2.4.3 初始化控制平面
