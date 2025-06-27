@@ -1004,8 +1004,12 @@ master02   NotReady   control-plane   2m46s   v1.24.4
 **修改之前对/etc/hosts文件的修改**
 ```
 ## 修改/etc/hosts文件
-sed    's#172.31.7.203#127.0.0.1#g' /etc/hosts
-sed -i 's#172.31.7.203#127.0.0.1#g' /etc/hosts
+sed    "/k8s01-component-connection-kubeapi.local.io/"d  /etc/hosts
+sed -i "/k8s01-component-connection-kubeapi.local.io/"d  /etc/hosts
+
+cat >>/etc/hosts<<'EOF'
+127.0.0.1  k8s01-component-connection-kubeapi.local.io
+EOF
 
 ## 再列出k8s中所有的nodes资源对象
 root@master02:~# kubectl get nodes
@@ -1065,8 +1069,12 @@ master03   NotReady   control-plane   2m46s   v1.24.4
 **修改之前对/etc/hosts文件的修改**
 ```
 ## 修改/etc/hosts文件
-sed    's#172.31.7.203#127.0.0.1#g' /etc/hosts
-sed -i 's#172.31.7.203#127.0.0.1#g' /etc/hosts
+sed    "/k8s01-component-connection-kubeapi.local.io/"d  /etc/hosts
+sed -i "/k8s01-component-connection-kubeapi.local.io/"d  /etc/hosts
+
+cat >>/etc/hosts<<'EOF'
+127.0.0.1  k8s01-component-connection-kubeapi.local.io
+EOF
 
 ## 再列出k8s中所有的nodes资源对象
 root@master03:~# kubectl get nodes
@@ -1219,9 +1227,6 @@ node02     NotReady   <none>          6s     v1.24.4   172.31.7.207   <none>    
 <br>
 <br>
 
-
-
-```
 
 ## 3.8 查看现有nodes资源对象
 在master01、master02、master03上操作均可
