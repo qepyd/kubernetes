@@ -853,8 +853,8 @@ ca932b06ec3f7       03fa22539fc1c       2 minutes ago       Running             
 
 ## 2.5 实现其现在控制平面的高可用
 ### 2.5.1 master01上操作,生成certificate-key和token
-**生成certificate**  
-创建一个manifests文件,内容来自于kube-system名称空间中cm/kubeadm-config对象中其data字段下ClusterConfiguration键的值。
+**准备clusterconfiguration**  
+为了后面生成certificate
 ```
 ## 生成相应的manifests
 cat >/tmp/kubeadm_clusterconfiguration.yaml<<'EOF'
@@ -893,8 +893,10 @@ scheduler:
   extraArgs:
     bind-address: 0.0.0.0
 EOF
+```
 
-## 生成certificate
+**生成certificate**
+```
 root@master01:~# kubeadm init phase upload-certs --upload-certs --config  /tmp/kubeadm_clusterconfiguration.yaml
 [upload-certs] Storing the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
 [upload-certs] Using certificate key:
@@ -922,7 +924,6 @@ kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg
   --node-name master03
 ```
 
-
 ### 2.5.3 master02上操作
 **/etc/hosts解析相应域名**
 ```
@@ -931,8 +932,15 @@ cat >>/etc/hosts <<'EOF'
 EOF
 ```
 
+**先拉取好镜像**
+```
+kubeadm config images pull \
+  --image-repository=registry.aliyuncs.com/google_containers \
+  --kubernetes-version=v1.24.4
+```
+
 **部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)**  
-会拉取image,没有那么快
+如果未事先拉取image,速度有点慢的
 ```
 ## 部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
@@ -979,8 +987,15 @@ cat >>/etc/hosts <<'EOF'
 EOF
 ```
 
+**先拉取好镜像**
+```
+kubeadm config images pull \
+  --image-repository=registry.aliyuncs.com/google_containers \
+  --kubernetes-version=v1.24.4
+```
+
 **部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)**
-会拉取image,没有那么快
+如果未事先拉取image,速度有点慢的
 ```
 ## 部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
