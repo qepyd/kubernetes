@@ -1200,9 +1200,7 @@ sudo nginx -s reload
 sudo ss -lntup | grep -w 6443
 ```
 
-## 3.5 控制平面生成token
-
-**控制平面生成token(我就在master01上操作了)**
+## 3.5 控制平面生成token(任何一个master上操作均可)
 ```
 root@master01:~# kubeadm token create --print-join-command
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 
