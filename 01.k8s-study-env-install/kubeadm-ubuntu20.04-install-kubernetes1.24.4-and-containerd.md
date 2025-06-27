@@ -114,6 +114,9 @@ Addons有很多，这里因为是学习环境，只会部署学习所需要的�
 CNI：
   Flannel  vxlan
 
+DNS:
+  coredns   # kubeadm安装时k8s时,不会让其不安装coredns,所以这里我们得自己安装
+
 container-resource-monitoring：
   metrics-server
 ```
