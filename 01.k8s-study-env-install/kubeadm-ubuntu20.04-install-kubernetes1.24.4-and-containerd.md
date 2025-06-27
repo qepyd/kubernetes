@@ -972,7 +972,12 @@ EOF
 **部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)**  
 如果未事先拉取image,速度有点慢的
 ```
-## 部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)
+## 试运行一下
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
+   --control-plane  --certificate-key  302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855  \
+   --node-name master02  --dry-run=client
+
+## 正式运行一下
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
    --control-plane  --certificate-key  302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855  \
    --node-name master02
@@ -1027,7 +1032,12 @@ EOF
 **部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)**
 如果未事先拉取image,速度有点慢的
 ```
-## 部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)
+## 试运行一下
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
+   --control-plane  --certificate-key  302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855  \
+   --node-name master03  --dry-run
+
+## 正式运行
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
    --control-plane  --certificate-key  302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855  \
    --node-name master03
@@ -1167,6 +1177,11 @@ EOF
 
 **加入控制平面**
 ```
+## 试运行一下
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5  \
+   --node-name node01  --dry-run
+
+## 正式运行
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5  \
    --node-name node01
 ```
@@ -1181,8 +1196,31 @@ EOF
 
 **加入控制平面**
 ```
+## 试运行一下
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5  \
+   --node-name node02  --dry-run
+
+## 正式运行
 kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5  \
    --node-name node02
+```
+
+## 3.8 查看现有nodes资源对象
+在master01、master02、master03上操作均可
+```
+root@master01:~# kubectl get nodes -o wide
+NAME       STATUS     ROLES           AGE    VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+master01   NotReady   control-plane   4h9m   v1.24.4   172.31.7.203   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+master02   NotReady   control-plane   54m    v1.24.4   172.31.7.204   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+master03   NotReady   control-plane   40m    v1.24.4   172.31.7.205   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+node01     NotReady   <none>          38s    v1.24.4   172.31.7.206   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+node02     NotReady   <none>          6s     v1.24.4   172.31.7.207   <none>        Ubuntu 20.04.4 LTS   5.4.0-100-generic   containerd://1.7.27
+```
+<br>
+<br>
+
+
+
 ```
 
 ## 3.8 查看现有nodes资源对象
