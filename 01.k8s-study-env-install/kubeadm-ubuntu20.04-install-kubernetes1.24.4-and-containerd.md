@@ -1127,15 +1127,15 @@ k8s是有worker node（master01、master02、master03）的，只不过具备污
 
 # 第3章 加入worker node到现有控制平面
 ## 3.1 安装部署工具kubeadm及k8s组件kubelet
-node01、node02上操作。
+node01、node02上操作。  
 参考 "1.6.1 安装部署工具kubeadm及k8s组件kubelet"。
 
 ## 3.2 安装容器运行时containerd
-node01、node02上操作。
+node01、node02上操作。  
 参考 "1.6.2 安装容器运行时containerd"
 
 ## 3.3 配置crictl连接containerd
-node01、node02上操作。
+node01、node02上操作。  
 参考 "1.6.3 配置crictl连接containerd"
 
 ## 3.4 安装nginx(L4代理)
