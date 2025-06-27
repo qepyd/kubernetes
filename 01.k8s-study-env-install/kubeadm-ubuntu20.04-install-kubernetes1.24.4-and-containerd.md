@@ -1,6 +1,6 @@
 ==============kubeadm工具在ubuntu20.04平台部署kubernetes v1.24.4,容器运行时使用containerd==============
 
-# 1.kubernetes的相关规划及准备相应环境
+# 第1章 kubernetes的相关规划及准备相应环境
 ## 1.1 我的需求
 **我的需求**
 ```
@@ -656,7 +656,7 @@ crictl image
 <br>
 
 
-# 2.kubernetes控制平面高可用的部署
+# 第2章 kubernetes控制平面高可用的部署
 ## 2.1 安装部署工具kubeadm及k8s组件kubelet
 master01、master02、master03上操作。  
 参考 "1.6.1 安装部署工具kubeadm及k8s组件kubelet"。
@@ -1125,7 +1125,7 @@ k8s是有worker node（master01、master02、master03）的，只不过具备污
 <br>
 
 
-# 3.加入worker node到现有控制平面
+# 第3章 加入worker node到现有控制平面
 ## 3.1 安装部署工具kubeadm及k8s组件kubelet
 node01、node02上操作。
 参考 "1.6.1 安装部署工具kubeadm及k8s组件kubelet"。
@@ -1276,7 +1276,7 @@ node02     NotReady   <none>          6s     v1.24.4   172.31.7.207   <none>    
 <br>
 
 
-# 4. 安装相关的Addons
+# 第4章 安装相关的Addons
 在master01、master02、master03上任何一台上操作
 ## 4.1 安装CNI插件之Flannel vxlan
 参考  https://github.com/qepyd/kubernetes/tree/main/91.Addons/01.cni/01.flannel/03.vxlan-And-DirectRouting-false  
