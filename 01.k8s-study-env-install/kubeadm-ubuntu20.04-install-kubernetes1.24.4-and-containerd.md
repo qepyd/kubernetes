@@ -1203,7 +1203,7 @@ sudo ss -lntup | grep -w 6443
 ## 3.5 控制平面生成token(任何一个master上操作均可)
 ```
 root@master01:~# kubeadm token create --print-join-command
-kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90 
 ```
 
 ## 3.6 node01加入控制平面
@@ -1217,11 +1217,11 @@ EOF
 **加入控制平面**
 ```
 ## 试运行一下
-kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5  \
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
    --node-name node01  --dry-run
 
 ## 正式运行
-kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5  \
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
    --node-name node01
 ```
 
@@ -1236,11 +1236,11 @@ EOF
 **加入控制平面**
 ```
 ## 试运行一下
-kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5  \
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
    --node-name node02  --dry-run
 
 ## 正式运行
-kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5  \
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4qr4un7xg5ymr3 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
    --node-name node02
 ```
 
