@@ -195,7 +195,24 @@ systemctl stop unattended-upgrades.service
 systemctl disable unattended-upgrades.service 
 ```
 
-### 1.4.6 更改apt源为阿里云的 
+### 1.4.6 确保/etc/resolv.conf文件不被systemd-resolved.service重启后覆盖
+/etc/resolv.conf是个软链接文件，指向的是/run/systemd/resolve/stub-resolv.conf文件。  
+当systemd-resolved.service应用一但重启，会重新生成内容到/run/systemd/resolve/stub-resolv.conf文件中。
+另外：当服务器的网卡未公网/私网DNS服务器，那么是无法Ping通FQDN(公网、私网)的。
+
+```
+## 删除软链接文件/etc/resolv.conf 
+find /etc/ -maxdepth 1 -type l  -name "resolv.conf" 
+find /etc/ -maxdepth 1 -type l  -name "resolv.conf" | xargs rm -f
+
+## 创建/etc/resolv.conf文件,并指定DNS服务器(阿里云)
+cat >/etc/resolv.conf<<'EOF'
+nameserver 223.5.5.5
+nameserver 223.6.6.6
+EOF
+```
+
+### 1.4.7 更改apt源为阿里云的 
 ```
 #### 更新apt源为阿里云
 cat >/etc/apt/sources.list<<'EOF'
@@ -220,7 +237,7 @@ apt-get update
 ```
 
 
-### 1.4.7 开启crond的日志
+### 1.4.8 开启crond的日志
 ```
 cat >>/etc/rsyslog.d/50-default.conf<<"EOF"
 cron.*   /var/log/cron.log
@@ -230,7 +247,7 @@ systemctl restart cron.service
 systemctl restart rsyslog.service
 ```
 
-### 1.4.8 定时更新系统操作时间
+### 1.4.9 定时更新系统操作时间
 修改时区为CST，以及时间为24小时帛
 ```
 ## 安装软件
@@ -308,7 +325,7 @@ crontab -u root -l
 ```
 
 
-### 1.4.9 开启ipvs支持
+### 1.4.10 开启ipvs支持
 ```
 #### 安装ipvs
 apt update
@@ -344,7 +361,7 @@ lsmod | grep -e ip_vs -e nf_conntrack_ipv4
 ```
 
 
-### 1.4.10 加载br_netfilter模块并设置内核参数
+### 1.4.11 加载br_netfilter模块并设置内核参数
 安装工具并临时加载br_netfilter模块
 ```
 chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
@@ -375,7 +392,7 @@ sysctl -p
 ```
 
 
-### 1.4.11 开启内核网络转发
+### 1.4.12 开启内核网络转发
 ```
 chattr -i /etc/sysctl.conf
 
@@ -386,7 +403,7 @@ EOF
 sysctl -p
 ```
 
-### 1.4.12 关闭交换分区
+### 1.4.13 关闭交换分区
 ```
 #### 设置vm.swappiness=0
 chattr -i /etc/sysctl.conf
@@ -400,7 +417,7 @@ sed    '/swap/'d /etc/fstab
 sed -i '/swap/'d /etc/fstab
 ```
 
-### 1.4.13 重启服务器
+### 1.4.14 重启服务器
 ```
 reboot
 ```
