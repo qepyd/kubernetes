@@ -210,6 +210,10 @@ cat >/etc/resolv.conf<<'EOF'
 nameserver 223.5.5.5
 nameserver 223.6.6.6
 EOF
+
+## 其 systemd-resolved.service 应用可停可不停， 其停止的命令为
+systemctl stop systemd-resolved.service
+systemctl disable systemd-resolved.service
 ```
 
 ### 1.4.7 更改apt源为阿里云的 
