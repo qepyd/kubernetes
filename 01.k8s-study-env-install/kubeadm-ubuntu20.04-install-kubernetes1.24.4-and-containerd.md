@@ -826,10 +826,10 @@ master01   NotReady   control-plane   5m28s   v1.24.4
 ```
 
 **列出k8s中所有的Pod**  
-01:没有coredns相关的Pod,因为我在安装时忽略了addon阶段其/coredns。
-02:这些Pod是在ns/kube-system中，kube-system名称空间是kubernetes中默认名称空间。
-03:kube-proxy是用Pod控制器之DaemonSet控制器所编排的,共享了所在宿主机(worker node)的网络名称空间。
-04:etcd、kube-apiserver、kube-controller-manager、kube-scheduler是以静态Pod方式部署的，共享了所在宿主机(worker node)的网络名称空间。
+01:没有coredns相关的Pod,因为我在安装时忽略了addon阶段其/coredns。  
+02:这些Pod是在ns/kube-system中，kube-system名称空间是kubernetes中默认名称空间。  
+03:kube-proxy是用Pod控制器之DaemonSet控制器所编排的,共享了所在宿主机(worker node)的网络名称空间。  
+04:etcd、kube-apiserver、kube-controller-manager、kube-scheduler是以静态Pod方式部署的，共享了所在宿主机(worker node)的网络名称空间。  
 ```
 root@master01:~# kubectl get pods -o wide -A
 NAMESPACE     NAME                               READY   STATUS    RESTARTS   AGE     IP             NODE       NOMINATED NODE   READINESS GATES
