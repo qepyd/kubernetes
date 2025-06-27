@@ -888,10 +888,54 @@ ca932b06ec3f7       03fa22539fc1c       2 minutes ago       Running             
 
 ## 2.5 实现其现在控制平面的高可用
 ### 2.5.1 master01上操作,生成certificate-key和token
+**准备clusterconfiguration**
+生成解密集群证书的certificate-key
+```
+## 生成相应的manifests
+cat >/tmp/kubeadm_clusterconfiguration.yaml<<'EOF'
+##### 以下内容来自 ns/kube-system 中 
+#     其 cm/kubeadm-config对象data字段
+#     ClusterConfiguration 键的值
+apiServer:
+  certSANs:
+  - 127.0.0.1
+  - 172.31.7.199
+  - 172.31.7.200
+  extraArgs:
+    authorization-mode: Node,RBAC
+    bind-address: 0.0.0.0
+  timeoutForControlPlane: 6m0s
+apiVersion: kubeadm.k8s.io/v1beta3
+certificatesDir: /etc/kubernetes/pki
+clusterName: kubernetes
+controlPlaneEndpoint: k8s01-component-connection-kubeapi.local.io:6443
+controllerManager:
+  extraArgs:
+    bind-address: 0.0.0.0
+    node-cidr-mask-size: "24"
+dns: {}
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+imageRepository: registry.aliyuncs.com/google_containers
+kind: ClusterConfiguration
+kubernetesVersion: v1.24.4
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 10.0.0.0/8
+  serviceSubnet: 11.0.0.0/12
+scheduler:
+  extraArgs:
+    bind-address: 0.0.0.0
+EOF
+```
+
 **生成certificate-key**
 ```
-root@master01:~# kubeadm certs certificate-key
-ae18c04ed3099445dfebbc6830ba696efb70a681a8d5691c7388e1817dc1ed67
+root@master01:~# kubeadm init phase upload-certs --upload-certs --config  /tmp/kubeadm_clusterconfiguration.yaml
+[upload-certs] Storing the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
+[upload-certs] Using certificate key:
+302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855
 ```
 
 **生成token**
