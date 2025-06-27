@@ -1271,4 +1271,7 @@ node02     NotReady   <none>          6s     v1.24.4   172.31.7.207   <none>    
 ## 4.3 安装container-resource-monitoring插件之metrics-server
 参考  https://github.com/qepyd/kubernetes/tree/main/91.Addons/04.container-resource-monitoring/metrics-server/v0.6.4  
 直接应用里面的 components.yaml 这个manifests
+<br>
+<br>
+
 
