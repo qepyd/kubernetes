@@ -769,9 +769,14 @@ EOF
 
 **初始化**
 ```
-kubeadm init --config kubeadm-config.yaml --upload-certs
+## 试运行一下
+kubeadm init --config  kubeadm-config.yaml  --upload-certs   --dry-run
+
+## 初始化
+kubeadm init --config  kubeadm-config.yaml  --upload-certs
 ```
-**成功结果展示**
+
+**试运行和初始化成功结果如下所示**
 ```
 Your Kubernetes control-plane has initialized successfully!
 
