@@ -431,27 +431,22 @@ apt-cache madison kubelet   | grep 1.24.4
 ## 安装
 chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
 apt-get update
-apt install -y kubeadm=1.24.4-00
+apt install -y  --allow-downgrades  kubeadm=1.24.4-00  kubelet=1.24.4-00  kubectl=1.24.4-00
    #
-   # 还会额外安装
-   #  kubectl
+   # 其kubeadm、kubelet、kubectl要一起安装,因为要保持版本一致。
+   # 会额外安装：
    #  cri-tools
-   #  
-   # 
-apt install -y kubelet=1.24.4-00
-   #
-   # 还会额外安装
-   #   ebtables
-   #   kubernetes-cni
-   #   socat
+   #  ebtables
+   #  kubernetes-cni
+   #  socat
    # 
 
 ## 检查
 which  kubeadm  kubectl crictl  kubelet  
 kubeadm version
 kubectl version
-crictl  --version
 kubelet --version
+crictl  --version
 
 ## kubelet启动是会失败的(正常)
 systemctl status kubelet.service  # 未正常启动,是正常的
