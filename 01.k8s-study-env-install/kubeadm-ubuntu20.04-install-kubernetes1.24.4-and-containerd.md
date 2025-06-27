@@ -1243,8 +1243,7 @@ kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token m3hioc.1f4
    --node-name node02
 ```
 
-## 3.8 查看现有nodes资源对象
-在master01、master02、master03上操作均可
+## 3.8 查看现有nodes资源对象(任何一个master上操作均可)
 ```
 root@master01:~# kubectl get nodes -o wide
 NAME       STATUS     ROLES           AGE    VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
