@@ -853,8 +853,8 @@ ca932b06ec3f7       03fa22539fc1c       2 minutes ago       Running             
 
 ## 2.5 实现其现在控制平面的高可用
 ### 2.5.1 master01上操作,生成certificate-key和token
-**准备clusterconfiguration**  
-为了后面生成certificate
+**准备clusterconfiguration**   
+生成解密集群证书的唯一密钥
 ```
 ## 生成相应的manifests
 cat >/tmp/kubeadm_clusterconfiguration.yaml<<'EOF'
@@ -895,33 +895,63 @@ scheduler:
 EOF
 ```
 
-**生成certificate**
+**生成解密集群证书的唯一密钥**
 ```
 root@master01:~# kubeadm init phase upload-certs --upload-certs --config  /tmp/kubeadm_clusterconfiguration.yaml
 [upload-certs] Storing the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
 [upload-certs] Using certificate key:
-e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b
+302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855
 ```
 
 **生成worker node加入控制平面的token**
 ```
-root@master01:~# kubeadm token create --print-join-command   # 这是命令
-kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 
+## 生成token
+root@master01:~# kubeadm token create --print-join-command 
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90 
+
+## 其 --discovery-token-ca-cert-hash 的值可从 k8s 集群 的 ca 证书中获取到 
+root@master01:~# openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex
+(stdin)= 28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90
+
+## 其 --token 的相关信息可从相关secrets中看到
+# <== 查看其所保存的位置 
+root@master01:~# kubectl -n kube-system get secrets bootstrap-token-fbbhis
+NAME                     TYPE                            DATA   AGE
+bootstrap-token-fbbhis   bootstrap.kubernetes.io/token   6      7m47s
+
+# <== 查看其在内容
+root@master01:~# kubectl -n kube-system get secrets bootstrap-token-fbbhis -o yaml
+apiVersion: v1
+data:
+  auth-extra-groups: c3lzdGVtOmJvb3RzdHJhcHBlcnM6a3ViZWFkbTpkZWZhdWx0LW5vZGUtdG9rZW4=  
+  expiration: MjAyNS0wNi0yOFQwMDozODoyMlo=        
+  token-id: ZmJiaGlz                              # <== 解码后就是 fbbhis             可用命令 echo "ZmJiaGlz" | base64 -d  解码
+  token-secret: YjBrc3pxdnZyNXQxc2g4Mg==          # <== 解码后就是 b0kszqvvr5t1sh82   可用命令 echo "YjBrc3pxdnZyNXQxc2g4Mg==" | base64 -d 解码
+  usage-bootstrap-authentication: dHJ1ZQ==
+  usage-bootstrap-signing: dHJ1ZQ==
+kind: Secret
+metadata:
+  creationTimestamp: "2025-06-27T00:38:22Z"
+  name: bootstrap-token-fbbhis
+  namespace: kube-system
+  resourceVersion: "1823"
+  uid: a83c8c3e-40aa-400b-b77b-bc6ec58c1c69
+type: bootstrap.kubernetes.io/token
 ```
 
 ### 2.5.2 将token与certificate进行组合
 **master02的(先不要操作)**
 ```
-kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
-  --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
-  --node-name master02
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
+   --control-plane  --certificate-key  302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855  \
+   --node-name master02
 ```
 
 **master03的(先不要操作)**
 ```
-kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
-  --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
-  --node-name master03
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
+   --control-plane  --certificate-key  302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855  \
+   --node-name master03
 ```
 
 ### 2.5.3 master02上操作
@@ -943,9 +973,9 @@ EOF
 如果未事先拉取image,速度有点慢的
 ```
 ## 部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)
-kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
-  --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
-  --node-name master02
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
+   --control-plane  --certificate-key  302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855  \
+   --node-name master02
   #
   # 成功后会提示如下信息
   # To start administering your cluster from this node, you need to run the following as a regular user:
@@ -998,9 +1028,9 @@ EOF
 如果未事先拉取image,速度有点慢的
 ```
 ## 部署k8s相关组件并加入现有控制平面,成为控制平面一部分(高可用)
-kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token mixo4a.wqg8gim6k07qex9t --discovery-token-ca-cert-hash sha256:453ebc60e7cc65858ad4795c2b2ee3a9582c7c2dfa441bda93a332c6be1ccec5 \
-  --control-plane  --certificate-key e4328417603837d02a3414ad9ebfda6e3f12602d425b4559cc838ca8ed4e2c7b \
-  --node-name master03
+kubeadm join k8s01-component-connection-kubeapi.local.io:6443 --token fbbhis.b0kszqvvr5t1sh82 --discovery-token-ca-cert-hash sha256:28d12b7d0a29a7276305d6250d809e0dd8d6caf4851547aef566c2137d43af90  \
+   --control-plane  --certificate-key  302120bc9d7d4da653e2a1a48c6b79b177f0b547e1340b68ee71a0b665221855  \
+   --node-name master03
   #
   # 成功后会提示如下信息
   # To start administering your cluster from this node, you need to run the following as a regular user:
