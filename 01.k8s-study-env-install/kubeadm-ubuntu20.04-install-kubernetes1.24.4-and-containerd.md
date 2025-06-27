@@ -426,9 +426,20 @@ sed -i '/swap/'d /etc/fstab
 reboot
 ```
 
+## 1.5 [重要] k8s各服务器修改/etc/hosts文件
+```
+cat >/etc/hosts<<'EOF'
+127.0.0.1     localhost
+172.31.7.203  master01
+172.31.7.204  master02
+172.31.7.205  master03
+172.31.7.206  node01
+172.31.7.207  node02
+EOF
+```
 
-## 1.5 相关软件的安装(不操作,后面来引用)
-### 1.5.1 安装部署工具kubeadm及k8s组件kubelet
+## 1.6 相关软件的安装(不操作,后面来引用)
+### 1.6.1 安装部署工具kubeadm及k8s组件kubelet
 **更改apt源**
 ```
 apt-get update && apt-get install -y apt-transport-https
@@ -502,7 +513,7 @@ registry.aliyuncs.com/google_containers/coredns:v1.8.6
   # 
 ```
 
-### 1.5.2 安装容器运行时containerd
+### 1.6.2 安装容器运行时containerd
 **安装runc**
 ```
 wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
@@ -629,7 +640,7 @@ nerdctl image ls    --namespace=k8s.io
 nerdctl image rm    --namespace=k8s.io   registry.aliyuncs.com/google_containers/pause:3.7
 ```
 
-### 1.5.3 配置crictl连接containerd
+### 1.6.3 配置crictl连接containerd
 创建/etc/crictl.yaml文件并配置
 ```
 cat >/etc/crictl.yaml<<'EOF'
@@ -648,15 +659,15 @@ crictl image
 # 2.kubernetes控制平面高可用的部署
 ## 2.1 安装部署工具kubeadm及k8s组件kubelet
 master01、master02、master03上操作。  
-参考 "1.5.1 安装部署工具kubeadm及k8s组件kubelet"。
+参考 "1.6.1 安装部署工具kubeadm及k8s组件kubelet"。
 
 ## 2.2 安装容器运行时containerd
 master01、master02、master03上操作。  
-参考 "1.5.2 安装容器运行时containerd"
+参考 "1.6.2 安装容器运行时containerd"
 
 ## 2.3 配置crictl连接containerd
 master01、master02、master03上操作。  
-参考 "1.5.3 配置crictl连接containerd"
+参考 "1.6.3 配置crictl连接containerd"
 
 ## 2.4 拉起控制平面(master01上操作)
 ### 2.4.1 先下载好镜像
@@ -1117,15 +1128,15 @@ k8s是有worker node（master01、master02、master03）的，只不过具备污
 # 3.加入worker node到现有控制平面
 ## 3.1 安装部署工具kubeadm及k8s组件kubelet
 node01、node02上操作。
-参考 "1.5.1 安装部署工具kubeadm及k8s组件kubelet"。
+参考 "1.6.1 安装部署工具kubeadm及k8s组件kubelet"。
 
 ## 3.2 安装容器运行时containerd
 node01、node02上操作。
-参考 "1.5.2 安装容器运行时containerd"
+参考 "1.6.2 安装容器运行时containerd"
 
 ## 3.3 配置crictl连接containerd
 node01、node02上操作。
-参考 "1.5.3 配置crictl连接containerd"
+参考 "1.6.3 配置crictl连接containerd"
 
 ## 3.4 安装nginx(L4代理)
 node01、node02上操作。  
