@@ -197,9 +197,8 @@ systemctl disable unattended-upgrades.service
 
 ### 1.4.6 确保/etc/resolv.conf文件不被systemd-resolved.service重启后覆盖
 /etc/resolv.conf是个软链接文件，指向的是/run/systemd/resolve/stub-resolv.conf文件。  
-当systemd-resolved.service应用一但重启，会重新生成内容到/run/systemd/resolve/stub-resolv.conf文件中。
+当systemd-resolved.service应用一但重启，会重新生成内容到/run/systemd/resolve/stub-resolv.conf文件中。  
 另外：当服务器的网卡未公网/私网DNS服务器，那么是无法Ping通FQDN(公网、私网)的。
-
 ```
 ## 删除软链接文件/etc/resolv.conf 
 find /etc/ -maxdepth 1 -type l  -name "resolv.conf" 
