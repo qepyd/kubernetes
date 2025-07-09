@@ -16,7 +16,14 @@ https://github.com/kubernetes-sigs/prometheus-adapter
    (例如：根据Pod的连接数进行水平扩展)。
 
 03:prometheus-adapter安装后的APIService为
-   v0.11.0 开始：v1beta1.metrics.k8s.io           # metrics.k8s.io是Group，v1betal是version，其Group和metrics-server项目的是一样的了
-   v0.11.0 之前：v1beta1.external.metrics.k8s.io  # external.metrics.k8s.io是Group，v1betal是version，
+   v0.11.0 开始：v1beta1.metrics.k8s.io           
+      #
+      # metrics.k8s.io是Group，v1betal是version
+      # 其Group和metrics-server项目的是一样的了
+      # 
+   v0.11.0 之前：v1beta1.external.metrics.k8s.io  
+      #
+      # external.metrics.k8s.io是Group，v1betal是version，
+      #
 ```
 
