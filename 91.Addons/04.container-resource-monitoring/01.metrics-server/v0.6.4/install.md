@@ -1,4 +1,4 @@
-# 1 我的k8s版本
+# 1.我的k8s版本(kubeadm工具部署)
 ```
 root@master01:~# kubectl get nodes
 NAME       STATUS   ROLES           AGE   VERSION
@@ -9,7 +9,7 @@ node01     Ready    <none>          12d   v1.24.4
 node02     Ready    <none>          12d   v1.24.4
 ```
 
-# 2 metrics-server版本选择
+# 2.metrics-server版本选择
 **代码托管仓库**
 ```
 https://github.com/kubernetes-sigs/metrics-server/

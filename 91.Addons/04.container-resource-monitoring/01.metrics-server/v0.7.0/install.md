@@ -26,7 +26,7 @@ https://github.com/kubernetes-sigs/metrics-server/tree/v0.7.0?tab=readme-ov-file
 wget https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.0/components.yaml
 ```
 
-# 5.manifests相关说明及修改
+# 4.manifests相关说明及修改
 ```
 ## 所用ns资源对象为kube-system(kubernetes安装好默认就存在)
 root@master01:/qepyd/kubernetes/90.Addons/04.container-resource-monitoring/metrics-server/v0.7.0# grep "namespace:" components.yaml  | uniq
@@ -71,14 +71,14 @@ grep "image:"   components.yaml
    --kubelet-insecure-tls
 ```
 
-# 6.应用manifests
+# 5.应用manifests
 ```
 kubectl apply -f ./components.yaml --dry-run=client 
 kubectl apply -f ./components.yaml 
 kubectl get -f components.yaml    
 ```
 
-# 7.验证
+# 6.验证
 ```
 ## 相关资源(不是CRD)
 root@master01:~# kubectl api-resources --api-group="metrics.k8s.io"
