@@ -14,16 +14,20 @@ https://github.com/kubernetes-sigs/prometheus-adapter
 
 03:prometheus-adapter定期从Prometheus收集可用指标的名称。
 
-04:prometheus-adapter安装后的APIService为
-   v0.11.0 开始：v1beta1.metrics.k8s.io           
+04:prometheus-adapter安装后的APIService资源对象为
+   v0.11.0 开始：
+      # 
+      # 只有 APIService/v1beta1.metrics.k8s.io 对象 
+      # APIGroup例如：metrics.k8s.io
+      # APIVersion例如：v1beta1
       #
-      # metrics.k8s.io是Group，v1betal是version
-      # 其Group和metrics-server项目的是一样的了
-      # 两者不要冲突(以防被删除)
+      # 其APIGroup、APIVersion和metrics-server项目的是一样的了
       #  
-   v0.11.0 之前：v1beta1.external.metrics.k8s.io  
+   v0.11.0 之前：
       #
-      # external.metrics.k8s.io是Group，v1betal是version，
+      # 拥有 APIService/v1beta1.external.metrics.k8s.io、APIService/v1beta2.custom.metrics.k8s.io、APIService/v1beta1.external.metrics.k8s.io 对象
+      # APIGroup例如：external.metrics.k8s.io、custom.metrics.k8s.io、external.metrics.k8s.io
+      # APIVersion例如：v1beta1、v1beta2
       #
 
 05:为k8s中的标准资源hpa(horizontalpodautoscalers  hpa autoscaling/v2 true   HorizontalPodAutoscaler)就可以根据
