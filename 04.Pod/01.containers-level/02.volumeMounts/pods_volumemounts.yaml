@@ -6,26 +6,26 @@ metadata:
   labels:
     app: volumemounts
 spec:
-  ## Pod级别
-  # 定义卷，使用的是emptyDir卷插件(内置)
+  #### Pod级别
+  # <== 定义卷，使用emptyDir卷插件
   volumes:
   - name: emptydir-test
     emptyDir: {} 
     
-  ## 容器级别之主容器
+  #### 容器级别之主容器
   containers:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
-    # 卷的挂载
+    # <== 卷的挂载
     volumeMounts:
-      - name: emptydir-test
-        mountPath: /data
-        readOnly: false
-    # 替换了image中其程序前台运行的命令,
-    # 新命令：有在挂载点下创建文件，并且也让其前台运行
+    - name: emptydir-test
+      mountPath: /data
+      readOnly: false
+    # <== 替换image中的启动命令
+    #     替换的命令不会启动image中的nginx应用,
+    #     而是在容器的/data目录中创建lili.txt文件并写入内容,且前台运行,
     command:
     - "/bin/sh"
     args:
     - "-c"
-    - "echo 'cl' >/data/lili.txt && sleep 100000000"
-
+    - "echo 'cl' >/data/lili.txt && sleep 100000000000"
