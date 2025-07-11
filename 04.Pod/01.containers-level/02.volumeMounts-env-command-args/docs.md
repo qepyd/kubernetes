@@ -1,9 +1,10 @@
+# 1. volumemounts-env-command-args
 **应用manifests**
 ```
-root@master01:~# kubectl apply -f pods_volumemounts-env-command-args.yaml --dry-run=client
+root@master01:~# kubectl apply -f 01.pods_volumemounts-env-command-args.yaml --dry-run=client
 pod/volumemounts-env-command-args created (dry run)
 root@master01:~#
-root@master01:~# kubectl apply -f pods_volumemounts-env-command-args.yaml
+root@master01:~# kubectl apply -f 01.pods_volumemounts-env-command-args.yaml
 pod/volumemounts-env-command-args created
 ```
 
@@ -55,5 +56,13 @@ HOME=/root
 
 **清理环境**
 ```
-kubectl delete -f  pods_volumemounts-env-command-args.yaml
+kubectl delete -f  01.pods_volumemounts-env-command-args.yaml
 ```
+
+# 2.nginx-daemon 
+
+
+# 3.mysql-daemon
+
+# 4.busybox-daemon
+ 
