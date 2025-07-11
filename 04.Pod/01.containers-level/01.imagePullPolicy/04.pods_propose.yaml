@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: propose 
+  labels:
+    app: propose
+spec:
+  #### Pod级别
+  # <== 拉取镜像时登录Registry的相关信息
+  #     若Pod中有多个容器时，镜像处于不同的Registry且都未公开(拉取时得先登录Registry)。
+  #     可以将不同的Registry的登录信息保存于不同的secrets资源对象中。
+  #imagePullSecrets: 
+  #- "Sccrets资源对象01"
+  #- "Secrets资源对象02"
+
+  #### 容器级别之主容器 
+  containers:
+  - name: myapp01
+    # <== 建议
+    #     image的VersionName指定但不指定latest,
+    #     imagePullPolicy指定为Always。
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.17
+    imagePullPolicy: Always

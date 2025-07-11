@@ -23,6 +23,6 @@ spec:
     #     我这里的镜像已公开(拉取时不需要登录Registry)
     #image: swr.cn-north-1.myhuaweicloud.com/library/nginx:
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:latest
-    # <== 镜像拉取策略
-    #     若image的TargeName未指定或指定为latest，imagePullPolicy则默认为Always。
+    # <== 镜像拉取策略,不可在线修改
+    #     若image的VersionName未指定或指定为latest，imagePullPolicy则默认为Always。
     #imagePullPolicy: Always
