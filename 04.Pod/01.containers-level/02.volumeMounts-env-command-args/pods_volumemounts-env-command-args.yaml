@@ -61,10 +61,12 @@ spec:
         fieldRef:
           fieldPath: status.hostIP
     # <-- env.name 和 env.valueFrom.configMapKeyRef
-    #     容器级别直接与configmap资源对象打交道
+    #     其env.name自行定义
+    #     其env.valueFrom.configMapKeyRef直接与configmaps资源对象打交道
     #
     # <-- env.name 和 env.valueFrom.secretKeyRef 
-    #     容器级别直接与secrets资源对象打交道
+    #     其env.name自行定义
+    #     其env.valueFrom.secretKeyRef直接与secrets资源对象打交道
     #
 
     # <== 容器前台的运行命令 
