@@ -1,4 +1,14 @@
 # 1.Pod的生命周期
+Pod中可以有多个容器(多个initContainers、多个containers)，initContainers是串行启动完成工作
+后退出，而containers是串行启动且不会退出。
+```
+post start hook  # 启动后做什么操作，非周期性。
+startup probe    # 启动探测，非周期性。
+livenessProbe    # 存活性探测，周期性的。
+readinessProbe   # 就绪性探测，周期性的。
+pre stop hook    # 停止前做什么操作，非周期性。
+```
+<image src="./picture/pod-lifecycle.jpg" style="width: 100%; height: auto;">
 
 
 # 2.lifecycle-poststart
@@ -66,4 +76,9 @@ root@master01:~# kubectl -n lili logs -f Pod/lifecycle-prestop
 127.0.0.1 - - [11/Jul/2025 14:53:46] "HEAD / HTTP/1.1" 200 -
 .............................................................
 .............................................................
+```
+
+# 4.清理环境
+```
+kubectl delete -f 01.pods_lifecycle-poststart.yaml 
 ```
