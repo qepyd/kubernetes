@@ -95,10 +95,64 @@ root@master01:~# kubectl -n lili get Pod/default-always -o json | jq ".spec.cont
 
 
 # 4.镜像拉取策略(Never)
+**应用manifests**
 ```
+root@master01:~# kubectl apply -f 03.pods_never.yaml --dry-run=client
+pod/never created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 03.pods_never.yaml
+pod/never created
+```
+
+**列出Pod资源对象,并查看所有主容器其image的imagePullPolicy**
+```
+## 列出ns/lili对象中的Pod/never对象
+root@master01:~# kubectl -n lili get Pod/never -o wide
+NAME    READY   STATUS              RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+never   0/1     ErrImageNeverPull   0          77s   10.0.4.19   node02   <none>           <none>
+     #
+     # 调度到了nodes/node02这个worker node上
+     # 状态为ErrImageNeverPull(Never是imagePullPolicy,说明nodes/node02这个worker node上没有相应的image)
+
+## 查看ns/lili对象中其Pod/never对象中所有主容器其image的imagePullPolicy
+root@master01:~# kubectl -n lili get Pod/never -o json | jq ".spec.containers[].name, .spec.containers[].image, .spec.containers[].imagePullPolicy"
+"myapp01"
+"swr.cn-north-1.myhuaweicloud.com/library/nginx:1.17"
+"Never"
+```
+
+**事后到worker node上pull镜像,再列出Pod资源对象**
+```
+## 到nodes/node02这个worker node上pull取镜像
+root@node02:~# crictl pull swr.cn-north-1.myhuaweicloud.com/library/nginx:1.17
+Image is up to date for sha256:ab56bba91343aafcdd94b7a44b42e12f32719b9a2b8579e93017c1280f48e8f3
+
+## 再列出Pod/never对象
+root@master01:~# kubectl -n lili get Pod/never -o wide
+NAME    READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS GATES
+never   1/1     Running   0          5m42s   10.0.4.19   node02   <none>           <none>
 ```
 
 # 5.建议(image的VersionName指定且不为latest,拉取策略为Always)
+**应用manifests**
 ```
+root@master01:~# kubectl apply -f 04.pods_propose.yaml  --dry-run=client
+pod/propose created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 04.pods_propose.yaml
+pod/propose created
 ```
 
+**列出Pod资源对象,并查看所有主容器其image的imagePullPolicy**
+```
+## 列出ns/lili对象中的Pod/propose对象
+root@master01:~# kubectl -n lili get Pod/propose
+NAME      READY   STATUS    RESTARTS   AGE
+propose   1/1     Running   0          105s
+
+## 查看ns/lili对象中其Pod/propose对象中所有主容器其image的imagePullPolicy
+root@master01:~# kubectl -n lili get Pod/propose -o json | jq ".spec.containers[].name, .spec.containers[].image, .spec.containers[].imagePullPolicy"
+"myapp01"
+"swr.cn-north-1.myhuaweicloud.com/library/nginx:1.17"
+"Always"
+```
