@@ -8,7 +8,7 @@ livenessProbe    # 存活性探测，周期性的。
 readinessProbe   # 就绪性探测，周期性的。
 pre stop hook    # 停止前做什么操作，非周期性。
 ```
-此图只展示了containers中各容器的hook和probe
+此图只展示了pods.spec.containers中各容器的hook和probe
 <image src="./picture/pod-lifecycle.jpg" style="width: 100%; height: auto;">
 
 
