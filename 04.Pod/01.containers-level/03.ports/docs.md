@@ -23,21 +23,6 @@ root@master01:~#
 root@master01:~# kubectl -n lili get Endpoints/human-read
 NAME         ENDPOINTS      AGE
 human-read   10.0.4.32:80   4m19s
-root@master01:~#
-root@master01:~# kubectl -n lili describe Endpoints/human-read
-Name:         human-read
-Namespace:    lili
-Labels:       app=human-read
-Annotations:  endpoints.kubernetes.io/last-change-trigger-time: 2025-07-11T13:47:11Z
-Subsets:
-  Addresses:          10.0.4.32
-  NotReadyAddresses:  <none>
-  Ports:
-    Name     Port  Protocol
-    ----     ----  --------
-    http-80  80    TCP
-
-Events:  <none>
 ```
 
 **worker node上访问Pod/human-read对象的PodIP:Port**
