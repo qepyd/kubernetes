@@ -7,7 +7,8 @@ metadata:
     app: volumemounts
 spec:
   #### Pod级别
-  # <== 定义卷，使用emptyDir卷插件
+  # <== 定义卷，使用emptyDir卷插件。
+  #     临时卷，当Pod销毁后,临时卷也会被删除,里面的数据也没有了。
   volumes:
   - name: emptydir-test
     emptyDir: {} 
