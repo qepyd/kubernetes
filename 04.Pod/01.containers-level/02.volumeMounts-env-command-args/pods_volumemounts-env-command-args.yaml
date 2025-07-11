@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: volumemounts-env-command-args 
+  labels:
+    app: volumemounts-env-command-args 
+spec:
+  #### Pod级别
+  # <== 定义卷，使用emptyDir卷插件。
+  #     临时卷，当Pod销毁后,临时卷也会被删除,里面的数据也没有了。
+  volumes:
+  - name: emptydir-test
+    emptyDir: {} 
+    
+  #### 容器级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 卷的挂载
+    volumeMounts:
+    - name: emptydir-test
+      mountPath: /data
+      readOnly: false
+    # <== 环境变量
+    env:
+    # <-- env.name 和 env.value
+    #     其env.name自行定义
+    #     其env.value自行定义
+    #     应该为image中的程序而服务(我这儿没有)
+    - name: MY_NAME
+      value: binbin
+    - name: MY_SEX
+      value: girl
+    # <-- env.name 和 env.valueFrom.fieldRef
+    #     其env.name自行定义
+    #     其env.valueFrom.fieldRed支持引用当前Pod对象的
+    #       metadata.namespace
+    #       metadata.name
+    #       metadata.labels['<KEY>']
+    #       metadata.annotations['<KEY>']
+    #       spec.nodeName 
+    #       spec.serviceAccountName
+    #       status.hostIP
+    #       status.podIP
+    #       status.podIPs
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    - name: NODE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+    - name: NODE_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    # <-- env.name 和 env.valueFrom.configMapKeyRef
+    #     容器级别直接与configmap资源对象打交道
+    #
+    # <-- env.name 和 env.valueFrom.secretKeyRef 
+    #     容器级别直接与secrets资源对象打交道
+    #
+
+    # <== 容器前台的运行命令 
+    #     这里的命令不会启动image中的程序，但会让其前台持久运行。
+    #     会在容器的/data/目录下创建lili.txt文件,并追加内容。
+    #       内容有自定义的
+    #       内容来自于env中相关变量的值
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "echo 'cl' >>/data/lili.txt  &&  echo $MY_NAME >>/data/lili.txt   &&   echo $POD_NAME >>/data/lili.txt   &&   sleep 100000000000"
+
