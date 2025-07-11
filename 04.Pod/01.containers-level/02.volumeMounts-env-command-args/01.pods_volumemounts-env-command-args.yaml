@@ -17,11 +17,17 @@ spec:
   containers:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
-    # <== 卷的挂载
+    # <== 卷的挂载(VolumeMount描述了在容器内装载卷)
     volumeMounts:
     - name: emptydir-test
       mountPath: /data
       readOnly: false
+
+    # <== 卷的挂载(volumeDevices是容器要使用的块设备列表)
+    #volumeDevices: <[]Object>
+    #  name: <string> -required-
+    #  devicePath: <string> -required-
+
     # <== 环境变量
     env:
     # <-- env.name 和 env.value
@@ -67,7 +73,12 @@ spec:
     # <-- env.name 和 env.valueFrom.secretKeyRef 
     #     其env.name自行定义
     #     其env.valueFrom.secretKeyRef直接与secrets资源对象打交道
-    #
+
+    # <== 直接与configmaps、secrets资源对象打交道
+    #envFrom: <[]Object>
+    #  configMapRef: <Object>
+    #  prefix: <string>
+    #  secretRef: <Object>
 
     # <== 容器前台的运行命令 
     #     这里的命令不会启动image中的程序，但会让其前台持久运行。
