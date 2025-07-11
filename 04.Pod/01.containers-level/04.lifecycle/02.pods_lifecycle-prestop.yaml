@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: lifecycle-prestop 
+  labels:
+    app: lifecycle-prestop 
+spec:
+  ## 容器级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/qepyd/demoapp:v1.1 
+    imagePullPolicy: Always
+    ports:
+    - name: http-80
+      containerPort: 80
+    # <== 生命周期
+    lifecycle:
+      # <-- preStop在容器终止时才调用
+      preStop:
+        # 方法之exec
+        exec:
+          command:
+          - "/bin/sh"
+          - "-c"
+          - "for n in $(seq 10); do sleep 4 && curl -I 127.0.0.1:80; done"
+        # 方法之httpGet
+        #httpGet: <Object>
+        # 方法之tcpSocket
+        #tcpSocket: <Object> 

@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: lifecycle-poststart 
+  labels:
+    app: lifecycle-poststart 
+spec:
+  ## 容器级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    imagePullPolicy: Always
+    ports:
+    - name: http-80
+      containerPort: 80
+    # <== 生命周期
+    lifecycle:
+      # <-- postStart在创建容器后立即调用(非周期性)
+      postStart:
+        # 方法之exec
+        exec:
+          command:
+          - "/bin/sh"
+          - "-c"
+          - "echo haha >/usr/share/nginx/html/index.html"
+        # 方法之httpGet
+        #httpGet: <Object>
+        # 方法之tcpSocket
+        #tcpSocket: <Object> 
