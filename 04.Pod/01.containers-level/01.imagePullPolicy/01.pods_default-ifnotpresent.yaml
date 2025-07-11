@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: default-ifnotpresent 
+  labels:
+    app: default-ifnotpresent
+spec:
+  #### Pod级别
+  # <== 拉取镜像时登录Registry的相关信息
+  #     若Pod中有多个容器时，镜像处于不同的Registry且都未公开(拉取时得先登录Registry)。
+  #     可以将不同的Registry的登录信息保存于不同的secrets资源对象中。
+  #imagePullSecrets: 
+  #- "Sccrets资源对象01"
+  #- "Secrets资源对象02"
+
+  #### 容器级别之主容器 
+  containers:
+  - name: myapp01
+    # <== 镜像
+    #     镜像可能未公开(得登录Registry)
+    #         可以把登录信息保存于secrets资源对象中,并在Pod级别用imagePullSecrets指定secrets资源对象。
+    #     我这里的镜像已公开(拉取时不需要登录Registry)
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 镜像拉取策略
+    #     若image的TargeName(例如:1.16)有指定且非latest,imagepullpolicy的默认为IfNotPresent
+    #imagePullPolicy: IfNotPresent
