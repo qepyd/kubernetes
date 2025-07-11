@@ -1,4 +1,4 @@
-# 1. volumemounts-env-command-args
+# 1.volumemounts-env-command-args
 **应用manifests**
 ```
 root@master01:~# kubectl apply -f 01.pods_volumemounts-env-command-args.yaml --dry-run=client
