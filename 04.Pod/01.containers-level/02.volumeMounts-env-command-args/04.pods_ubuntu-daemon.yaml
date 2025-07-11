@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: ubuntu-daemon 
+  labels:
+    app: ubuntu-daemon 
+spec:
+  containers:
+  - name: ubuntu
+    # <== 此镜像是公开的
+    image: swr.cn-north-1.myhuaweicloud.com/library/ubuntu:18.04
+    imagePullPolicy: Always
+    # <== 容器的前台运行的命令
+    #     image中没有让其前台运行的命令
+    #     所以这里人为指定
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 10000000000000"

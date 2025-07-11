@@ -8,23 +8,18 @@ metadata:
 spec:
   containers:
   - name: myapp01
+    # <== 我这的镜像是公开的
     image: swr.cn-north-1.myhuaweicloud.com/library/mysql:5.7
     imagePullPolicy: Always
-
-    # 其image中的mysql在启动过程中要求设置相应变量并赋值
+    # <== 定义环境变量(为image中的应用程序而服务)
     env:
     - name: MYSQL_ROOT_PASSWORD
       value: "123456"
-    
-    # 其image运行成容器时的命令是由ENTRYPOINT和CMD指令指定,其为:
-    #   ENTRYPOINT ["docker-entrypoint.sh"]
-    #   CMD ["mysqld"]
-    # 其指令会让mysql以守护进程运行。
-    # 
-    # 以下使用command和args对其进行"覆盖"
-    #   跟原有的一模一样
-    #   不会影响mysql的启动
-    #
+    # <== 容器前台的运行命令
+    #     运行命令会启动image中的应用程序。 
+    #     其image运行成容器时的命令是由ENTRYPOINT和CMD指令指定,其为:
+    #       ENTRYPOINT ["docker-entrypoint.sh"]
+    #       CMD ["mysqld"]
     command:
     - "docker-entrypoint.sh"
     args:

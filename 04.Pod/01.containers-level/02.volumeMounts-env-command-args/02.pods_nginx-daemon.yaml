@@ -8,17 +8,14 @@ metadata:
 spec:
   containers:
   - name: myapp01
+    # <== 我这的镜像是公开的
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
     imagePullPolicy: Always
-    #
-    # 其image运行成容器时的命令是由CMD指令指定
-    # 其为CMD ["nginx", "-g", "daemon off;"]
-    # 其指令会让nginx以守护进程运行。
-    # 
-    # 以下使用command和args对其进行"覆盖"
-    #   跟原有的一模一样
-    #   不会影响其nginx启动
-    #
+    # <== 指定容器的前台运行命令
+    #     此命令会启动image中的nginx应用程序
+    #     其image运行成容器时的命令是由CMD指令指定
+    #     其为CMD ["nginx", "-g", "daemon off;"]
+    #     其指令会让nginx以守护进程运行。
     command:
     - "nginx"
     args:
