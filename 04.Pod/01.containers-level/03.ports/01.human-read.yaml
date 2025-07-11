@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: human-read
+  labels:
+    app: human-read 
+spec:
+  ## 容器级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    imagePullPolicy: Always
+    # <== 从容器要公开的端口
+    #     场景1：人类可读
+    #     场景2：关联此Pod资源对象的资源对象(例如svc资源对象)其相关
+    #            配置(svc.spec.ports)中可引用此处的列表名
+    ports:
+    - name: http-80
+      containerPort: 80
+    #- name: http-81        # image中并没有应用提供81端口,这里打开注释后也不会报错。
+    #  containerPort: 81
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: lili
+  name: human-read
+  labels:
+    app: human-read
+spec:
+  # 在所处namespace中通过标签匹配Pod
+  selector:
+    app: human-read
+  # svc资源对象的类型
+  type: ClusterIP
+
+  # ServicePort包含有关服务端口的信息
+  ports:
+  - name: http-80
+    appProtocol: http
+    # 此端口随便定义(只要不与此资源对象其spec.ports中其它列表的port冲突即可)。
+    port: 80
+    # 协议,只支持TCP和UDP
+    protocol: "TCP"
+    # Pod/human-read对象其spec.containers.ports.name 或  直接写 80
+    targetPort: http-80
+
