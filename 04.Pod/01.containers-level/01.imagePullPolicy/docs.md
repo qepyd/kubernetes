@@ -156,3 +156,11 @@ root@master01:~# kubectl -n lili get Pod/propose -o json | jq ".spec.containers[
 "swr.cn-north-1.myhuaweicloud.com/library/nginx:1.17"
 "Always"
 ```
+
+# 6.清理环境
+```
+kubectl delete -f  01.pods_default-ifnotpresent.yaml
+kubectl delete -f  02.pods_default-always.yaml
+kubectl delete -f  03.pods_never.yaml
+kubectl delete -f  04.pods_propose.yaml
+```
