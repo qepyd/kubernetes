@@ -30,7 +30,7 @@ Pod级别定义容器的重启策略(restartPolicy)为Always(默认)。
 startupProbe探测成功，各主容器均就绪，Pod可成为svc的后端端点(endpoints)。
 在线改变主容器中应用其探测处的值。
 观察Pod中的容器是否会重启，不会，说明startupProbe是非周期性的。
-
+```
 
 **一直失败会导致死循环重启**startupprobe-failure01和startupprobe-failure02
 ```
