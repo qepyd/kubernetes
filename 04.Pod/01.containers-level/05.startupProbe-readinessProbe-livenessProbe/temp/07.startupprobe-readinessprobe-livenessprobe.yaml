@@ -1,0 +1,94 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: startupprobe-readinessprobe-livenessprobe 
+  labels:
+    app: startupprobe-readinessprobe-livenessprobe 
+spec:
+  #### Pod级别
+  # <== Pod中容器的重启策略
+  #     默认值：Always
+  #     可设值：Always、OnFailure、Never
+  restartPolicy: Always
+
+  #### 容器级别之主容器
+  containers:
+  - name: demoapp
+    image: swr.cn-north-1.myhuaweicloud.com/qepyd/demoapp:v1.1
+    imagePullPolicy: Always
+
+    # <== 启动应用和命令(120秒后才会启动,启动耗时大概140秒)
+    command:
+    - '/bin/sh'
+    args:
+    - '-c'
+    - 'sleep 120; python3 /usr/local/bin/demo.py'
+
+    # <== 端口列表(人类可读)
+    ports:
+    - name: http-80
+      containerPort: 80
+
+    # <== 启动探测,非周期,
+    startupProbe:
+      # 初始探测等待时长 需要 要把应用的启动时长考滤进来
+      initialDelaySeconds: 140
+      timeoutSeconds: 1
+      failureThreshold: 3
+      successThreshold: 1
+      periodSeconds: 10
+      exec:
+        command: 
+        - '/bin/sh'
+        - '-c'
+        - '[ $(curl -s 127.0.0.1:80/readyz) == "OK" ]'
+
+    # <== 就绪性探测，周期性的
+    readinessProbe:
+      # 初始探测等待时长 不需要 把应用的启动时长考滤进来
+      initialDelaySeconds: 10
+      timeoutSeconds: 1
+      failureThreshold: 3
+      successThreshold: 1
+      periodSeconds: 10
+      exec:
+        command: 
+        - '/bin/sh'
+        - '-c'
+        - '[ $(curl -s 127.0.0.1/readyz) == "OK" ]'
+
+    # <== 存活探测,周期性
+    livenessProbe:
+      # 初始探测等待时长 不需要 把应用的启动时长考滤进来
+      initialDelaySeconds: 10
+      timeoutSeconds: 1
+      failureThreshold: 3
+      successThreshold: 1
+      periodSeconds: 10
+      exec:
+        command: 
+        - '/bin/sh'
+        - '-c'
+        - '[ $(curl -s 127.0.0.1/livez) == "OK" ]'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: lili
+  name: startupprobe-readinessprobe-livenessprobe 
+  labels:
+    app: startupprobe-readinessprobe-livenessprobe 
+spec:
+  selector:
+    app: startupprobe-readinessprobe-livenessprobe 
+  type: ClusterIP
+  ports:
+  - name: http-80
+    appProtocol: http
+    port: 80
+    protocol: "TCP"
+    targetPort: http-80
+---
+

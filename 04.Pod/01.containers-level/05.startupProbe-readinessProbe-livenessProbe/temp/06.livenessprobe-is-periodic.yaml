@@ -3,9 +3,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: lili
-  name: readinessprobe-is-periodic 
+  name: livenessprobe-is-periodic 
   labels:
-    app: readinessprobe-is-periodic 
+    app: livenessprobe-is-periodic 
 spec:
   #### Pod级别
   # <== Pod中容器的重启策略
@@ -31,11 +31,11 @@ spec:
     - name: http-80
       containerPort: 80
 
-    # <== 就绪探测
-    readinessProbe:
-      # <-- 初始探测时等待时长(单位秒)，不用把应用的启动时长考滤进来,
-      #     因为readinessProbe探测失败后是不会重启的，只是不会被加入到svc资源对象的后端端点。
-      #     也不会重启容器。
+    # <== 存活探测，周期性的，探测失败会导致容器重启(和启动探测startupProbe一样)
+    #     若容器未定义启动探测(startupProbe),其初始探测的等待时长要把应用程序的启动
+    #     时长考滤进来。
+    livenessProbe:
+      # <-- 探测前的等待时长
       initialDelaySeconds: 10
       # <-- 探测超时的秒数(默认1秒)
       timeoutSeconds: 1
@@ -45,23 +45,28 @@ spec:
       successThreshold: 1
       # <-- 执行探测的频率(以秒为单位),默认10，最低取值为1。
       periodSeconds: 10
-      # <-- 探针(我写对了的)
+      # <-- 探针
       exec:
         command: 
         - '/bin/sh'
         - '-c'
-        - '[ $(curl -s 127.0.0.1/readyz) == "OK" ]'
+        - '[ $(curl -s 127.0.0.1:80/livez) == "OK" ]'
+      # <-- 探针(我写对了的)
+      #httpGet:
+      #  scheme: "HTTP" 
+      #  port: 80
+      #  path: "/livez" 
 ---
 apiVersion: v1
 kind: Service
 metadata:
   namespace: lili
-  name: readinessprobe-is-periodic 
+  name: livenessprobe-is-periodic 
   labels:
-    app: readinessprobe-is-periodic 
+    app: livenessprobe-is-periodic 
 spec:
   selector:
-    app: readinessprobe-is-periodic 
+    app: livenessprobe-is-periodic 
   type: ClusterIP
   ports:
   - name: http-80
