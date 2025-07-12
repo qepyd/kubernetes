@@ -13,7 +13,7 @@ pre stop hook    # 停止前做什么操作，非周期性。
 
 
 # 2.startupProbe
-**非周期性**
+**非周期性**startupprobe-non-periodic
 ```
 Pod级别定义容器的重启策略(restartPolicy)为Always(默认)。
 
@@ -32,7 +32,7 @@ startupProbe探测成功，各主容器均就绪，Pod可成为svc的后端端�
 观察Pod中的容器是否会重启，不会，说明startupProbe是非周期性的。
 
 
-**一直失败会导致死循环重启**
+**一直失败会导致死循环重启**startupprobe-failure01和startupprobe-failure02
 ```
 ## 场景1(startupprobe-failure01)
 Pod级别定义容器的重启策略(restartPolicy)为Always(默认)。
@@ -67,7 +67,7 @@ Pod级别定义容器的重启策略(restartPolicy)默认为Always。
 Pod的状态会在 Running 和 CrashLoopBackOff 间切换。
 ```
 
-**应该预估出启动时长,再进行首次探测**
+**应该预估出启动时长,再进行首次探测**startupprobe-success
 ```
 Pod级别定义容器的重启策略(restartPolicy)默认为Always。
 

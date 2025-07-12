@@ -8,7 +8,7 @@ metadata:
     app: startupprobe-non-periodic 
 spec:
   #### Pod级别
-  # <== 重启策略
+  # <== Pod中容器的重启策略
   #     默认值：Always
   #     可设值：Always、OnFailure、Never
   restartPolicy: Always
@@ -19,7 +19,7 @@ spec:
     image: swr.cn-north-1.myhuaweicloud.com/qepyd/demoapp:v1.1
     imagePullPolicy: Always
 
-    # <== 启动应用和命令(会立即启动,启动耗时2秒内)
+    # <== 启动应用和命令(10秒内是能够启动成功的)
     command:
     - '/bin/sh'
     args:
@@ -49,7 +49,6 @@ spec:
         - '/bin/sh'
         - '-c'
         - '[ $(curl -s 127.0.0.1/readyz) == "OK" ]'
-
 ---
 apiVersion: v1
 kind: Service
@@ -68,3 +67,5 @@ spec:
     port: 80
     protocol: "TCP"
     targetPort: http-80
+---
+

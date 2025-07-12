@@ -1,23 +1,4 @@
 ---
-# 应用程序要360秒后才能够启动成功。
-# startupProbe探测规则和命令
-#    # <== 规则
-#    初始探测等待10秒
-#    探测超时时长1秒
-#    失败次数3
-#    成功次数1
-#    探测间隔10秒
-#    # <== 命令
-#    应用程序支持，且我写正确了的。
-# startupProbe探测过程。
-#    Pod级别其 restartPolicy 默认为Always。
-#    startupProbe探测失败，会延后10s后重启容器。
-#    startupProbe探测失败，会延后20s后重启容器。
-#    startupProbe探测失败，会延后40s后重启容器。
-#    .........................................
-#    .....................，延后是300s(5m), Pod状态为 CrashLoopBackOff
-#    startupProbe探测成功。
----
 apiVersion: v1
 kind: Pod
 metadata:
@@ -27,7 +8,7 @@ metadata:
     app: startupprobe-failure02
 spec:
   #### Pod级别
-  # <== 重启策略
+  # <== Pod中容器的重启策略
   #     默认值：Always
   #     可设值：Always、OnFailure、Never
   restartPolicy: Always
@@ -38,12 +19,12 @@ spec:
     image: swr.cn-north-1.myhuaweicloud.com/qepyd/demoapp:v1.1
     imagePullPolicy: Always
 
-    # <== 启动应用和命令(会立即启动,耗时2秒内)
+    # <== 启动应用和命令(得300秒才能够启动成功)
     command:
     - '/bin/sh'
     args:
     - '-c'
-    - 'sleep 360; python3 /usr/local/bin/demo.py'
+    - 'sleep 300; python3 /usr/local/bin/demo.py'
 
     # <== 端口列表(人类可读)
     ports:
@@ -86,3 +67,5 @@ spec:
     port: 80
     protocol: "TCP"
     targetPort: http-80
+---
+

@@ -1,24 +1,4 @@
 ---
-# 应用程序立即就能够启动成功。
-# startupProbe探测规则和命令
-#    # <== 规则
-#    初始探测等待10秒
-#    探测超时时长1秒
-#    失败次数3
-#    成功次数1
-#    探测间隔10秒
-#    # <== 命令
-#    我故意写错
-# startupProbe探测过程。
-#    Pod级别其 restartPolicy 默认为Always。
-#    startupProbe探测失败，会延后10s后重启容器。
-#    startupProbe探测失败，会延后20s后重启容器。
-#    startupProbe探测失败，会延后40s后重启容器。
-#    .........................................
-#    .....................，上限是300s(5m), Pod状态为 CrashLoopBackOff
-#    .....................，
-#    .....................，会陷入重启死循环
----
 apiVersion: v1
 kind: Pod
 metadata:
@@ -28,7 +8,7 @@ metadata:
     app: startupprobe-failure01
 spec:
   #### Pod级别
-  # <== 重启策略
+  # <== Pod中容器的重启策略
   #     默认值：Always
   #     可设值：Always、OnFailure、Never
   restartPolicy: Always
@@ -39,7 +19,7 @@ spec:
     image: swr.cn-north-1.myhuaweicloud.com/qepyd/demoapp:v1.1
     imagePullPolicy: Always
 
-    # <== 启动应用和命令(会立即启动,耗时2秒内)
+    # <== 启动应用和命令(10秒内是能够启动成功的)
     command:
     - '/bin/sh'
     args:
@@ -63,7 +43,7 @@ spec:
       successThreshold: 1
       # <-- 执行探测的频率(以秒为单位),默认10，最低取值为1。
       periodSeconds: 10
-      # <-- 探针(我故意写错了,应该是OK,我写成了OOK)
+      # <-- 探针(我故意写错,应该是OK,我写成了OOK)
       exec:
         command: 
         - '/bin/sh'
@@ -87,3 +67,5 @@ spec:
     port: 80
     protocol: "TCP"
     targetPort: http-80
+---
+
