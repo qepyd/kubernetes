@@ -3,9 +3,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: lili
-  name: startupprobe-failure01
+  name: readinessprobe-is-periodic 
   labels:
-    app: startupprobe-failure01
+    app: readinessprobe-is-periodic 
 spec:
   #### Pod级别
   # <== Pod中容器的重启策略
@@ -19,21 +19,23 @@ spec:
     image: swr.cn-north-1.myhuaweicloud.com/qepyd/demoapp:v1.1
     imagePullPolicy: Always
 
-    # <== 启动应用和命令(10秒内是能够启动成功的)
+    # <== 启动应用和命令(120秒后才会启动,启动耗时大概140秒)
     command:
     - '/bin/sh'
     args:
     - '-c'
-    - 'python3 /usr/local/bin/demo.py'
+    - 'sleep 120; python3 /usr/local/bin/demo.py'
 
     # <== 端口列表(人类可读)
     ports:
     - name: http-80
       containerPort: 80
 
-    # <== 启动探测
-    startupProbe:
-      # <-- 实始探测时前等待时长(单位秒)，
+    # <== 就绪探测
+    readinessProbe:
+      # <-- 初始探测时等待时长(单位秒)，不用把应用的启动时长考滤进来,
+      #     因为readinessProbe探测失败后是不会重启的，只是不会被加入到svc资源对象的后端端点。
+      #     也不会重启容器。
       initialDelaySeconds: 10
       # <-- 探测超时的秒数(默认1秒)
       timeoutSeconds: 1
@@ -43,23 +45,23 @@ spec:
       successThreshold: 1
       # <-- 执行探测的频率(以秒为单位),默认10，最低取值为1。
       periodSeconds: 10
-      # <-- 探针(我故意写错,应该是OK,我写成了OOK)
+      # <-- 探针(我写对了的)
       exec:
         command: 
         - '/bin/sh'
         - '-c'
-        - '[ $(curl -s 127.0.0.1/readyz) == "OOK" ]'
+        - '[ $(curl -s 127.0.0.1/readyz) == "OK" ]'
 ---
 apiVersion: v1
 kind: Service
 metadata:
   namespace: lili
-  name: startupprobe-failure01
+  name: readinessprobe-is-periodic 
   labels:
-    app: startupprobe-failure01
+    app: readinessprobe-is-periodic 
 spec:
   selector:
-    app: startupprobe-failure01
+    app: readinessprobe-is-periodic 
   type: ClusterIP
   ports:
   - name: http-80

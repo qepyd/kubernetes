@@ -31,7 +31,7 @@ spec:
     - name: http-80
       containerPort: 80
 
-    # <== 启动控制
+    # <== 启动探测
     startupProbe:
       # <-- 初始探测时等待时长(单位秒)，
       initialDelaySeconds: 300

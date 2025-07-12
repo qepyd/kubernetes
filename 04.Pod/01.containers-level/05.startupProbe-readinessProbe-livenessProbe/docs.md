@@ -227,3 +227,114 @@ startupprobe-failure02               2m20s
 
 ## 2.4 startupprobe-success
 
+
+
+
+# 3 readinessProbe
+容器的就绪探测(readinessProbe)是周期性的，失败后是不会重启容器的(所以其初始探测的等待时长不用将应用程序的启动时长考滤进来)。
+当就绪探测成功后，容器才算就绪，Pod才会加入配对的svc资源对象的后端端点。
+**应用manifests**
+```
+root@master01:~# kubectl apply -f 05.readinessprobe-is-periodic.yaml  --dry-run=client
+pod/readinessprobe-is-periodic configured (dry run)
+service/readinessprobe-is-periodic configured (dry run)
+
+root@master01:~# kubectl apply -f 05.readinessprobe-is-periodic.yaml 
+pod/readinessprobe-is-periodic created
+service/readinessprobe-is-periodic created
+```
+
+
+**就绪探测还未成功(已失败多次)**
+期间肯定是有失败的(应用程序启动需要120秒后才启动，初始探测前等待10秒，失败次数3，成功次数1，间隔10秒，探测命令是写对了的)。  
+可看出容器是没有重启的，Pod中的容器还未就绪，Pod未加被加入到svc的后端端点列表中。
+```
+root@master01:~# kubectl  -n lili get Pod/readinessprobe-is-periodic -o wide -w
+NAME                         READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+readinessprobe-is-periodic   0/1     Running   0          8s    10.0.4.71   node02   <none>           <none>
+光标在闪烁
+
+
+root@master01:~# kubectl -n lili get svc/readinessprobe-is-periodic 
+NAME                         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+readinessprobe-is-periodic   ClusterIP   11.7.190.13   <none>        80/TCP    17s
+
+
+root@master01:~# kubectl -n lili get ep/readinessprobe-is-periodic -w
+NAME                         ENDPOINTS   AGE
+readinessprobe-is-periodic               26s
+光标在闪烁
+```
+
+
+
+**就绪探测已成功**
+```
+root@master01:~# kubectl  -n lili get Pod/readinessprobe-is-periodic -o wide -w
+NAME                         READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+readinessprobe-is-periodic   0/1     Running   0          8s    10.0.4.71   node02   <none>           <none>
+readinessprobe-is-periodic   1/1     Running   0          2m25s   10.0.4.71   node02   <none>           <none>
+光标在闪烁
+
+root@master01:~# kubectl -n lili get svc/readinessprobe-is-periodic 
+NAME                         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+readinessprobe-is-periodic   ClusterIP   11.7.190.13   <none>        80/TCP    17s
+
+root@master01:~# kubectl -n lili get ep/readinessprobe-is-periodic -w
+NAME                         ENDPOINTS   AGE
+readinessprobe-is-periodic               26s
+readinessprobe-is-periodic   10.0.4.71:80   2m25s
+光标在闪烁
+
+root@master01:~# curl 11.7.190.13:80        # worker node上访问svcClusterIP:svcPort
+iKubernetes demoapp v1.1 !! ClientIP: 10.0.0.0, ServerName: readinessprobe-is-periodic, ServerIP: 10.0.4.71!
+```
+
+**在线修改探测处的值(让其探测失败)**
+```
+root@master01:~# kubectl -n lili exec -it pod/readinessprobe-is-periodic -c demoapp -- curl 127.0.0.1/readyz
+OK
+
+root@master01:~# kubectl -n lili exec -it pod/readinessprobe-is-periodic -c demoapp -- curl -XPOST -d "readyz=FAIL" 127.0.0.1/readyz
+root@master01:~# 
+
+root@master01:~# kubectl -n lili exec -it pod/readinessprobe-is-periodic -c demoapp -- curl 127.0.0.1/readyz 
+FAIL
+```
+
+
+**就绪探测已失败**
+```
+root@master01:~# kubectl  -n lili get Pod/readinessprobe-is-periodic -o wide -w
+NAME                         READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+readinessprobe-is-periodic   0/1     Running   0          8s    10.0.4.71   node02   <none>           <none>
+readinessprobe-is-periodic   1/1     Running   0          2m25s   10.0.4.71   node02   <none>           <none>
+readinessprobe-is-periodic   0/1     Running   0          11m     10.0.4.71   node02   <none>           <none>
+   # 
+   # Pod中的容器又未完全就绪
+   #
+
+root@master01:~# kubectl -n lili get svc/readinessprobe-is-periodic 
+NAME                         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+readinessprobe-is-periodic   ClusterIP   11.7.190.13   <none>        80/TCP    11m
+
+root@master01:~# kubectl -n lili get ep/readinessprobe-is-periodic -w
+NAME                         ENDPOINTS   AGE
+readinessprobe-is-periodic               26s
+readinessprobe-is-periodic   10.0.4.71:80   2m25s
+readinessprobe-is-periodic                  11m
+   #
+   # svc的后端端点列表中又将Pod给移除了
+   #
+
+root@master01:~# curl 11.7.190.13:80     # worker node上访问svcClusterIP:svcPort，已无法访问，因为svc的后端端点列表是空的
+curl: (7) Failed to connect to 11.7.190.13 port 80: Connection refused
+```
+
+**让就绪探测成功**
+```
+销毁Pod后重建
+或
+kubectl -n lili exec -it pod/readinessprobe-is-periodic -c demoapp -- curl -XPOST -d "readyz=OK" 127.0.0.1/readyz
+```
+
