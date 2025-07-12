@@ -224,3 +224,6 @@ startupprobe-failure02               2m20s
     # 其 ENDPOINTS 字段始终是没有值。因为所关联的Pod里面的主容器始终未就绪(READY)。
     #
 ```
+
+## 2.4 startupprobe-success
+
