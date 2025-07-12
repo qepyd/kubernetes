@@ -227,3 +227,47 @@ startupprobe-non-periodic   10.0.4.88:80   86s
 kubectl delete -f 03.startupprobe-non-periodic.yaml
 ```
 
+
+# 3 readinessProbe
+## 3.1 readinessprobe-failure
+**应用manifests**
+```
+root@master01:~#  kubectl apply -f 04.readinessprobe-failure.yaml  --dry-run=client
+pod/readinessprobe-failure created (dry run)
+service/readinessprobe-failure created (dry run)
+root@master01:~# 
+root@master01:~#  kubectl apply -f 04.readinessprobe-failure.yaml 
+pod/readinessprobe-failure created
+service/readinessprobe-failure created
+```
+
+**watch到的pod、svc、ep**
+```
+root@master01:~# kubectl -n lili get pods -o wide -w
+NAME                     READY   STATUS    RESTARTS   AGE   IP       NODE     NOMINATED NODE   READINESS GATES
+readinessprobe-failure   0/1     Pending   0          0s    <none>   <none>   <none>           <none>
+readinessprobe-failure   0/1     Pending   0          1s    <none>   node02   <none>           <none>
+readinessprobe-failure   0/1     ContainerCreating   0          1s    <none>   node02   <none>           <none>
+readinessprobe-failure   0/1     Running             0          2s    10.0.4.89   node02   <none>           <none>
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+  #
+  # 影响Pod加入到svc的后端端点。
+  # 不会重启(RESTARTS字段的值始终是0)
+  # 
+
+root@master01:~# kubectl -n lili get svc  -w
+NAME                     TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+readinessprobe-failure   ClusterIP   11.8.43.137   <none>        80/TCP    0s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+
+root@master01:~# kubectl -n lili get ep  -w
+NAME                     ENDPOINTS   AGE
+readinessprobe-failure   <none>      0s
+readinessprobe-failure               1s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+```
+
+**清理环境**
+```
+kubectl delete -f  04.readinessprobe-failure.yaml
+```
