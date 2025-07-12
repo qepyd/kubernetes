@@ -71,5 +71,57 @@ root@master01:~# kubectl -n lili exec -it pod/startupprobe-non-periodic -c demoa
 FAIL
 ```
 
+## 2.2 startupprobe-failure01
+**应用manifests**
+```
+root@master01:~# kubectl apply -f 02.startupprobe-failure01.yaml  --dry-run=client
+pod/startupprobe-failure01 created (dry run)
+service/startupprobe-failure01 created (dry run)
+root@master01:~#
+root@master01:~#
+root@master01:~# kubectl apply -f 02.startupprobe-failure01.yaml
+pod/startupprobe-failure01 created
+service/startupprobe-failure01 created
+```
+
+
+**观察Pod资源对象(不要停止观察)**
+```
+root@master01:~# kubectl -n lili get Pod/startupprobe-failure01 -o wide -w 
+NAME                     READY   STATUS             RESTARTS      AGE     IP          NODE     NOMINATED NODE   READINESS GATES
+startupprobe-failure01   0/1     Running            0             7s      10.0.4.59   node02   <none>           <none>
+startupprobe-failure01   0/1     Running            1 (1s ago)    71s     10.0.4.59   node02   <none>           <none>
+startupprobe-failure01   0/1     Running            2 (1s ago)    2m21s   10.0.4.59   node02   <none>           <none>
+startupprobe-failure01   0/1     Running            3 (2s ago)    3m32s   10.0.4.59   node02   <none>           <none>
+startupprobe-failure01   0/1     Running            4 (2s ago)    4m42s   10.0.4.59   node02   <none>           <none>
+startupprobe-failure01   0/1     Running            5 (1s ago)    5m51s   10.0.4.59   node02   <none>           <none>
+startupprobe-failure01   0/1     CrashLoopBackOff   5 (1s ago)    7m1s    10.0.4.59   node02   <none>           <none>
+startupprobe-failure01   0/1     Running            6 (83s ago)   8m23s   10.0.4.59   node02   <none>           <none>
+startupprobe-failure01   0/1     CrashLoopBackOff   6 (1s ago)    9m31s   10.0.4.59   node02   <none>           <none>
+startupprobe-failure01   0/1     CrashLoopBackOff   6 (41s ago)   10m     10.0.4.59   node02   <none>           <none>
+startupprobe-failure01   0/1     Running            7 (2m49s ago)   12m   10.0.4.59   node02   <none>           <none>
+光标在闪烁
+	#
+	# Pod中的容器会一陷入重启死循环(因为startupProbe的探测命令我故障写错了)。
+	# Pod的状态也会在 Running 和 CrashLoopBackOff 间切换。
+	# 
+```
+
+
+**观察svc资源对象和ep资源对象(svc资源对象触发自动创建的)**
+```
+root@master01:~# kubectl -n lili get svc/startupprobe-failure01 
+NAME                     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+startupprobe-failure01   ClusterIP   11.7.212.106   <none>        80/TCP    2m6s
+root@master01:~#
+root@master01:~#
+root@master01:~# kubectl -n lili get ep/startupprobe-failure01  -w 
+NAME                     ENDPOINTS   AGE
+startupprobe-failure01               2m20s
+	#
+	# 其 ENDPOINTS 字段始终是没有值。因为所关联的Pod里面的主容器始终未就绪(READY)。
+	#
+```
+
 
 
