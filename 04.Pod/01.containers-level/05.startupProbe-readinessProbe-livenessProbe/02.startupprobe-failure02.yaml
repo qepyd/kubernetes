@@ -3,9 +3,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: lili
-  name: startupprobe-failure01
+  name: startupprobe-failure02
   labels:
-    app: startupprobe-failure01
+    app: startupprobe-failure02
 spec:
   #### Pod级别
   # <== Pod中容器的重启策略
@@ -19,7 +19,7 @@ spec:
     image: swr.cn-north-1.myhuaweicloud.com/qepyd/demoapp:v1.1
     imagePullPolicy: Always
 
-    # <== 启动应用和命令(得60秒以后才执行启动命令)
+    # <== 启动应用和命令(得60秒后才执行启动命令)
     command:
     - '/bin/sh'
     args:
@@ -34,10 +34,8 @@ spec:
     # <== 启动探测
     startupProbe:
       # <-- 初始探测时等待时长(单位秒)
-      #     就是这里的问题(未将应用的启动时长考滤进来,导致startupProbe探测失败)
-      #        影响Pod加入到svc的后端端点
-      #        导致容器陷入重启死循环
-      initialDelaySeconds: 10
+      #     考滤到了应用的启动耗时
+      initialDelaySeconds: 60
       # <-- 探测超时的秒数(默认1秒)
       timeoutSeconds: 1
       # <-- 失败次数
@@ -46,23 +44,23 @@ spec:
       successThreshold: 1
       # <-- 执行探测的频率(以秒为单位),默认10，最低取值为1。
       periodSeconds: 10
-      # <-- 探针(应用程序支持，且我写对了的)
+      # <-- 探针(问题就在这里，我故意写错，把OK写成了OOK)
       exec:
         command: 
         - '/bin/sh'
         - '-c'
-        - '[ $(curl -s 127.0.0.1:80/readyz) == "OK" ]'
+        - '[ $(curl -s 127.0.0.1:80/readyz) == "OOK" ]'
 ---
 apiVersion: v1
 kind: Service
 metadata:
   namespace: lili
-  name: startupprobe-failure01
+  name: startupprobe-failure02
   labels:
-    app: startupprobe-failure01
+    app: startupprobe-failure02
 spec:
   selector:
-    app: startupprobe-failure01
+    app: startupprobe-failure02
   type: ClusterIP
   ports:
   - name: http-80
