@@ -232,7 +232,7 @@ startupprobe-failure02               2m20s
 
 # 3 readinessProbe
 容器的就绪探测(readinessProbe)是周期性的，失败后是不会重启容器的(所以其初始探测的等待时长不用将应用程序的启动时长考滤进来)。
-当就绪探测成功后，容器才算就绪，Pod才会加入配对的svc资源对象的后端端点。
+当就绪探测成功后，容器才算就绪，Pod才会加入配对的svc资源对象的后端端点。  
 **应用manifests**
 ```
 root@master01:~# kubectl apply -f 05.readinessprobe-is-periodic.yaml  --dry-run=client
