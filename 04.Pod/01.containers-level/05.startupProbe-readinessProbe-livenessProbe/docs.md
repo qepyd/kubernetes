@@ -36,8 +36,9 @@ startupprobe-non-periodic   0/1     Running   0          13s   10.0.4.57   node0
 startupprobe-non-periodic   0/1     Running   0          36s   10.0.4.57   node02   <none>           <none>
 startupprobe-non-periodic   1/1     Running   0          36s   10.0.4.57   node02   <none>           <none>
      #
-     # 可看到 Pod/startupprobe-non-periodic 中的所有主容器均已就绪(READY)
-     # 只有Pod中所有主容器 READY 后，才会成为其svc资源对象的后端
+     # 可看到 Pod/startupprobe-non-periodic 中的所有主容器均已就绪(READY),各容器的探测(这里是startupProbe)均成功。
+     # 只有Pod中所有主容器 READY 后，才会成为其svc资源对象的后端。
+     # 
 ```
 
 **列出svc资源对象和ep资源对象(svc资源对象创建的)**
