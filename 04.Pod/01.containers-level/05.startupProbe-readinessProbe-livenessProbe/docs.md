@@ -63,11 +63,11 @@ kubectl -n lili get pod/startupprobe-non-periodic -o wide -w
 
 **更改Pod资源对象中demoapp容器里面应用其/readyz的值为FAIL**
 ```
-root@master01:~# kubectl -n lili exec -it pod/startupprobe -c demoapp -- curl 127.0.0.1/readyz
+root@master01:~# kubectl -n lili exec -it pod/startupprobe-non-periodic -c demoapp -- curl 127.0.0.1/readyz
 OK
-root@master01:~# kubectl -n lili exec -it pod/startupprobe -c demoapp -- curl -XPOST -d "readyz=FAIL" 127.0.0.1/readyz
+root@master01:~# kubectl -n lili exec -it pod/startupprobe-non-periodic -c demoapp -- curl -XPOST -d "readyz=FAIL" 127.0.0.1/readyz
 root@master01:~#
-root@master01:~# kubectl -n lili exec -it pod/startupprobe -c demoapp -- curl 127.0.0.1/readyz 
+root@master01:~# kubectl -n lili exec -it pod/startupprobe-non-periodic -c demoapp -- curl 127.0.0.1/readyz 
 FAIL
 ```
 
