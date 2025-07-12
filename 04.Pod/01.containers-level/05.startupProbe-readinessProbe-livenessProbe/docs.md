@@ -15,6 +15,22 @@ pre stop hook    # 停止前做什么操作，非周期性。
 # 2.startupProbe
 ```
 非周期性
+	Pod的其重启策略(restartPolicy)默认为Always。
+	各主容器startupProbe探测成功，各主容器均就绪，Pod可成为svc的后端端点(endpoints)。
+	在线改变主容器中应用的探测处的值。
+	Pod中的容器不会重启，说明startupProbe是非周期性的。
+
+一直失败会导致死循环重启。
+	Pod的其重启策略(restartPolicy)默认为Always。
+	任何一个主容器startupProbe探测失败(我故意把探测的命令写错)。
+	Pod中的相关容器会不断的重启，各主容器未就绪，Pod不会成为svc的后端端点(endpoints)。
+	Pod的状态会在Running和CrashLoopBackOff间切换。
+
+前面几次失败，但后面成功了。
+	Pod的其重启策略(restartPolicy)默认为Always。
+	应用程序(Pod中某一主容器)要360秒才会启动成功。
+	在360秒这期间，相关主容器startupProbe探测失败，各主容器未就绪，Pod不会成为svc的后端端点(endpoints)。
+	在360秒之后，相关主容器startupProbe探测成功，各主容器就绪，Pod会成为svc的后端端点(endpoints)。
 ```
 ## 2.1 startupprobe-non-periodic
 **应用manifests**
