@@ -16,7 +16,7 @@ pre stop hook    # 停止前做什么操作，非周期性。
 ```
 非周期性
 ```
-# 2.1 startupprobe-non-periodic
+## 2.1 startupprobe-non-periodic
 **应用manifests**
 ```
 root@master01:~# kubectl apply -f 01.startupprobe-non-periodic.yaml  --dry-run=client
