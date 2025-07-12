@@ -271,3 +271,128 @@ readinessprobe-failure               1s
 ```
 kubectl delete -f  04.readinessprobe-failure.yaml
 ```
+
+## 3.2 readinessprobe-is-periodic
+**应用manifests**
+```
+root@master01:~# kubectl apply -f 05.readinessprobe-is-periodic.yaml --dry-run=client
+pod/readinessprobe-is-periodic created (dry run)
+service/readinessprobe-is-periodic created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 05.readinessprobe-is-periodic.yaml 
+pod/readinessprobe-is-periodic created
+service/readinessprobe-is-periodic created
+```
+
+**Pod中的主容器已就绪(watch到的pod、svc、ep)**
+```
+root@master01:~# kubectl -n lili get pods -o wide -w
+NAME                         READY   STATUS              RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+readinessprobe-is-periodic   0/1     Pending             0          0s    <none>      <none>   <none>           <none>
+readinessprobe-is-periodic   0/1     Pending             0          0s    <none>      node02   <none>           <none>
+readinessprobe-is-periodic   0/1     ContainerCreating   0          0s    <none>      node02   <none>           <none>
+readinessprobe-is-periodic   0/1     Running             0          1s    10.0.4.90   node02   <none>           <none>
+readinessprobe-is-periodic   1/1     Running             0          85s   10.0.4.90   node02   <none>           <none>
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+	#
+	# pod中的主容器已就绪
+	#
+
+root@master01:~# kubectl -n lili get svc  -w
+NAME                         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+readinessprobe-is-periodic   ClusterIP   11.9.98.93   <none>        80/TCP    0s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+
+root@master01:~# kubectl -n lili get ep  -w
+NAME                         ENDPOINTS   AGE
+readinessprobe-is-periodic   <none>      0s
+readinessprobe-is-periodic               1s
+readinessprobe-is-periodic   10.0.4.90:80   85s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+```
+
+
+**在线修改探测处结果的值(让其探测失败)**
+```
+root@master01:~# kubectl -n lili exec -it pod/readinessprobe-is-periodic -c demoapp  -- curl 127.0.0.1/readyz
+OK
+
+root@master01:~# kubectl -n lili exec -it pod/readinessprobe-is-periodic -c demoapp -- curl -XPOST -d "readyz=FAIL" 127.0.0.1/readyz
+root@master01:~# 
+
+root@master01:~# kubectl -n lili exec -it pod/readinessprobe-is-periodic -c demoapp -- curl 127.0.0.1/readyz
+FAIL
+```
+
+**watch到的pod、svc、ep**
+```
+root@master01:~# kubectl -n lili get pods -o wide -w
+NAME                         READY   STATUS              RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+readinessprobe-is-periodic   0/1     Pending             0          0s    <none>      <none>   <none>           <none>
+readinessprobe-is-periodic   0/1     Pending             0          0s    <none>      node02   <none>           <none>
+readinessprobe-is-periodic   0/1     ContainerCreating   0          0s    <none>      node02   <none>           <none>
+readinessprobe-is-periodic   0/1     Running             0          1s    10.0.4.90   node02   <none>           <none>
+readinessprobe-is-periodic   1/1     Running             0          85s   10.0.4.90   node02   <none>           <none>
+readinessprobe-is-periodic   0/1     Running             0          4m    10.0.4.90   node02   <none>           <none>
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+	#
+	# pod中的主容器未就绪(即READY字段的值为0/1)
+	# Pod中的主容器是不会重启的
+	# 
+
+root@master01:~# kubectl -n lili get svc  -w
+NAME                         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+readinessprobe-is-periodic   ClusterIP   11.9.98.93   <none>        80/TCP    0s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+
+root@master01:~# kubectl -n lili get ep  -w
+NAME                         ENDPOINTS   AGE
+readinessprobe-is-periodic   <none>      0s
+readinessprobe-is-periodic               1s
+readinessprobe-is-periodic   10.0.4.90:80   85s
+readinessprobe-is-periodic                  4m
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+```
+
+**在线修改探测处结果的值(让其探测成功)**
+```
+root@master01:~# kubectl -n lili exec -it pod/readinessprobe-is-periodic -c demoapp -- curl -XPOST -d "readyz=OK" 127.0.0.1/readyz
+root@master01:~# 
+```
+
+**watch到的pod、svc、ep**
+```
+root@master01:~# kubectl -n lili get pods -o wide -w
+NAME                         READY   STATUS    RESTARTS   AGE   IP       NODE     NOMINATED NODE   READINESS GATES
+readinessprobe-is-periodic   0/1     Pending   0          0s    <none>   <none>   <none>           <none>
+readinessprobe-is-periodic   0/1     Pending   0          0s    <none>   node02   <none>           <none>
+readinessprobe-is-periodic   0/1     ContainerCreating   0          0s    <none>   node02   <none>           <none>
+readinessprobe-is-periodic   0/1     Running             0          1s    10.0.4.90   node02   <none>           <none>
+readinessprobe-is-periodic   1/1     Running             0          85s   10.0.4.90   node02   <none>           <none>
+readinessprobe-is-periodic   0/1     Running             0          4m    10.0.4.90   node02   <none>           <none>
+readinessprobe-is-periodic   1/1     Running             0          6m    10.0.4.90   node02   <none>           <none>
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+  #
+  # Pod中的主容器又就绪了(即READY字段的值为1/1)
+  # Pod中的主容器是不会重启的
+  
+root@master01:~# kubectl -n lili get svc  -w
+NAME                         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+readinessprobe-is-periodic   ClusterIP   11.9.98.93   <none>        80/TCP    0s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+
+root@master01:~# kubectl -n lili get ep  -w
+NAME                         ENDPOINTS   AGE
+readinessprobe-is-periodic   <none>      0s
+readinessprobe-is-periodic               1s
+readinessprobe-is-periodic   10.0.4.90:80   85s
+readinessprobe-is-periodic                  4m
+readinessprobe-is-periodic   10.0.4.90:80   6m
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+```
+
+**清理环境**
+```
+kubectl delete -f  05.readinessprobe-is-periodic.yaml
+```
+
