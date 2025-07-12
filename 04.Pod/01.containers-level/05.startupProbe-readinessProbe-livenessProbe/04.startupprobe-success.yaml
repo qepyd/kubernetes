@@ -22,9 +22,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: lili
-  name: startupprobe-failure02
+  name: startupprobe-success
   labels:
-    app: startupprobe-failure02
+    app: startupprobe-success
 spec:
   #### Pod级别
   # <== 重启策略
@@ -43,7 +43,7 @@ spec:
     - '/bin/sh'
     args:
     - '-c'
-    - 'sleep 360; python3 /usr/local/bin/demo.py'
+    - 'sleep 300; python3 /usr/local/bin/demo.py'
 
     # <== 端口列表(人类可读)
     ports:
@@ -53,7 +53,7 @@ spec:
     # <== 启动控制
     startupProbe:
       # <-- 初始探测时等待时长(单位秒)，
-      initialDelaySeconds: 10
+      initialDelaySeconds: 300
       # <-- 探测超时的秒数(默认1秒)
       timeoutSeconds: 1
       # <-- 失败次数
@@ -73,12 +73,12 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: lili
-  name: startupprobe-failure02
+  name: startupprobe-success
   labels:
-    app: startupprobe-failure02
+    app: startupprobe-success
 spec:
   selector:
-    app: startupprobe-failure02
+    app: startupprobe-success
   type: ClusterIP
   ports:
   - name: http-80
