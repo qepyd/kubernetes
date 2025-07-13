@@ -33,7 +33,7 @@ readinessProbe
 
 livenessProbe
   探测失败
-    不影响Pod加入到svc的后端端点。
+    影响Pod加入到svc的后端端点。
     会导致容器的重启。
     若：只有livenessProbe，应该考滤到应用程序的启动时长，
 	即初始探测等待时长(initialDelaySeconds)久一点。
@@ -394,5 +394,63 @@ readinessprobe-is-periodic   10.0.4.90:80   6m
 **清理环境**
 ```
 kubectl delete -f  05.readinessprobe-is-periodic.yaml
+```
+
+
+
+# 4 livenessProbe
+## 4.1 livenessprobe-failure
+**应用manifests**
+```
+root@master01:~# kubectl apply -f 06.livenessprobe-failure.yaml --dry-run=client
+pod/livenessprobe-failure created (dry run)
+service/livenessprobe-failure created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 06.livenessprobe-failure.yaml 
+pod/livenessprobe-failure created
+service/livenessprobe-failure created
+```
+
+**watch到的pod、svc、ep**
+```
+root@master01:~# kubectl -n lili get pods -o wide -w
+NAME                    READY   STATUS              RESTARTS        AGE    IP          NODE     NOMINATED NODE   READINESS GATES
+livenessprobe-failure   0/1     Pending             0               0s     <none>      <none>   <none>           <none>
+livenessprobe-failure   0/1     Pending             0               0s     <none>      node02   <none>           <none>
+livenessprobe-failure   0/1     ContainerCreating   0               0s     <none>      node02   <none>           <none>
+livenessprobe-failure   1/1     Running             0               2s     10.0.4.91   node02   <none>           <none>
+livenessprobe-failure   1/1     Running             1 (1s ago)      2m1s   10.0.4.91   node02   <none>           <none>
+livenessprobe-failure   1/1     Running             2 (1s ago)      4m1s   10.0.4.91   node02   <none>           <none>
+livenessprobe-failure   1/1     Running             3 (2s ago)      6m2s   10.0.4.91   node02   <none>           <none>
+livenessprobe-failure   1/1     Running             4 (1s ago)      8m1s   10.0.4.91   node02   <none>           <none>
+livenessprobe-failure   1/1     Running             5 (1s ago)      10m    10.0.4.91   node02   <none>           <none>
+livenessprobe-failure   1/1     Running             6 (2s ago)      12m    10.0.4.91   node02   <none>           <none>
+livenessprobe-failure   0/1     CrashLoopBackOff    6 (1s ago)      14m    10.0.4.91   node02   <none>           <none>
+livenessprobe-failure   1/1     Running             7 (2m54s ago)   16m    10.0.4.91   node02   <none>           <none>
+livenessprobe-failure   0/1     CrashLoopBackOff    7 (1s ago)      18m    10.0.4.91   node02   <none>           <none>
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+    #
+    # Pod中的容器会重启
+    # 当Pod状态为CrashLoopBackOff时，Pod会被从svc的后端端点中移除。
+    # 
+
+root@master01:~# kubectl -n lili get svc  -w
+NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+livenessprobe-failure   ClusterIP   11.3.207.244   <none>        80/TCP    0s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+
+root@master01:~# kubectl -n lili get ep  -w
+NAME                    ENDPOINTS   AGE
+livenessprobe-failure   <none>      0s
+livenessprobe-failure   10.0.4.91:80   2s       # 当Pod状态为CrashLoopBackOff时,会将Pod从后端端点中移除。
+livenessprobe-failure                  14m
+livenessprobe-failure   10.0.4.91:80   16m
+livenessprobe-failure                  18m      # 当Pod状态为CrashLoopBackOff时,会将Pod从后端端点中移除。
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+```
+
+**清理环境**
+```
+kubectl delete -f  06.livenessprobe-failure.yaml
 ```
 
