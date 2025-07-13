@@ -3,9 +3,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: lili
-  name: startupprobe-readinessprobe-livenessprobe 
+  name: startupprobe-readinessprobe-livenessprobe
   labels:
-    app: startupprobe-readinessprobe-livenessprobe 
+    app: startupprobe-readinessprobe-livenessprobe
 spec:
   #### Pod级别
   # <== Pod中容器的重启策略
@@ -19,70 +19,67 @@ spec:
     image: swr.cn-north-1.myhuaweicloud.com/qepyd/demoapp:v1.1
     imagePullPolicy: Always
 
-    # <== 启动应用和命令(120秒后才会启动,启动耗时大概140秒)
+    # <== 启动应用和命令(得60秒后才执行启动命令)
     command:
     - '/bin/sh'
     args:
     - '-c'
-    - 'sleep 120; python3 /usr/local/bin/demo.py'
+    - 'sleep 60; python3 /usr/local/bin/demo.py'
 
     # <== 端口列表(人类可读)
     ports:
     - name: http-80
       containerPort: 80
 
-    # <== 启动探测,非周期,
+    # <== 启动探测，非周期性，得考滤应用启动的时长
     startupProbe:
-      # 初始探测等待时长 需要 要把应用的启动时长考滤进来
-      initialDelaySeconds: 140
+      # <-- 得考滤应用启动的时长
+      initialDelaySeconds: 80
       timeoutSeconds: 1
       failureThreshold: 3
       successThreshold: 1
       periodSeconds: 10
-      exec:
-        command: 
-        - '/bin/sh'
-        - '-c'
-        - '[ $(curl -s 127.0.0.1:80/readyz) == "OK" ]'
+      httpGet:
+        scheme: "HTTP"
+        port: 80
+        path: "/readyz"
 
-    # <== 就绪性探测，周期性的
+    # <== 就绪探测，周期性，在startupProbe之后
     readinessProbe:
-      # 初始探测等待时长 不需要 把应用的启动时长考滤进来
+      # <-- 因存在startupProbe,所以不用考滤应用启动的时长
       initialDelaySeconds: 10
       timeoutSeconds: 1
       failureThreshold: 3
       successThreshold: 1
       periodSeconds: 10
-      exec:
-        command: 
-        - '/bin/sh'
-        - '-c'
-        - '[ $(curl -s 127.0.0.1/readyz) == "OK" ]'
+      httpGet:
+        scheme: "HTTP"
+        port: 80
+        path: "/readyz" 
 
-    # <== 存活探测,周期性
+    # <== 存活探测，周期性，在startupProbe之后
     livenessProbe:
-      # 初始探测等待时长 不需要 把应用的启动时长考滤进来
+      # <-- 因存在startupProbe,所以不用考滤应用启动的时长
       initialDelaySeconds: 10
       timeoutSeconds: 1
       failureThreshold: 3
       successThreshold: 1
       periodSeconds: 10
-      exec:
-        command: 
-        - '/bin/sh'
-        - '-c'
-        - '[ $(curl -s 127.0.0.1/livez) == "OK" ]'
+      httpGet:
+        scheme: "HTTP"
+        port: 80
+        path: "/livez" 
 ---
 apiVersion: v1
 kind: Service
 metadata:
   namespace: lili
-  name: startupprobe-readinessprobe-livenessprobe 
+  name: startupprobe-readinessprobe-livenessprobe
   labels:
-    app: startupprobe-readinessprobe-livenessprobe 
+    app: startupprobe-readinessprobe-livenessprobe
 spec:
   selector:
-    app: startupprobe-readinessprobe-livenessprobe 
+    app: startupprobe-readinessprobe-livenessprobe
   type: ClusterIP
   ports:
   - name: http-80
