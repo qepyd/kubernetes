@@ -74,6 +74,10 @@ startupprobe-failure01   0/1     CrashLoopBackOff    5 (1s ago)      6m2s   10.0
 startupprobe-failure01   0/1     Running             6 (90s ago)     7m31s  10.0.4.83   node02   <none>           <none>
 startupprobe-failure01   0/1     CrashLoopBackOff    6 (0s ago)      8m31s  10.0.4.83   node02   <none>           <none>
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+    # 
+    # 会导致容器的重启。
+    # 影响Pod加入到svc的后端端点，Pod状态为Running或CrashLoopBackOff，Pod会被从svc的后端端点列表中移除。
+    # 
 
 root@master01:~# kubectl -n lili get svc  -w
 NAME                     TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
@@ -124,6 +128,10 @@ startupprobe-failure02   0/1     CrashLoopBackOff    7 (0s ago)      18m    10.0
 startupprobe-failure02   0/1     Running             8 (5m1s ago)    23m    10.0.4.86   node02   <none>           <none>
 startupprobe-failure02   0/1     Running             9 (1s ago)      25m    10.0.4.86   node02   <none>           <none>
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+    # 
+    # 会导致容器的重启。  
+    # 影响Pod加入到svc的后端端点，Pod状态为Running或CrashLoopBackOff，Pod会被从svc的后端端点列表中移除。
+    # 
 
 root@master01:~# kubectl -n lili get svc  -w
 NAME                     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
@@ -167,6 +175,7 @@ startupprobe-non-periodic   1/1     Running             0          86s   10.0.4.
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
    #
    # Pod中各主容器均已就绪
+   # Pod会加入到关联至此的svc资源对象其后端端点列表中。
    #
 
 root@master01:~# kubectl -n lili get svc  -w
@@ -205,10 +214,12 @@ startupprobe-non-periodic   0/1     Running             0          2s    10.0.4.
 startupprobe-non-periodic   0/1     Running             0          86s   10.0.4.88   node02   <none>           <none>
 startupprobe-non-periodic   1/1     Running             0          86s   10.0.4.88   node02   <none>           <none>
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
-	#
-	# 不会重启(RESTARTS字段的值始终是0)
-	# 也不会影响其加入svc的后端端点，READY字段的值始终是1/1
-	# 
+    #
+    # 不会再进行探测了，因为startupProbe是非周期性的。
+    #    Pod也就不会重启(RESTARTS字段的值始终是0)
+    #    Pod中容器是就绪的(READY字段的值1/1)
+    # 不影响Pod在所关联至此svc资源对象中的后端端点列表中的存在。
+    # 
 
 root@master01:~# kubectl -n lili get svc  -w
 NAME                        TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
@@ -245,15 +256,17 @@ service/readinessprobe-failure created
 **watch到的pod、svc、ep**
 ```
 root@master01:~# kubectl -n lili get pods -o wide -w
-NAME                     READY   STATUS    RESTARTS   AGE   IP       NODE     NOMINATED NODE   READINESS GATES
-readinessprobe-failure   0/1     Pending   0          0s    <none>   <none>   <none>           <none>
-readinessprobe-failure   0/1     Pending   0          1s    <none>   node02   <none>           <none>
-readinessprobe-failure   0/1     ContainerCreating   0          1s    <none>   node02   <none>           <none>
+NAME                     READY   STATUS              RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+readinessprobe-failure   0/1     Pending             0          0s    <none>      <none>   <none>           <none>
+readinessprobe-failure   0/1     Pending             0          1s    <none>      node02   <none>           <none>
+readinessprobe-failure   0/1     ContainerCreating   0          1s    <none>      node02   <none>           <none>
 readinessprobe-failure   0/1     Running             0          2s    10.0.4.89   node02   <none>           <none>
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
   #
+  # 不会重启Pod中的主容器(RESTARTS字段的值始终是0)
+  # 但因为探测会一直失败
+  #     Pod中的主容器不会就绪(READY字段的0/1)
   # 影响Pod加入到svc的后端端点。
-  # 不会重启(RESTARTS字段的值始终是0)
   # 
 
 root@master01:~# kubectl -n lili get svc  -w
@@ -295,9 +308,10 @@ readinessprobe-is-periodic   0/1     ContainerCreating   0          0s    <none>
 readinessprobe-is-periodic   0/1     Running             0          1s    10.0.4.90   node02   <none>           <none>
 readinessprobe-is-periodic   1/1     Running             0          85s   10.0.4.90   node02   <none>           <none>
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
-	#
-	# pod中的主容器已就绪
-	#
+   #
+   # pod中的主容器已就绪(READY字段之1/1)。
+   # Pod已加入关联至此其svc的后端端点列表中的。
+   # 
 
 root@master01:~# kubectl -n lili get svc  -w
 NAME                         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
@@ -311,7 +325,6 @@ readinessprobe-is-periodic               1s
 readinessprobe-is-periodic   10.0.4.90:80   85s
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
 ```
-
 
 **在线修改探测处结果的值(让其探测失败)**
 ```
@@ -336,10 +349,10 @@ readinessprobe-is-periodic   0/1     Running             0          1s    10.0.4
 readinessprobe-is-periodic   1/1     Running             0          85s   10.0.4.90   node02   <none>           <none>
 readinessprobe-is-periodic   0/1     Running             0          4m    10.0.4.90   node02   <none>           <none>
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
-	#
-	# pod中的主容器未就绪(即READY字段的值为0/1)
-	# Pod中的主容器是不会重启的
-	# 
+   #
+   # Pod中的主容器不会重启(不会重启，其探测就会一直失败，Pod中的主容器就一直未就绪(0/1))。
+   # Pod会被从关联至此其svc的后端端点列表中移除。
+   # 
 
 root@master01:~# kubectl -n lili get svc  -w
 NAME                         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
@@ -347,9 +360,9 @@ readinessprobe-is-periodic   ClusterIP   11.9.98.93   <none>        80/TCP    0s
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
 
 root@master01:~# kubectl -n lili get ep  -w
-NAME                         ENDPOINTS   AGE
-readinessprobe-is-periodic   <none>      0s
-readinessprobe-is-periodic               1s
+NAME                         ENDPOINTS      AGE
+readinessprobe-is-periodic   <none>         0s
+readinessprobe-is-periodic                  1s
 readinessprobe-is-periodic   10.0.4.90:80   85s
 readinessprobe-is-periodic                  4m
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
@@ -374,9 +387,10 @@ readinessprobe-is-periodic   0/1     Running             0          4m    10.0.4
 readinessprobe-is-periodic   1/1     Running             0          6m    10.0.4.90   node02   <none>           <none>
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
   #
-  # Pod中的主容器又就绪了(即READY字段的值为1/1)
-  # Pod中的主容器是不会重启的
-  
+  # Pod中的主容器不会重启(探测成功，是因为人为改变修改了探测处结果的值，Pod中的主容器就绪(1/1))。  
+  # Pod又会加入关联至此其svc的后端端点列表中。
+  # 
+ 
 root@master01:~# kubectl -n lili get svc  -w
 NAME                         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
 readinessprobe-is-periodic   ClusterIP   11.9.98.93   <none>        80/TCP    0s
@@ -396,7 +410,6 @@ readinessprobe-is-periodic   10.0.4.90:80   6m
 ```
 kubectl delete -f  05.readinessprobe-is-periodic.yaml
 ```
-
 
 
 # 4 livenessProbe
@@ -455,6 +468,7 @@ livenessprobe-failure                  18m      # 当Pod状态为CrashLoopBackOf
 kubectl delete -f  06.livenessprobe-failure.yaml
 ```
 
+
 ## 4.2 livenessprobe-is-periodic
 **应用manifests**
 ```
@@ -476,6 +490,10 @@ livenessprobe-is-periodic   0/1     Pending             0          0s    <none> 
 livenessprobe-is-periodic   0/1     ContainerCreating   0          0s    <none>      node02   <none>           <none>
 livenessprobe-is-periodic   1/1     Running             0          2s    10.0.4.92   node02   <none>           <none>
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+  #
+  # Pod已就绪(READY字段的1/1)。
+  # Pod会加入所关联至此其svc资源对象的后端端点列表中。
+  #
 
 root@master01:~# kubectl -n lili get svc  -w
 NAME                        TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
@@ -512,8 +530,10 @@ livenessprobe-is-periodic   1/1     Running             0            2s      10.
 livenessprobe-is-periodic   1/1     Running             1 (1s ago)   3m11s   10.0.4.92   node02   <none>           <none>
 光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
   #
-  # 重启了一次，当重启后，探测就成功了
-  #
+  # Pod会重启
+  #    因为探测失败才重启，但Pod状态是非CrashLoopBackOff,不会从svc资源对象后端端点列表中移除。
+  #    重启成功后，探测成功。
+  # 
 
 root@master01:~# kubectl -n lili exec -it pod/livenessprobe-is-periodic -c demoapp  -- curl 127.0.0.1/livez
 OK
