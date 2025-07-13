@@ -455,3 +455,82 @@ livenessprobe-failure                  18m      # 当Pod状态为CrashLoopBackOf
 kubectl delete -f  06.livenessprobe-failure.yaml
 ```
 
+## 4.2 livenessprobe-is-periodic
+**应用manifests**
+```
+root@master01:~# kubectl apply -f 07.livenessprobe-is-periodic.yaml  --dry-run=client
+pod/livenessprobe-is-periodic created (dry run)
+service/livenessprobe-is-periodic created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 07.livenessprobe-is-periodic.yaml
+pod/livenessprobe-is-periodic created
+service/livenessprobe-is-periodic created
+```
+
+**Pod中各主容器就绪(watch到的pod、svc、ep)**
+```
+root@master01:~# kubectl -n lili get pods -o wide -w
+NAME                        READY   STATUS              RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+livenessprobe-is-periodic   0/1     Pending             0          0s    <none>      <none>   <none>           <none>
+livenessprobe-is-periodic   0/1     Pending             0          0s    <none>      node02   <none>           <none>
+livenessprobe-is-periodic   0/1     ContainerCreating   0          0s    <none>      node02   <none>           <none>
+livenessprobe-is-periodic   1/1     Running             0          2s    10.0.4.92   node02   <none>           <none>
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+
+root@master01:~# kubectl -n lili get svc  -w
+NAME                        TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+livenessprobe-is-periodic   ClusterIP   11.7.96.229   <none>        80/TCP    0s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+
+root@master01:~# kubectl -n lili get ep  -w
+NAME                        ENDPOINTS   AGE
+livenessprobe-is-periodic   <none>      0s
+livenessprobe-is-periodic   10.0.4.92:80   2s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+```
+
+**修改相关主容器探测处的值(让其失败)**
+```
+root@master01:~# kubectl -n lili exec -it pod/livenessprobe-is-periodic -c demoapp  -- curl 127.0.0.1/livez
+OK
+
+root@master01:~# kubectl -n lili exec -it pod/livenessprobe-is-periodic -c demoapp -- curl -XPOST -d "livez=FAIL" 127.0.0.1/livez
+root@master01:~# 
+
+root@master01:~# kubectl -n lili exec -it pod/livenessprobe-is-periodic -c demoapp -- curl 127.0.0.1/livez
+FAIL
+```
+
+**探测会失败(watch到的pod、svc、ep)**
+```
+root@master01:~# kubectl -n lili get pods -o wide -w
+NAME                        READY   STATUS              RESTARTS     AGE     IP       NODE     NOMINATED NODE   READINESS GATES
+livenessprobe-is-periodic   0/1     Pending             0            0s      <none>   <none>   <none>           <none>
+livenessprobe-is-periodic   0/1     Pending             0            0s      <none>   node02   <none>           <none>
+livenessprobe-is-periodic   0/1     ContainerCreating   0            0s      <none>   node02   <none>           <none>
+livenessprobe-is-periodic   1/1     Running             0            2s      10.0.4.92   node02   <none>           <none>
+livenessprobe-is-periodic   1/1     Running             1 (1s ago)   3m11s   10.0.4.92   node02   <none>           <none>
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+  #
+  # 重启了一次，当重启后，探测就成功了
+  #
+
+root@master01:~# kubectl -n lili exec -it pod/livenessprobe-is-periodic -c demoapp  -- curl 127.0.0.1/livez
+OK
+
+root@master01:~# kubectl -n lili get svc  -w
+NAME                        TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+livenessprobe-is-periodic   ClusterIP   11.7.96.229   <none>        80/TCP    0s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+
+root@master01:~# kubectl -n lili get ep  -w
+NAME                        ENDPOINTS   AGE
+livenessprobe-is-periodic   <none>      0s
+livenessprobe-is-periodic   10.0.4.92:80   2s
+光标在闪烁,光标在闪烁,光标在闪烁,光标在闪烁
+```
+
+**清理环境**
+```
+kubectl delete -f 07.livenessprobe-is-periodic.yaml
+```
