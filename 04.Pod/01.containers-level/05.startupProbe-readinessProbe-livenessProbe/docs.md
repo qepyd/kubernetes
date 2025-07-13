@@ -15,7 +15,7 @@ pre stop hook    # 停止前做什么操作，非周期性。
 startupProbe
   探测失败
     会导致容器的重启。
-    影响Pod加入到svc的后端端点，Pod的状态为Running或CrashLoopBackOff，Pod会被从svc的后端端点列表中移除。
+    Pod的状态为Running或CrashLoopBackOff时，Pod不会加入svc的后端端点列表中移除。
     若：只有startupProbe,应该考滤到应用程序的启动时长
 	即初始探测等待时长(initialDelaySeconds)久一点。
   非周期性
@@ -24,13 +24,13 @@ startupProbe
 readinessProbe
   探测失败
     不会导致容器的重启。
-    影响Pod加入到svc的后端端点，Pod的状态一是 Running 状态，Pod会被从svc的后端端点列表中移除。
+    Pod的状态一直是 Running 状态，Pod会被从svc的后端端点列表中移除。
     若：只有readinessProbe,应该考滤到应用程序的启动时长
 	即初始探测等待时长(initialDelaySeconds)久一点。
   周期性
     探测失败
-      影响Pod加入到svc的后端端点。
       不会导致容器的重启。
+      影响Pod加入到svc的后端端点。
 
 livenessProbe
   探测失败
@@ -40,8 +40,8 @@ livenessProbe
 	即初始探测等待时长(initialDelaySeconds)久一点。
   周期性
     探测失败
-      不影响Pod加入到svc的后端端点。
       会导致容器的重启。
+      当Pod状态为 CrashLoopBackOff 时，Pod会被从svc的后端端点列表中移除。
 ```
 
 # 2 startupProbe
