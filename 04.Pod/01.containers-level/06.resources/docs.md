@@ -5,7 +5,7 @@ pods.spec.containers.resources.requests
 pods.spec.containers.resources.limtis
 ```
 **requests和limits常见资源及其单位**  
-官方: https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container  
+https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container  
 ```
 cpu
   https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
