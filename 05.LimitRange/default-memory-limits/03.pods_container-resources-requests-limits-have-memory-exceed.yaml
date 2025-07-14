@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: container-resources-requests-limits-have-memory-exceed 
+  labels:
+    app: container-resources-requests-limits-have-memory-exceed
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 资源请求(requests)和限制(limits)
+    #     省略了resources.requests字段，会根据resources.limits字段中key: value进行填充
+    resources:
+      limits:
+        memory: "600Mi"
+
+## 此资源对象所在namespace中有个LimitRange资源对象。
+#    requests:
+#      memory: "256Mi"
+#    limits:
+#      memory: "512Mi"
+#
+#  此资源对象的myapp01容器的resources如下所示
+#    requests:
+#      memory: "600Mi"
+#    limits:
+#      memory: "600Mi"
+#
+#  此Pod是允许被kube-apiserver所接收的(调度、创建)
+#    不受所在名称空间中其LimitRange资源对象对memory的requests、limits。
+#
