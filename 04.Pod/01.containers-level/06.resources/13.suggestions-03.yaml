@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: suggestions-03 
+  labels:
+    app: suggestions-03 
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    resources:
+      # 不显示定义requests,会根据用limits中的进行填充)
+      limits:
+        memory: "100Mi"
+
