@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: only-limits-effect-pod-dispatch-05
+  labels:
+    app: only-limits-effect-pod-dispatch-05
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 资源限制
+    #     只有limits(没有requests,拥有limits),会影响Pod的调度:
+    #        调度时需要有worker node能够满足所需cpu、memory的能力。
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "100Mi"
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+    # <== 资源
+    #     只有limits(没有requests,拥有limits),会影响Pod的调度:
+    #        调度时需要有worker node能够满足所需cpu、memory的能力。
+    resources:
+      limits:
+        cpu: "50m"
+        memory: "50Mi" 
+
+# 上述有2个容器(主容器)
+#    Pod在调度时会将能够同时满足以下能力的worker node选择出来
+#    cpu: 100m + 50m = 150m
+#    memory: 100Mi + 50Mi = 150Mi

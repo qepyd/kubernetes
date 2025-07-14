@@ -11,9 +11,14 @@ spec:
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
     # <== 资源限制
     #     只有requests(拥有requests,没有limits),会影响Pod的调度:
-    #        调度时需要有worker node能够满足所需cpu、memory的能力。
+    #        调度时需要有worker node具备requests下所定义资源的能力。
     resources:
       requests:
         cpu: "100000m"
         memory: "100Mi"
-       
+
+# 上述有1个容器(主容器)
+#    Pod在调度时会将能够同时满足以下能力的worker node选择出来
+#    cpu: 100000m
+#    memory: 100Mi
+#   
