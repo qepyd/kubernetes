@@ -18,7 +18,7 @@ spec:
     - "sleep 1000000000"
 
 
-## Pod的服务质量(Qos)之BestEffort(满足)
+## Pod的服务质量(Qos)之BestEffort(尽最大努力)
 #
 #  Guaranteed > Bustable > BestEffort
 #

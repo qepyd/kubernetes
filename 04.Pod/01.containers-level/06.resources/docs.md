@@ -360,7 +360,7 @@ root@master01:/qepyd/kubernetes/04.Pod/01.containers-level/06.resources# kubectl
 ## 3.3 BestEffort
 **说明**
 ```
-## Pod的服务质量(Qos)之BestEffort(满足)
+## Pod的服务质量(Qos)之BestEffort(尽最大努力)
 #
 #  Guaranteed > Bustable > BestEffort
 #
