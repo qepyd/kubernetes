@@ -397,8 +397,5 @@ root@master01:~# kubectl -n lili get pod/pod-qos-to-besteffort  -o json | jq ".s
 "BestEffort"
 ```
 
-
-
-
-# 4 限制(limits)的效果演示 
+# 4 限制(limits)后效果演示 
 
