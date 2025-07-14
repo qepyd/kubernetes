@@ -38,16 +38,19 @@ Pod中各容器其limits下的相关资源量用于限制容器中应用程序�
 **无法满足Pod中各容器其请求(requests)**
 ```
 ## 应用manifests
-kubectl apply -f 01.only-requests-but-requests-effect-pod-dispatch-01.yaml \
-              -f 02.only-requests-but-requests-effect-pod-dispatch-02.yaml \
-              -f 03.only-requests-but-requests-effect-pod-dispatch-03.yaml --dry-run=client
-
-kubectl apply -f 01.only-requests-but-requests-effect-pod-dispatch-01.yaml \
-              -f 02.only-requests-but-requests-effect-pod-dispatch-02.yaml \
-              -f 03.only-requests-but-requests-effect-pod-dispatch-03.yaml 
+root@master01:~# kubectl apply -f 01.only-requests-but-requests-effect-pod-dispatch-01.yaml -f 02.only-requests-but-requests-effect-pod-dispatch-02.yaml -f 03.only-requests-but-requests-effect-pod-dispatch-03.yaml --dry-run=client
+pod/only-requests-but-requests-effect-pod-dispatch-01 created (dry run)
+pod/only-requests-but-requests-effect-pod-dispatch-02 created (dry run)
+pod/only-requests-but-requests-effect-pod-dispatch-03 created (dry run)
+root@master01:~#
+root@master01:~#
+root@master01:~# kubectl apply -f 01.only-requests-but-requests-effect-pod-dispatch-01.yaml -f 02.only-requests-but-requests-effect-pod-dispatch-02.yaml -f 03.only-requests-but-requests-effect-pod-dispatch-03.yaml 
+pod/only-requests-but-requests-effect-pod-dispatch-01 created
+pod/only-requests-but-requests-effect-pod-dispatch-02 created
+pod/only-requests-but-requests-effect-pod-dispatch-03 created
 
 ## 列出相关资源对象
-root@master01:~# kubectl get -f 01.only-requests-but-requests-effect-pod-dispatch-01.yaml  -f 02.only-requests-but-requests-effect-pod-dispatch-02.yaml   -f 03.only-requests-but-requests-effect-pod-dispatch-03.yaml  -o wide
+root@master01:~# kubectl get -f 01.only-requests-but-requests-effect-pod-dispatch-01.yaml  -f 02.only-requests-but-requests-effect-pod-dispatch-02.yaml -f 03.only-requests-but-requests-effect-pod-dispatch-03.yaml  -o wide
 NAME                                                READY   STATUS    RESTARTS   AGE     IP       NODE     NOMINATED NODE   READINESS GATES
 only-requests-but-requests-effect-pod-dispatch-01   0/1     Pending   0          4m55s   <none>   <none>   <none>           <none>
 only-requests-but-requests-effect-pod-dispatch-02   0/1     Pending   0          4m54s   <none>   <none>   <none>           <none>
@@ -62,9 +65,8 @@ kubectl -n lili describe Pod/only-requests-but-requests-effect-pod-dispatch-01
 kubectl -n lili describe Pod/only-requests-but-requests-effect-pod-dispatch-02
 kubectl -n lili describe Pod/only-requests-but-requests-effect-pod-dispatch-03
 
-
 ## 查看Pod其资源请求(requests)和限制(limits)
-root@master01:~# kubectl get -f 01.only-requests-but-requests-effect-pod-dispatch-01.yaml -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
+root@master01:~# kubectl -n lili get Pod/only-requests-but-requests-effect-pod-dispatch-01 -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
 "myapp01"
 {
   "cpu": "100",
@@ -73,7 +75,7 @@ root@master01:~# kubectl get -f 01.only-requests-but-requests-effect-pod-dispatc
 null
 root@master01:~#
 root@master01:~#
-root@master01:~# kubectl get -f 02.only-requests-but-requests-effect-pod-dispatch-02.yaml -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
+root@master01:~# kubectl -n lili get Pod/only-requests-but-requests-effect-pod-dispatch-02 -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
 "myapp01"
 {
   "cpu": "100m",
@@ -82,7 +84,7 @@ root@master01:~# kubectl get -f 02.only-requests-but-requests-effect-pod-dispatc
 null
 root@master01:~#
 root@master01:~#
-root@master01:~# kubectl get -f 03.only-requests-but-requests-effect-pod-dispatch-03.yaml -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
+root@master01:~# kubectl -n lili get Pod/only-requests-but-requests-effect-pod-dispatch-03 -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
 "myapp01"
 {
   "cpu": "100",
@@ -110,7 +112,7 @@ only-requests-but-requests-effect-pod-dispatch-04   1/1     Running   0         
 only-requests-but-requests-effect-pod-dispatch-05   2/2     Running   0          37s   10.0.4.118   node02   <none>           <none>
 
 ## 查看Pod其资源请求(requests)和限制(limits)
-root@master01:~# kubectl get -f 04.only-requests-but-requests-effect-pod-dispatch-04.yaml  -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
+root@master01:~# kubectl -n lili get only-requests-but-requests-effect-pod-dispatch-04  -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
 "myapp01"
 {
   "cpu": "100m",
@@ -119,7 +121,7 @@ root@master01:~# kubectl get -f 04.only-requests-but-requests-effect-pod-dispatc
 null
 root@master01:~#
 root@master01:~#
-root@master01:~# kubectl get -f 05.only-requests-but-requests-effect-pod-dispatch-05.yaml  -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
+root@master01:~# kubectl -n lili get only-requests-but-requests-effect-pod-dispatch-05  -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
 "myapp01"
 "busybox"
 {
@@ -161,9 +163,8 @@ kubectl -n lili describe Pod/only-limits-effect-pod-dispatch-01
 kubectl -n lili describe Pod/only-limits-effect-pod-dispatch-02
 kubectl -n lili describe Pod/only-limits-effect-pod-dispatch-03
 
-
 ## 查看Pod其资源请求(requests)和限制(limits)
-root@master01:~# kubectl get Pod/only-limits-effect-pod-dispatch-01 -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
+root@master01:~# kubectl -n lili get Pod/only-limits-effect-pod-dispatch-01 -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
 "myapp01"
 {
   "cpu": "100",
@@ -175,7 +176,7 @@ root@master01:~# kubectl get Pod/only-limits-effect-pod-dispatch-01 -o json | jq
 }
 root@master01:~#
 root@master01:~#
-root@master01:~# kubectl get Pod/only-limits-effect-pod-dispatch-02 -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
+root@master01:~# kubectl -n lili get Pod/only-limits-effect-pod-dispatch-02 -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
 "myapp01"
 {
   "cpu": "100m",
@@ -187,7 +188,7 @@ root@master01:~# kubectl get Pod/only-limits-effect-pod-dispatch-02 -o json | jq
 }
 root@master01:~#
 root@master01:~#
-root@master01:~# kubectl get Pod/only-limits-effect-pod-dispatch-03 -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
+root@master01:~# kubectl -n lili get Pod/only-limits-effect-pod-dispatch-03 -o json | jq ".spec.containers[].name, .spec.containers[].resources.requests, .spec.containers[].resources.limits"
 "myapp01"
 {
   "cpu": "100",
@@ -390,7 +391,6 @@ null
 null
 null
 null
-
 
 ## 查看Pod的QoS
 root@master01:~# kubectl -n lili get pod/pod-qos-to-besteffort  -o json | jq ".status.qosClass"
