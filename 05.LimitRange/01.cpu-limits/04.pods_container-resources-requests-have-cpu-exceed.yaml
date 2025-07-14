@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: container-resources-requests-have-cpu-exceed 
+  labels:
+    app: container-resources-requests-have-cpu-exceed 
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    resources:
+      requests:
+        # 1 等于 1000m
+        cpu: 1 
+
+## 此资源对象所在namespace中有个LimitRange资源对象。
+#    requests:
+#      cpu: 400m 
+#    limits:
+#      cpu: 800m 
+#
+#  此资源对象的myapp01容器的resources如下所示
+#    requests:
+#      cpu: 1000m
+#
+#  此Pod是不会被kube-apiserver所接收的(调度、创建)
+#    会直接报错，如下所示:
+#      The Pod "container-resources-requests-have-cpu-exceed" is invalid: spec.containers[0].resources.requests: Invalid value: "1": must be less than or equal to cpu limit
+#    因为其值大于了800m。
+#    注意：其值不能大于800m
+#

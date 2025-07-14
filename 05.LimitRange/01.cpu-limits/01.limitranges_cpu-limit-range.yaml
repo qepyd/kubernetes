@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  namespace: lili
+  name: cpu-limit-range
+spec:
+  limits:
+  - type: Container
+    # 支持在线更改
+    defaultRequest:
+      # 其0.4等于400m
+      cpu: 0.4
+    # 支持在线更改
+    default:
+      # 其0.4等于800m
+      cpu: 0.8 
+
+
+#### 说明
+# 对所在名称空间(lili)中各Pod资源对象中的容器(Container)进行cpu的limits。
+#   01：若所在名称空间(lili)中的Pod里面容器没有进行cpu的requests、limits。
+#       则根据LimitRange资源对象所定义的进行设置。
+#
+#   02：若所在名称空间(lili)中的Pod里面容器有进行cpu的requests和limits设置,
+#       例如1：resources.limits.cpu: 1000m   # <== 其resources.requests下会填充cpu: 1000m
+#       例如2：resources.requests.cpu: 1000m  resources.limits.cpu: 1000m
+#       则不受LimitRange资源对象所定义的限制，即使超过了。
+#
+#   03：若所在名称空间(lili)中的Pod里面容器只有requests字段进行cpu的设置。
+#       不能大于LimitRange的limits.default.cpu的值(0.8等于800m)

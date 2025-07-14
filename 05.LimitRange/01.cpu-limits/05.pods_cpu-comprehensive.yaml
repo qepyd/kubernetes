@@ -2,12 +2,12 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: lili
-  name: memory-comprehensive 
+  name: cpu-comprehensive 
   labels:
-    app: memory-comprehensive 
+    app: cpu-comprehensive 
 spec:
   containers:
-  - name: busybox
+  - name: busybox01
     image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
     command:
     - "/bin/sh"
@@ -15,11 +15,20 @@ spec:
     - "-c"
     - "sleep 1000000000"
 
+  - name: busybox02
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+    resources:
+      requests:
+        cpu: "800m" 
+
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
-    # <== 资源（只有requests(拥有requests,没有limits)）
-    #     省略了resources.requests字段,会根据resources.limits中的key: value进行填充
     resources:
       limits:
-        memory: "600Mi"
+        cpu: "1000m"
 
