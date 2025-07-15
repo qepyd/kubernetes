@@ -12,11 +12,11 @@ spec:
     # <== 资源请求和限制
     #     没有resources.requests，但有resources.limits，其resources.requests会根据
     #     resources.limits中的key: value对来进行填充。从而是显示指定了resources.requests和
-    #     resources.limits。所以，可超过任何范围(各LimitRange)的limit。
+    #     resources.limits。所以，cpu可以超过最大范围(各LimitRange)的limit。
     resources:
       limits:
+        # 其cpu可以超过最大范围(各LimitRange)的limit
         # 其1000m等于1
-        # 可超过任何范围的最大值
         cpu: "1000m"
 
 ## 此资源对象所在namespace中存在的一个limitrange资源对象

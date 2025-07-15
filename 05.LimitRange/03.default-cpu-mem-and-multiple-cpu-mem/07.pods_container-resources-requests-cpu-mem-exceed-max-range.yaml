@@ -9,12 +9,18 @@ spec:
   containers:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
-    # <== 资源请求(requests)和限制(limits)
+    # <== 资源请求和限制
+    #     有resources.requests，但没有resources.limits，其resources.limits不会根据
+    #     resources.requests中的key: value对来进行填充。从而是未显示指定了resources.requests和
+    #     resources.limits。所以，cpu不能超过最大范围(各LimitRange)的limit值，memory不能超过最小范围(各limitRange)的limit
     resources:
       requests:
-        # 其1000m等于1
-        cpu: "1000m"
-        memory: "712Mi"
+        # 不能超过最大范围(各LimitRange)的limit
+        # 但，这里超过了最大范围(各LimitRange)的limit
+        cpu: "950m"
+        # 不能超过最小范围(各LimitRange)的limit
+        # 但，这里超过了最小范围(各limitRange)的limit
+        memory: "521Mi"
 
 ## 此资源对象所在namespace中存在的几个limitrange资源对象
 #  limitrange/cpu-limit-range
@@ -41,9 +47,8 @@ spec:
 #    default:
 #        memory: 612Mi
 #
-## 此资源对象中其myapp01容器其自定义的requests下的cpu、memory超过了最大范围，
-#  会直接报错，Pod不被kube-apiserver所接受的，
-#  The Pod "container-resources-requests-cpu-mem-exceed-max-range" is invalid: 
-#  * spec.containers[0].resources.requests: Invalid value: "1": must be less than or equal to cpu limit
-#  * spec.containers[0].resources.requests: Invalid value: "712Mi": must be less than or equal to memory limit
-# 
+## 此资源对象中其myapp01容器其自定义的requests下的cpu、memory超过了最大范围，会直接报错，Pod不被kube-apiserver所接受的，
+# The Pod "container-resources-requests-cpu-mem-exceed-max-range" is invalid: 
+# * spec.containers[0].resources.requests: Invalid value: "950m": must be less than or equal to cpu limit
+# * spec.containers[0].resources.requests: Invalid value: "521Mi": must be less than or equal to memory limit
+

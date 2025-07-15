@@ -9,13 +9,18 @@ spec:
   containers:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
-    # <== 资源请求(requests)和限制(limits)
-    #     省略了resources.requests字段，会根据resources.limits字段中key: value进行填充
+    # <== 资源请求和限制
+    #     没有resources.requests，但有resources.limits，其resources.requests会根据
+    #     resources.limits中的key: value对来进行填充。从而是显示指定了resources.requests和
+    #     resources.limits。所以，cpu可以超过最大范围(各LimitRange)的limit。memory可以超过最小/大范围(各limitRange)的limit
     resources:
       limits:
+        # cpu可以超过最大范围(各LimitRange)的limit
         # 其1000m等于1
         cpu: "1000m"
-        memory: "712Mi"
+        # memory可以超过最小/大范围(各limitRange)的limit
+        memory: "521Mi"
+        #memory: "712Mi"
 
 ## 此资源对象所在namespace中存在的几个limitrange资源对象
 #  limitrange/cpu-limit-range
@@ -48,8 +53,8 @@ spec:
 #   resouces:
 #     requests:
 #       cpu: 1000m
-#       memory: 712Mi
+#       memory: 521Mi
 #     limtis:  
 #       cpu: 1000m
-#       memory: 712Mi
+#       memory: 521Mi
 # 

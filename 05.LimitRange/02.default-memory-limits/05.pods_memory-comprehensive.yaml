@@ -22,7 +22,7 @@ spec:
     # <== 资源请求和限制
     #     没有resources.requests，但有resources.limits，其resources.requests会根据
     #     resources.limits中的key: value对来进行填充。从而是显示指定了resources.requests和
-    #     resources.limits。所以，可超过任何范围(各LimitRange)的limit。
+    #     resources.limits。所以，memory可以超过最小/大范围(各limitRange)的limit
     resources:
       limits:
         memory: "600Mi"
@@ -37,7 +37,7 @@ spec:
     # <== 资源请求和限制
     #     有resources.requests，但没有resources.limits，其resources.limits不会根据
     #     resources.requests中的key: value对来进行填充。从而是未显示指定了resources.requests和
-    #     resources.limits。所以，不能超过最小范围(各LimitRange)的limit。
+    #     resources.limits。所以，memory不能超过最小范围(各limitRange)的limit
     resources:
       requests:
         memory: "512Mi"

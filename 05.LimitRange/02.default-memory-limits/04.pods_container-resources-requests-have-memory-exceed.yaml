@@ -12,10 +12,10 @@ spec:
     # <== 资源请求和限制
     #     有resources.requests，但没有resources.limits，其resources.limits不会根据
     #     resources.requests中的key: value对来进行填充。从而是未显示指定了resources.requests和
-    #     resources.limits。所以，不能超过最小范围(各LimitRange)的limit值
+    #     resources.limits。所以，memory不能超过最小范围(各limitRange)的limit
     resources:
       requests:
-        # 不能超过最小范围(各LimitRange)的limit值 
+        # 其memorymemory不能超过最小范围(各limitRange)的limit
         # 但，这里超过了最小范围(各LimitRange)的limit值
         memory: "600Mi"
 
