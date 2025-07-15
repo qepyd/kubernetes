@@ -12,7 +12,7 @@ spec:
     # <== 资源请求和限制
     #     没有resources.requests，但有resources.limits，其resources.requests会根据
     #     resources.limits中的key: value对来进行填充。从而是显示指定了resources.requests和
-    #     resources.limits。所以，可超过任何范围的最大值
+    #     resources.limits。所以，可超过任何范围(各LimitRange)的limit
     resources:
       limits:
         memory: "600Mi"
