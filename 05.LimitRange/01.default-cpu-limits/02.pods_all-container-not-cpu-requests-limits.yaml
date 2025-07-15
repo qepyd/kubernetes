@@ -16,3 +16,26 @@ spec:
     args:
     - "-c"
     - "sleep 1000000000"
+
+## 此资源对象所在namespace中存在的一个limitrange资源对象
+#  limitrange/cpu-limit-range
+#    defaultrequests: 
+#        cpu: 400m
+#    default:
+#        cpu: 800m
+#
+## 此资源对象中各容器没有定义任何的resources，各容器的资源限制如下所示
+#  myapp01
+#    resources:
+#      requests:
+#        cpu: 400m
+#      limits:
+#        cpu: 800m
+#
+#  busybox
+#    resources:
+#      requests:
+#        cpu: 400m
+#      limits:
+#        cpu: 800m
+#

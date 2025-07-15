@@ -2,9 +2,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: lili
-  name: cpu-comprehensive 
+  name: cpu-memory-comprehensive 
   labels:
-    app: cpu-comprehensive 
+    app: cpu-memory-comprehensive 
 spec:
   containers:
   - name: busybox01
@@ -25,7 +25,10 @@ spec:
     #     resources.limits。所以，可超过任何范围(各LimitRange)的limit。
     resources:
       limits:
+        # 可超过任何范围的最大值
         cpu: "1000m"
+        # 可超过任何范围的最大值
+        memory: "712Mi" 
 
   - name: youapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
@@ -40,35 +43,62 @@ spec:
     #     resources.limits。所以，不能超过最小范围(各LimitRange)的limit。
     resources:
       requests:
+        # 不能超过最小范围的最大值
         cpu: "800m"
+        # 不能超过最小范围的最大值
+        memory: "512Mi"
 
-## 此资源对象所在namespace中存在的一个limitrange资源对象
+
+## 此资源对象所在namespace中存在的几个limitrange资源对象
 #  limitrange/cpu-limit-range
 #    defaultrequests: 
 #        cpu: 400m
 #    default:
 #        cpu: 800m
+#    
+#  limitrange/cpu-limitrange
+#    defaultrequests: 
+#        cpu: 500m
+#    default:
+#        cpu: 900m
 #
-## 此Pod创建后,各容器的resources如下所示
+#  limitrange/mem-limit-range
+#    defaultrequests: 
+#        memory: 256Mi
+#    default:
+#        memory: 512Mi
+#
+#  limitrange/mem-limitrange
+#    defaultrequests: 
+#        memory: 356Mi
+#    default:
+#        memory: 612Mi
+#
+## 此资源对象创建后，Pod中各容器的resources如下所示
 #  busybox01
-#    resources:
-#      requests:
-#        cpu: 400m
-#      limits:
-#        cpu: 800m
+#   resouces:
+#     requests:
+#       cpu: 400m
+#       memory: 256Mi
+#     limtis:  
+#       cpu: 800m
+#       memory: 512Mi
 #
 #  myapp01
-#    resources:
-#      requests:
-#        cpu: 1000m
-#      limits:
-#        cpu: 1000m
+#   resouces:
+#     requests:
+#       cpu: 1000m
+#       memory: 712Mi
+#     limtis:  
+#       cpu: 1000m
+#       memory: 712Mi
 #
 #  youapp01
-#    resources:
-#      requests:
-#        cpu: 800m
-#      limits:  # 根据最小范围(LimitRange)的limit补充
-#        cpu: 800m
-#
-
+#   resouces:
+#     requests:
+#       cpu: 800m
+#       memory: 512Mi
+#     limtis:  # 根据最小范围(LimitRange)的limit生成
+#       cpu: 800m
+#       memory: 512Mi
+# 

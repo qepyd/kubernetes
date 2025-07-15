@@ -9,23 +9,24 @@ spec:
   containers:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 资源请求和限制
+    #     有resources.requests，但没有resources.limits，其resources.limits不会根据
+    #     resources.requests中的key: value对来进行填充。从而是未显示指定了resources.requests和
+    #     resources.limits。所以，不能超过最小范围(各LimitRange)的limit值
     resources:
       requests:
+        # 不能超过最小范围的limit值
+        # 但，这里超过了
         memory: "600Mi"
 
-## 此资源对象所在namespace中有个LimitRange资源对象。
-#    requests:
-#      memory: "256Mi"
-#    limits:
-#      memory: "512Mi"
+## 此资源对象所在namespace中存在的一个limitrange资源对象
+#  limitrange/mem-limit-range
+#    defaultrequests: 
+#        memory: 256Mi
+#    default:
+#        memory: 512Mi
 #
-#  此资源对象的myapp01容器的resources如下所示
-#    requests:
-#      memory: "600Mi"
-#
-#  此Pod是不会被kube-apiserver所接收的(调度、创建)
-#    会直接报错，如下所示:
-#      The Pod "container-resources-requests-have-memory-exceed" is invalid: spec.containers[0].resources.requests: Invalid value: "600Mi": must be less than or equal to memory limit
-#    因为其值大于了512Mi。
-#    注意：其值不能大于512Mi
-#
+## 此Pod将不被kube-apiserver所接受
+#  会直接报错，如下所示:
+#  The Pod "container-resources-requests-have-memory-exceed" is invalid: spec.containers[0].resources.requests: Invalid value: "600Mi": must be less than or equal to memory limit
+#  

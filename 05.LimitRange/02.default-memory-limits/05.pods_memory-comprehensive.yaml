@@ -14,9 +14,15 @@ spec:
     args:
     - "-c"
     - "sleep 1000000000"
+    # <== 资源请求和限制
+    #     没有定义，则会使用最小范围(各LimitRange)相应的值
 
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 资源请求和限制
+    #     没有resources.requests，但有resources.limits，其resources.requests会根据
+    #     resources.limits中的key: value对来进行填充。从而是显示指定了resources.requests和
+    #     resources.limits。所以，可超过任何范围(各LimitRange)的limit。
     resources:
       limits:
         memory: "600Mi"
@@ -28,6 +34,42 @@ spec:
     args:
     - "-c"
     - "sleep 1000000000"
+    # <== 资源请求和限制
+    #     有resources.requests，但没有resources.limits，其resources.limits不会根据
+    #     resources.requests中的key: value对来进行填充。从而是未显示指定了resources.requests和
+    #     resources.limits。所以，不能超过最小范围(各LimitRange)的limit。
     resources:
       requests:
         memory: "512Mi"
+
+## 此资源对象所在namespace中存在的一个limitrange资源对象
+#  limitrange/mem-limit-range
+#    defaultrequests: 
+#        memory: 256Mi
+#    default:
+#        memory: 512Mi
+# 
+## 此资源对象创建后，Pod中各容器的resources如下所示
+#  busybox01
+#   resouces:
+#     requests:
+#       memory: 256Mi
+#     limtis:  
+#       memory: 512Mi
+#
+#  myapp01
+#   resouces:
+#     requests:
+#       memory: 600Mi
+#     limtis:  
+#       memory: 600Mi
+#
+#  youapp01
+#   resouces:
+#     requests:
+#       memory: 512Mi
+#     limtis:  # 根据最小范围(LimitRange)的limit补充的
+#       memory: 512Mi
+#
+#
+

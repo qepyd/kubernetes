@@ -9,25 +9,29 @@ spec:
   containers:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
-    # <== 资源请求(requests)和限制(limits)
-    #     省略了resources.requests字段，会根据resources.limits字段中key: value进行填充
+    # <== 资源请求和限制
+    #     没有resources.requests，但有resources.limits，其resources.requests会根据
+    #     resources.limits中的key: value对来进行填充。从而是显示指定了resources.requests和
+    #     resources.limits。所以，可超过任何范围(各LimitRange)的limit。
     resources:
       limits:
         # 其1000m等于1
+        # 可超过任何范围的最大值
         cpu: "1000m"
 
-## 此资源对象所在namespace中有个LimitRange资源对象。
-#    requests:
-#      cpu: 400m
-#    limits:
-#      cpu: 800m
+## 此资源对象所在namespace中存在的一个limitrange资源对象
+#  limitrange/cpu-limit-range
+#    defaultrequests: 
+#        cpu: 400m
+#    default:
+#        cpu: 800m
 #
-#  此资源对象的myapp01容器的resources如下所示
-#    requests:
-#      cpu: 1000m
-#    limits:
-#      cpu: 1000m
+## 此资源对象中各容器的resources如下所示
+#  myapp01
+#    resources:
+#      requests:
+#        cpu: 1000m
+#      limits:
+#        cpu: 1000m
 #
-#  此Pod是允许被kube-apiserver所接收的(调度、创建)
-#    不受所在名称空间中其LimitRange资源对象对cpu的limits(requests、limits)。
 #
