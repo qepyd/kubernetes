@@ -15,7 +15,13 @@ spec:
     - "-c"
     - "sleep 1000000000"
 
-  - name: busybox02
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    resources:
+      limits:
+        cpu: "1000m"
+
+  - name: youapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
     command:
     - "/bin/sh"
@@ -24,11 +30,5 @@ spec:
     - "sleep 1000000000"
     resources:
       requests:
-        cpu: "800m" 
-
-  - name: myapp01
-    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
-    resources:
-      limits:
-        cpu: "1000m"
+        cpu: "800m"
 
