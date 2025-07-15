@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: all-container-not-resources 
+  labels:
+    app: all-container-not-resources 
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+
+#### 根据LimitRnage资源对象其spec.limits.default.memory最大的LimitRange资源对象为容器设置resources。
+#  myapp01容器
+#    resources:
+#       limits:
+#          cpu: 700m
+#          memory: 550Mi
+#       requests:
+#          cpu: 700m
+#          memory: 550Mi
+#
+#  busybox
+#    resources:
+#      limits:
+#        cpu: 700m
+#        memory: 550Mi
+#      requests:
+#        cpu: 700m
+#        memory: 550Mi
+# 
+---

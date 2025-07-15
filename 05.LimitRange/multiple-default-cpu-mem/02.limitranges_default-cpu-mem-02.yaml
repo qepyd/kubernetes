@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  namespace: lili
+  name: default-cpu-mem-02 
+spec:
+  limits:
+  - type: Container
+    # 支持在线更改
+    defaultRequest:
+      cpu: "300m"
+      memory: "156Mi"
+    # 支持在线更改
+    default:
+      cpu: "900m" 
+      memory: "412Mi"
+
+#### 此资源对象创建后,其在线manifests的关键信息如下
+#spec:
+#  limits:
+#  - default:
+#      cpu: 900m
+#      memory: 412Mi
+#    defaultRequest:
+#      cpu: 300m
+#      memory: 156Mi
+#    type: Container
+---
+

@@ -1,0 +1,42 @@
+---
+## 此资源对象所在namespace中存在的几个limitrange资源对象(具备spec.limits.max、spec.limts.min字段)
+#
+#  limitrange/max-min-cpu-mem对象
+#    limits:
+#    - default:
+#        cpu: 800m          # 来自max
+#        memory: 512Mi      # 来自max
+#      defaultRequest:
+#        cpu: 800m          # 来自max
+#        memory: 512Mi      # 来自max
+#      max:
+#        cpu: 800m
+#        memory: 512Mi
+#      min:
+#        cpu: 400m
+#        memory: 256Mi
+#      type: Container
+# 
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: defined-requests 
+  labels:
+    app: defined-requests 
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 资源请求和限制
+    #     有resources.requests
+    #     没有resources.limits
+    #     resources.limits中key:value对不会根据resources.requests字段下的key:value来生成
+    resources:
+      requests:
+        cpu: "400m"      # 最小(min),最大(max)
+        memory: "256Mi"  # 最小(min),最大(max)
+
+      #没有limits字段
+      # 会根据LimitRange中的spce.limits.default字段生成

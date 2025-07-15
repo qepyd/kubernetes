@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: defined-requests-limits-01 
+  labels:
+    app: defined-requests-limits-01 
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 资源请求和限制
+    #     有resources.requests
+    #     有resources.limits
+    resources:
+      # 不受各LimitRange资源对象其spec.limits.default的约束
+      limits:
+        cpu: "900m"
+        memory: "600Mi"
+
+      # 不受各LimitRange资源对象其spec.limits.defaultRequest的约束
+      requests:
+        cpu: "100m"
+        memory: "100Mi"
+
+      # 注意：
+      # requests中相应资源的值不能大于limits中相应资源的值,这是最基本的
+---
+
