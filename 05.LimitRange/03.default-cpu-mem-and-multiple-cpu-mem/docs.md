@@ -149,7 +149,7 @@ pod/container-resources-requests-cpu-mem-exceed-max-range created (dry run)
 root@master01:~#
 root@master01:~# kubectl apply -f 07.pods_container-resources-requests-cpu-mem-exceed-max-range.yaml
 The Pod "container-resources-requests-cpu-mem-exceed-max-range" is invalid: 
-* spec.containers[0].resources.requests: Invalid value: "950m": must be less than or equal to cpu limit
+* spec.containers[0].resources.requests: Invalid value: "850m": must be less than or equal to cpu limit
 * spec.containers[0].resources.requests: Invalid value: "521Mi": must be less than or equal to memory limit
 ```
 
