@@ -17,7 +17,7 @@ spec:
       requests:
         # 1 等于 1000m
         # 不能超过最小范围(各LimitRange)的limit 
-        # 但，这里超过了最小范围的最大值
+        # 但，这里超过了最小范围(各LimitRange)的limit
         cpu: 1 
 
 ## 此资源对象所在namespace中存在的一个limitrange资源对象
