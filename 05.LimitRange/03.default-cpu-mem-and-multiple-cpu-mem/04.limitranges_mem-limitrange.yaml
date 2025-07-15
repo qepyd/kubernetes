@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  namespace: lili
+  name: mem-limitrange
+spec:
+  limits:
+    - type: Container
+      # 支持在线更改
+      defaultRequest:
+        memory: 356Mi
+      # 支持在线更改
+      default:
+        memory: 612Mi
