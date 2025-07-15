@@ -37,7 +37,7 @@ spec:
     # <== 资源请求和限制
     #     有resources.requests，但没有resources.limits，其resources.limits不会根据
     #     resources.requests中的key: value对来进行填充。从而是未显示指定了resources.requests和
-    #     resources.limits。所以，cpu不能超过最大范围(各LimitRange)的limit值.
+    #     resources.limits。所以，cpu不能超过最小范围(各LimitRange)的limit值.
     resources:
       requests:
         cpu: "800m"
