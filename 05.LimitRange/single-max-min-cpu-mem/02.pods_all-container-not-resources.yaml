@@ -18,23 +18,23 @@ spec:
     - "-c"
     - "sleep 1000000000"
 
-#### 根据LimitRnage资源对象其spec.limits.default.memory最大的LimitRange资源对象为容器设置resources。
+#### 当前Pod中各容器的resources如下所示
 #  myapp01容器
 #    resources:
 #       limits:
-#          cpu: 700m
-#          memory: 550Mi
+#          cpu: 400m
+#          memory: 512Mi
 #       requests:
-#          cpu: 700m
-#          memory: 550Mi
+#          cpu: 400m
+#          memory: 512Mi
 #
 #  busybox
 #    resources:
 #      limits:
-#        cpu: 700m
-#        memory: 550Mi
+#        cpu: 400m
+#        memory: 512Mi
 #      requests:
-#        cpu: 700m
-#        memory: 550Mi
+#        cpu: 400m
+#        memory: 512Mi
 # 
 ---

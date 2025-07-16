@@ -1,22 +1,23 @@
 ---
-## 此资源对象所在namespace中存在的几个limitrange资源对象(具备spec.limits.max、spec.limts.min字段)
+## 此资源对象所在namespace中只存在一个LimitRange资源对象,关键信息如下
 #
-#  limitrange/max-min-cpu-mem对象
-#    limits:
-#    - default:
-#        cpu: 800m          # 来自max
-#        memory: 512Mi      # 来自max
-#      defaultRequest:
-#        cpu: 800m          # 来自max
-#        memory: 512Mi      # 来自max
-#      max:
-#        cpu: 800m
-#        memory: 512Mi
-#      min:
-#        cpu: 400m
-#        memory: 256Mi
-#      type: Container
-# 
+#spec:
+#  limits:
+#  - default:
+#      cpu: 400m
+#      memory: 512Mi
+#    defaultRequest:
+#      cpu: 400m
+#      memory: 512Mi
+#    max:
+#      cpu: 400m
+#      memory: 512Mi
+#    min:
+#      cpu: 200m
+#      memory: 256Mi
+#    type: Container
+#
+#
 ---
 apiVersion: v1
 kind: Pod
@@ -35,8 +36,10 @@ spec:
     #     resources.limits中key:value对不会根据resources.requests字段下的key:value来生成
     resources:
       requests:
-        cpu: "400m"      # 最小(min),最大(max)
+        cpu: "200m"      # 最小(min),最大(max)
         memory: "256Mi"  # 最小(min),最大(max)
 
       #没有limits字段
       # 会根据LimitRange中的spce.limits.default字段生成
+---
+

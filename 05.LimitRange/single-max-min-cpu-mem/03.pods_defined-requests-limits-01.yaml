@@ -1,0 +1,42 @@
+---
+## 此资源对象所在namespace中只存在一个LimitRange资源对象,关键信息如下
+#
+#spec:
+#  limits:
+#  - default:
+#      cpu: 400m
+#      memory: 512Mi
+#    defaultRequest:
+#      cpu: 400m
+#      memory: 512Mi
+#    max:
+#      cpu: 400m
+#      memory: 512Mi
+#    min:
+#      cpu: 200m
+#      memory: 256Mi
+#    type: Container
+#
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: defined-requests-limits-01 
+  labels:
+    app: defined-requests-limits-01 
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 资源请求和限制
+    #     有resources.requests
+    #     有resources.limits
+    resources:
+      requests:
+        cpu: "200m"      # 最小(min),最大(max)
+        memory: "256Mi"  # 最小(min),最大(max)
+      limits:
+        cpu: "400m"      # 最小(min),最大(max)
+        memory: "512Mi"  # 最小(min),最大(max)

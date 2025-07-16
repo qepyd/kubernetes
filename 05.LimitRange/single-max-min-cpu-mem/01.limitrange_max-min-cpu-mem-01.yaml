@@ -7,25 +7,26 @@ spec:
   limits:
   - type: Container
     min:
-      cpu: "400m"
+      cpu: "200m"
       memory: "256Mi"
     max:
-      cpu: "800m"
+      cpu: "400m"
       memory: "512Mi"
 
 #### 此资源对象创建后,信息如下
 #spec:
 #  limits:
 #  - default:
-#      cpu: 800m       # 根据max
-#      memory: 512Mi   # 根据max
+#      cpu: 400m
+#      memory: 512Mi
 #    defaultRequest:
-#      cpu: 800m       # 根据max
-#      memory: 512Mi   # 根据max
+#      cpu: 400m
+#      memory: 512Mi
 #    max:
-#      cpu: 800m
+#      cpu: 400m
 #      memory: 512Mi
 #    min:
-#      cpu: 400m
+#      cpu: 200m
 #      memory: 256Mi
 #    type: Container
+#
