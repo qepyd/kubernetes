@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: resources-requests-effect-pod-dispatch 
+  labels:
+    app: resources-requests-effect-pod-dispatch
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 资源限制(limits)和请求(requests)
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "216Mi"
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+    # <== 资源限制(limits)和请求(requests)
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "1024Gi"
+
+
+# 此Pod各容器的resources
+#   myapp01容器
+#     resources:
+#       requests:
+#         cpu: "50m"
+#         memory: "216Mi"
+#
+#   busybox容器
+#     resources:
+#       requests:
+#         cpu: "1000m"
+#         memory: "1024Gi"
+#       limits:
+#         cpu: "1000m"
+#         memory: "1024Gi"
+#
+# 此Pod总的resources.requests
+#   cpu: 50m + 1000m
+#   memory: 216Mi + 1024Gi
+#   此Pod创建后，在被调度时：
+#      把不满足cpu和memory资源量的worker node给排除掉,再择优选择。
+#      若将所有worker node都给排除了，那么Pod的状态将处于 Pending。
+#

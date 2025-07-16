@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: container-memory-use-exceed-limit 
+  labels:
+    app: container-memory-use-exceed-limit 
+spec:
+  containers:
+  - name: stress
+    image: swr.cn-north-1.myhuaweicloud.com/qepyd/stress:1.0.4
+    # <== 启动命令
+    #     尝试分配超出其限制的内存
+    command:
+    - "stress"
+    args:
+    - "--vm"
+    - "1"
+    - "--vm-bytes"
+    - "80M"
+    - "--vm-hang"
+    - "1"
+    # <== 资源的请求(requests)和限制(limits)
+    resources:
+      limits:
+        memory: "50Mi" 
+
+# 容器的memory限制为50Mi
+#   01:容器中的应用程序占用memory会超过限制(50Mi)
+#   02:该容器会成为被终止的候选容器, 如果容器继续消耗超出其
+#      限制的内存，则终止容器。 
+#   03:如果终止的容器可以被重启，则 kubelet 会重新启动它，就像其他任何类型的运行时失败一样。
+# 

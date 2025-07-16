@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: resources-requests-limits-error 
+  labels:
+    app: resources-requests-limits-error
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 资源限制(limits)和请求(requests)
+    #     人为显示定义resources的limits和requests
+    #     这里是正确的
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "512Mi"
+      requests:
+        cpu: "50m"
+        memory: "256Mi"
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+    # <== 资源限制(limits)和请求(requests)
+    #     人为显示定义resources的limits和requests
+    #     这里是错误的(reques下的某资源量是不能大于limits下的某资源量)
+    #       会导致Pod不被kube-apiserver所收受。
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "512Mi"
+      requests:
+        cpu: "150m"
+        memory: "256Mi"

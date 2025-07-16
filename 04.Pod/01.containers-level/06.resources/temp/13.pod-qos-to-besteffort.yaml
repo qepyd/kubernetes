@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: pod-qos-to-besteffort 
+  labels:
+    app: pod-qos-to-besteffort 
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+
+
+## Pod的服务质量(Qos)之BestEffort(尽最大努力)
+#
+#  Guaranteed > Bustable > BestEffort
+#
+#  官方：https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-besteffort
+#  
+#  Pod中必须任何容器均没有 resources(pods.spec.containers.resources)
+#
