@@ -17,6 +17,6 @@ spec:
     resources:
       # 不受各LimitRange资源对象其spec.limits.default的约束
       limits:
-        cpu: "800m"
-        memory: "512Mi"
+        cpu: "900m"
+        memory: "600Mi"
 ---
