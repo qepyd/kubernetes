@@ -6,15 +6,18 @@ metadata:
   name: default-cpu-mem-02 
 spec:
   limits:
-  - type: Container
+  # 支持在线更改
+  - default:
+      #cpu: "900m" 
+      cpu: "900m" 
+      memory: "612Mi"
     # 支持在线更改
     defaultRequest:
-      cpu: "300m"
-      memory: "156Mi"
-    # 支持在线更改
-    default:
-      cpu: "900m" 
-      memory: "412Mi"
+      #cpu: "300m"
+      cpu: "500m"
+      #memory: "156Mi"
+      memory: "356Mi"
+    type: Container
 
 #### 此资源对象创建后,其在线manifests的关键信息如下
 #spec:
