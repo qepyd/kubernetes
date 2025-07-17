@@ -8,8 +8,8 @@ spec:
   limits:
   - type: Container
     max:
-      cpu: "600m"
-      memory: "656Mi"
+      cpu: "400m"
+      memory: "512Mi"
     min:
       cpu: "200m"
       memory: "256Mi"
@@ -19,14 +19,14 @@ spec:
 #   spec:
 #     limits:
 #     - default:            # 创建LimitRange资源对象时,未指定,根据max的生成
-#         cpu: 600m
-#         memory: 656Mi
+#         cpu: 400m
+#         memory: 512Mi
 #       defaultRequest:     # 创建LimitRange资源对象时,未指定,根据min的生成
-#         cpu: 600m
-#         memory: 656Mi
+#         cpu: 400m
+#         memory: 512Mi
 #       max:
-#         cpu: 600m
-#         memory: 656Mi
+#         cpu: 400m
+#         memory: 512Mi
 #       min:
 #         cpu: 200m
 #         memory: 256Mi
@@ -38,6 +38,6 @@ spec:
 #   Resource Limits
 #     Type       Resource  Min    Max    Default Request  Default Limit  Max Limit/Request Ratio
 #     ----       --------  ---    ---    ---------------  -------------  -----------------------
-#     Container  cpu       200m   600m   600m             600m           -
-#     Container  memory    256Mi  656Mi  656Mi            656Mi          -
+#     Container  cpu       200m   400m   400m             400m           -
+#     Container  memory    256Mi  512Mi  512Mi            512Mi          -
 #

@@ -18,7 +18,7 @@ spec:
     resources:
       limits:
         cpu: "400m"      # 最小(min),最大(max)
-        memory: "512Mi"  # 最小(min),最大(max)
+        memory: "456Mi"  # 最小(min),最大(max)
 ---
 #
 # 此资源所在namespace的describe关键信息如下所示
@@ -27,17 +27,17 @@ spec:
 #   Resource Limits
 #     Type       Resource  Min    Max    Default Request  Default Limit  Max Limit/Request Ratio
 #     ----       --------  ---    ---    ---------------  -------------  -----------------------
-#     Container  cpu       200m   400m   400m             400m           -
-#     Container  memory    256Mi  512Mi  512Mi            512Mi          -
+#     Container  cpu       200m   600m   600m             600m           -
+#     Container  memory    256Mi  656Mi  656Mi            656Mi          -
 #
 # 此资源对象中 各主容器 有人为定义resoruces，其计算资源的值不可以随便定义，受LimitRange其min、max的限制
 #   主容器myapp01
 #     resources:
 #       limits:
 #         cpu: 400m
-#         memory: 512Mi
+#         memory: 456Mi
 #       requests:
 #         cpu: 400m
-#         memory: 512Mi
+#         memory: 456Mi
 #
 
