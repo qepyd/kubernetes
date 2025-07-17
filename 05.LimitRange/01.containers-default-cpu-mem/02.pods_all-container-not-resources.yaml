@@ -8,7 +8,7 @@ metadata:
   labels:
     app: all-container-not-resources 
 spec:
-  # 实始容器
+  # 初始容器
   initContainers:
   - name: echo
     image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
