@@ -1,21 +1,20 @@
-
 ---
 apiVersion: v1
 kind: LimitRange
 metadata:
   namespace: lili
-  name: containers-max-min-cpu-mem-not-have-ratio-2  
+  name: containers-max-min-cpu-mem-not-have-ratio-2 
 spec:
   limits:
-  - default:           # 有人为指定，最少min，最大max。
-      cpu: "200m"      
-      memory: "256Mi"
-    defaultRequest:    # 有人为指定，最少min，最大max。相关资源计算量不能大于 default 中的计算资源量
+  - default:           # 最少min，最大max。
+      cpu: "600m"      
+      memory: "656Mi"
+    defaultRequest:    # 最少min，最大max。相关资源计算量不能大于 default 中的计算资源量
       cpu: "200m"     
       memory: "256Mi" 
     max:
-      cpu: "400m"
-      memory: "512Mi"
+      cpu: "600m"
+      memory: "656Mi"
     min:
       cpu: "200m"
       memory: "256Mi"
@@ -25,26 +24,26 @@ spec:
 # 此资源对象创建后，其在线manifests的关键信息如下所示
 #   spec:
 #     limits:
-#     - default:
-#         cpu: 200m
-#         memory: 256Mi
-#       defaultRequest:
+#     - default:            
+#         cpu: 600m
+#         memory: 656Mi
+#       defaultRequest: 
 #         cpu: 200m
 #         memory: 256Mi
 #       max:
-#         cpu: 400m
-#         memory: 512Mi
+#         cpu: 600m
+#         memory: 656Mi
 #       min:
 #         cpu: 200m
 #         memory: 256Mi
 #       type: Container
 #
-# 此资源对象创建后，其所在namespace的describe信息如下所示
+# 此资源对象创建后，其所在namespace的describe关键信息如下所示
 #   No resource quota.
 #   
 #   Resource Limits
-#    Type       Resource  Min    Max    Default Request  Default Limit  Max Limit/Request Ratio
-#    ----       --------  ---    ---    ---------------  -------------  -----------------------
-#    Container  cpu       200m   400m   200m             200m           -
-#    Container  memory    256Mi  512Mi  256Mi            256Mi          -
+#     Type       Resource  Min    Max    Default Request  Default Limit  Max Limit/Request Ratio
+#     ----       --------  ---    ---    ---------------  -------------  -----------------------
+#     Container  cpu       200m   600m   200m             600m           -
+#     Container  memory    256Mi  656Mi  256Mi            656Mi          -
 #
