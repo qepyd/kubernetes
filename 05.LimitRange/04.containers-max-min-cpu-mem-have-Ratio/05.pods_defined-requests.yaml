@@ -32,7 +32,7 @@ spec:
 #    Container  cpu       200m   800m   200m             800m           3
 #    Container  memory    256Mi  1Gi    256Mi            1Gi            3
 #
-#
+# 此资源对象中 各主容器 有人为定义resoruces，受LimitRange的Default Limit、Min、Max、Ratio限制
 #   主容器myapp01
 #     resources:
 #       limits:

@@ -30,12 +30,13 @@ spec:
 #
 # 此Pod将不会被创建,过不了kube-apiserver的访问控制,因为超过了 最大比值 3
 #    主容器myapp01: 
-#      resources.limits.cpu: 800m
-#      resources.requests.cpu: 200m
+#      resources.limits.cpu: 800m        # Default Limit
+#      resources.requests.cpu: 200m      # Default Request
 #          # 
 #          # 超过了最大比值 3 
-#      resources.limits.memory: 1Gi
-#      resources.requests.memory: 256Mi
+#          #
+#      resources.limits.memory: 1Gi      # Default Limit
+#      resources.requests.memory: 256Mi  # Default Request
 #          #
 #          # 超过了最大比值 3
 #          #

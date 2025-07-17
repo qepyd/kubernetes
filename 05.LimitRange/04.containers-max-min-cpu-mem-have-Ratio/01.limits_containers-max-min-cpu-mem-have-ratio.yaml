@@ -47,6 +47,9 @@ spec:
 #       min:
 #         cpu: 200m
 #         memory: 256Mi
+#       maxLimitRequestRatio:
+#         cpu: "3"
+#         memory: "3"
 #       type: Container
 #
 # 此资源对象创建后，其所在namespace的describe关键信息如下所示

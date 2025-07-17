@@ -17,8 +17,8 @@ spec:
     #     resources.requests字段中的相关定义根据esources.limits字段下定义生成。
     resources:
       limits:
-        cpu: "800m"      # 最小(min),最大(max)
-        memory: "768Mi"  # 最小(min),最大(max)
+        cpu: "800m"       # 最小(min),最大(max),Ratio
+        memory: "1024Mi"  # 最小(min),最大(max),Ratio
 ---
 #
 # 此资源所在namespace的describe关键信息如下所示
@@ -30,14 +30,14 @@ spec:
 #    Container  cpu       200m   800m   200m             800m           3
 #    Container  memory    256Mi  1Gi    256Mi            1Gi            3
 #
-# 此资源对象中 各主容器 有人为定义resoruces，其计算资源的值不可以随便定义，受LimitRange其min、max的限制
+# 此资源对象中 各主容器 有人为定义resoruces，受LimitRange的Min、Max、Ratio限制
 #   主容器myapp01
 #     resources:
 #       limits:
 #         cpu: 800m
-#         memory: 768Mi
+#         memory: 1024Mi
 #       requests:
 #         cpu: 800m
-#         memory: 768Mi
+#         memory: 7024Mi
 #
 #
