@@ -21,14 +21,16 @@ spec:
     - "sleep 1000000000"
 ---
 #
-# 此Pod所在namespace的describe信息中其resource limits信息如下所示:
-#   Resource Limits
-#   Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
-#   ----  --------  ---  ---    ---------------  -------------  -----------------------
-#   Pod   cpu       -    400m   -                -              -
-#   Pod   memory    -    512Mi  -                -              -
+# 此Pod所在namespace其describe关键信息如下所示
+#   No resource quota.
 #
-# 此Pod中各主容器没有resources，此Pod没有最大cpu、memory所说，不满足LimitRange的限制
+#   Resource Limits
+#     Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
+#     ----  --------  ---  ---    ---------------  -------------  -----------------------
+#     Pod   cpu       -    400m   -                -              -
+#     Pod   memory    -    512Mi  -                -              -
+#
+# 此Pod中 非所有主容器 均定义了resources.limits。此Pod没有最大cpu、memory所说。
 #    此Pod是不会被创建的，会直接报错，在kube-apiserver的准入控制处不通过。
-#     Error from server (Forbidden): error when creating "02.pods_all-container-not-resources.yaml": pods "all-container-not-resources" is forbidden: [maximum cpu usage per Pod is 400m.  No limit is specified, maximum memory usage per Pod is 512Mi.  No limit is specified]
+#    Error from server (Forbidden): error when creating "02.pods_all-container-not-resources.yaml": pods "all-container-not-resources" is forbidden: [maximum cpu usage per Pod is 400m.  No limit is specified, maximum memory usage per Pod is 512Mi.  No limit is specified]
 # 

@@ -21,10 +21,12 @@ spec:
 #       memory: 512Mi
 #     type: Pod
 #
-# 此资源对象创建后,其所在namespace的describe信息如下
+# 此资源对象创建后,其所在namespace其describe信息如下所示:
+#   No resource quota.
+#
 #   Resource Limits
-#   Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
-#   ----  --------  ---  ---    ---------------  -------------  -----------------------
-#   Pod   cpu       -    400m   -                -              -
-#   Pod   memory    -    512Mi  -                -              -
-
+#     Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
+#     ----  --------  ---  ---    ---------------  -------------  -----------------------
+#     Pod   cpu       -    400m   -                -              -
+#     Pod   memory    -    512Mi  -                -              -
+#

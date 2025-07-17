@@ -35,13 +35,15 @@ spec:
         memory: "256Mi"
 ---
 #
-# 此Pod所在namespace的describe信息中其resource limits信息如下所示:
-#   Resource Limits
-#   Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
-#   ----  --------  ---  ---    ---------------  -------------  -----------------------
-#   Pod   cpu       -    400m   -                -              -
-#   Pod   memory    -    512Mi  -                -              -
+# 此Pod所在namespace其describe关键信息如下所示
+#   No resource quota.
 #
-# 此Pod中所有主容器都定义了resources。总cpu限制未超过400m，总memory限制未超过512Mi
+#   Resource Limits
+#     Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
+#     ----  --------  ---  ---    ---------------  -------------  -----------------------
+#     Pod   cpu       -    400m   -                -              -
+#     Pod   memory    -    512Mi  -                -              -
+#
+# 此Pod中 所有主容器 均定义了resources.limits。。总cpu限制未超过400m，总memory限制未超过512Mi
 #   此Pod是会被创建的。 
 #

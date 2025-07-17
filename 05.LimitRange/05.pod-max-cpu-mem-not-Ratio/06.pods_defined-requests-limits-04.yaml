@@ -4,9 +4,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: lili
-  name: defined-requests-limits-03 
+  name: defined-requests-limits-04 
   labels:
-    app: defined-requests-limits-03 
+    app: defined-requests-limits-04 
 spec:
   # 初始容器
   initContainers:
@@ -17,6 +17,10 @@ spec:
     args:
     - "-c"
     - "echo hello world"
+    resources:
+      limits:
+        cpu: "50m"
+        memory: "56Mi" 
 
   # 主容器
   containers:
@@ -54,6 +58,6 @@ spec:
 #     Pod   cpu       -    400m   -                -              -
 #     Pod   memory    -    512Mi  -                -              -
 #
-# 此Pod中 所有主容器 都定义了resources.limits。总cpu限制未超过400m，总memory限制未超过512Mi
+# 此Pod中 所有主容器 均定义了resources.limits。总cpu限制未超过400m，总memory限制未超过512Mi
 #   此Pod是会被创建的。 
 #
