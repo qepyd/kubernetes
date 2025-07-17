@@ -1,4 +1,4 @@
-limitranges资源(简写limits，kind为LimitRange)是kubernetes中的标准资源，是namespace级别的资源。  
+limitranges资源（简写limits，kind为LimitRange）是kubernetes中的标准资源，是namespace级别的资源。  
 官方参考：https://kubernetes.io/zh-cn/docs/concepts/policy/limit-range/  
 ```
 对所在namespace中各Pod中的Container设置其计算资源的限制
