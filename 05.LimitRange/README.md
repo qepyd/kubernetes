@@ -20,7 +20,7 @@ limitranges资源（简写limits，kind为LimitRange）是kubernetes中的标准
 ```
 
 # 2. 综合的配合示例
-建议在namespace中只配置一个LimitRange资源对象,其相关资源量的配置是可以在线修改的。
+建议在namespace中只创建一个LimitRange资源对象
 ```
 apiVersion: v1
 kind: LimitRange
