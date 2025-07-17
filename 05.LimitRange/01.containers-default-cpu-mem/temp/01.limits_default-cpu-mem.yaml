@@ -7,18 +7,17 @@ metadata:
   name: default-cpu-mem 
 spec:
   limits:
-    # <== 各Pod中其各container之resources.limits默认资源量
+    # <== 各Pod其container的resources.limits默认配置
     #     可在线更改
-  - default: 
-      cpu: "600m" 
-      memory: "656Mi"
-    # <== 各Pod中其各container之resources.requests默认资源量
+  - default:
+      cpu: "500m" 
+      memory: "612Mi"
+    # <== 各Pod其container的resources.requests默认配置
     #     可在线更改
-    #     相关资源量不能大于 default 中的。
-    defaultRequest:  
-      cpu: "200m"
-      memory: "256Mi"
-    # <== 此资源对象所在namespace下各Pod中其各container
+    defaultRequest:
+      cpu: "300m"
+      memory: "356Mi"
+    # <== 此资源对象所在namespace下各Pod中的container
     type: Container
 ---
 #
@@ -26,11 +25,11 @@ spec:
 #  spec:
 #    limits:
 #    - default:
-#        cpu: 600m
-#        memory: 656Mi
+#        cpu: 500m
+#        memory: 612Mi
 #      defaultRequest:
-#        cpu: 200m
-#        memory: 256Mi
+#        cpu: 300m
+#        memory: 356Mi
 #      type: Container
 #
 # 此资源对象所在namespace其describe的关键信息如下所示
@@ -39,6 +38,6 @@ spec:
 #   Resource Limits
 #    Type       Resource  Min  Max  Default Request  Default Limit  Max Limit/Request Ratio
 #    ----       --------  ---  ---  ---------------  -------------  -----------------------
-#    Container  cpu       -    -    200m             600m           -
-#    Container  memory    -    -    256Mi            656Mi          -
+#    Container  cpu       -    -    300m             500m           -
+#    Container  memory    -    -    356Mi            612Mi          -
 #

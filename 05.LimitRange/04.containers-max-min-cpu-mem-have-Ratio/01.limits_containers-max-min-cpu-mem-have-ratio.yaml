@@ -14,14 +14,14 @@ spec:
       cpu: "200m"     
       memory: "256Mi" 
     max:
-      cpu: "400m"
-      memory: "512Mi"
+      cpu: "600m"
+      memory: "768Mi"
     min:
       cpu: "200m"
       memory: "256Mi"
     maxLimitRequestRatio: 
-      cpu: 2            # 限制cpu limits/requests 的最大比值，（default/defaultRequest）。
-      memory: 2         # 限制memory limits/requests 的最大比值，（default/defaultRequest）。
+      cpu: 3            # 限制cpu limits/requests 的最大比值，（default/defaultRequest）。
+      memory: 3         # 限制memory limits/requests 的最大比值，（default/defaultRequest）。
     type: Container
 ---
 

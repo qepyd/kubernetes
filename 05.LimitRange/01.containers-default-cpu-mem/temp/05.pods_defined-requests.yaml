@@ -21,8 +21,8 @@ spec:
 
       ### 有requests字段
       requests:   # requests中相应计算资源的值不能大于limits中相应计算资源的值,这是最基本的哈
-        cpu: "100m"     
-        memory: "100Mi"
+        cpu: "50m"     
+        memory: "50Mi"
 ---
 #
 # 此资源对象所在namespace其describe的关键信息如下所示
@@ -31,17 +31,17 @@ spec:
 #   Resource Limits
 #    Type       Resource  Min  Max  Default Request  Default Limit  Max Limit/Request Ratio
 #    ----       --------  ---  ---  ---------------  -------------  -----------------------
-#    Container  cpu       -    -    200m             600m           -
-#    Container  memory    -    -    256Mi            656Mi          -
+#    Container  cpu       -    -    300m             500m           -
+#    Container  memory    -    -    356Mi            612Mi          -
 #
 # 此资源对象中 各主容器 有人为定义resoruces，其计算资源的值可以随便定义，不受LimitRange的限制。
 #   主容器myapp01
 #     resources:
 #       limits:
-#         cpu: 600m
-#         memory: 656Mi
+#         cpu: 500m
+#         memory: 612Mi
 #       requests:
-#         cpu: 100m
-#         memory: 100Mi
+#         cpu: 50m
+#         memory: 50Mi
 #
 

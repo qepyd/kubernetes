@@ -37,24 +37,24 @@ spec:
 #   Resource Limits
 #    Type       Resource  Min  Max  Default Request  Default Limit  Max Limit/Request Ratio
 #    ----       --------  ---  ---  ---------------  -------------  -----------------------
-#    Container  cpu       -    -    200m             600m           -
-#    Container  memory    -    -    256Mi            656Mi          -
+#    Container  cpu       -    -    300m             500m           -
+#    Container  memory    -    -    356Mi            612Mi          -
 #
 # 此资源对象中 所有主容器 均未定义resources，各主容器resources如下所示
 #   主容器myapp01
 #     resources:
 #       limits:
-#         cpu: 600m
-#         memory: 656Mi
+#         cpu: 500m
+#         memory: 612Mi
 #       requests:
-#         cpu: 200m
-#         memory: 256Mi
+#         cpu: 300m
+#         memory: 356Mi
 #   主容器busybox
 #     resources:
 #       limits:
-#         cpu: 600m
-#         memory: 656Mi
+#         cpu: 500m
+#         memory: 612Mi
 #       requests:
-#         cpu: 200m
-#         memory: 256Mi
+#         cpu: 300m
+#         memory: 356Mi
 #
