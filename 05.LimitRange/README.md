@@ -20,6 +20,7 @@ limitranges资源（简写limits，kind为LimitRange）是kubernetes中的标准
 ```
 
 # 2. 综合的配合示例
+建议在namespace中只配置一个LimitRange资源对象,其相关资源量的配置是可以在线修改的。
 ```
 apiVersion: v1
 kind: LimitRange
@@ -46,6 +47,10 @@ spec:
     min:
       cpu: "500m"
       memory: "512Mi"
+    # <== 最大比值
+    maxLimitRequestRatio:
+      cpu: "8"           # max 4000m  / min 500m
+      memory: "8"        # max 4096Mi / min 512Mi 
   ## Pod中所有主容器其相关计算资源总和的限制
   - type: Pod
     max:
