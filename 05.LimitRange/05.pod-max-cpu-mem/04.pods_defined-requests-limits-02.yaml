@@ -41,9 +41,9 @@ spec:
 #   Resource Limits
 #     Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
 #     ----  --------  ---  ---    ---------------  -------------  -----------------------
-#     Pod   cpu       -    400m   -                -              -
-#     Pod   memory    -    512Mi  -                -              -
+#     Pod   cpu       -    600m   -                -              -
+#     Pod   memory    -    768Mi  -                -              -
 #
-# 此Pod中 所有主容器 均定义了resources.limits。。总cpu限制未超过400m，总memory限制未超过512Mi
+# 此Pod中 所有主容器 均定义了resources.limits。总cpu限制未超过400m，总memory限制未超过512Mi
 #   此Pod是会被创建的。 
 #

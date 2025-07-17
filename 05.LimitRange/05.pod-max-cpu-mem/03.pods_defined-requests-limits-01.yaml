@@ -34,10 +34,10 @@ spec:
 #   Resource Limits
 #     Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
 #     ----  --------  ---  ---    ---------------  -------------  -----------------------
-#     Pod   cpu       -    400m   -                -              -
-#     Pod   memory    -    512Mi  -                -              -
+#     Pod   cpu       -    600m   -                -              -
+#     Pod   memory    -    768Mi  -                -              -
 #
-# 此Pod中 非所有主容器 均定义了resources.limits。 总cpu限制未超过400m，总memory限制未超过512Mi
+# 此Pod中 所有主容器 均定义resources.limits。此Pod没有最大cpu、memory所说。
 #   此Pod是不会被创建的，会直接报错，在kube-apiserver的准入控制处不通过。
-#   Error from server (Forbidden): error when creating "03.pods_defined-requests-limits-01.yaml": pods "defined-requests-limits-01" is forbidden: [maximum cpu usage per Pod is 400m.  No limit is specified, maximum memory usage per Pod is 512Mi.  No limit is specified]
+#   Error from server (Forbidden): error when creating "03.pods_defined-requests-limits-01.yaml": pods "defined-requests-limits-01" is forbidden: [maximum cpu usage per Pod is 600m.  No limit is specified, maximum memory usage per Pod is 768Mi.  No limit is specified]
 #

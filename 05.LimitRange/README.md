@@ -1,3 +1,4 @@
+# 1. 基本介绍及实践索引
 limitranges资源（简写limits，kind为LimitRange）是kubernetes中的标准资源，是namespace级别的资源。  
 官方参考：https://kubernetes.io/zh-cn/docs/concepts/policy/limit-range/  
 ```
@@ -18,3 +19,35 @@ limitranges资源（简写limits，kind为LimitRange）是kubernetes中的标准
   ./06.pvc-max-min/
 ```
 
+# 2. 综合的示例
+```
+apiVersion: v1
+kind: LimitRange
+metadata:
+  namespace: lili
+  name: limitranges
+spec:
+  limits:
+  - type: Container
+    default: 
+      cpu: "2"     
+      memory: "2Gi"
+    defaultRequest:  
+      cpu: "2"
+      memory: "2Gi"
+    max:
+      cpu: "4"
+      memory: "4Gi"
+    min:
+      cpu: "500m"
+      memory: "512Mi"
+  - type: Pod
+    max:
+      cpu: "4"
+      memory: "8Gi"
+  - type: PersistentVolumeClaim
+    max:
+      storage: 50Gi
+    #min:
+    #  storage: 30Gi
+```
