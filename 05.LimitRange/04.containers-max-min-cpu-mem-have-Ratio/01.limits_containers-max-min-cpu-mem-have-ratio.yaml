@@ -1,27 +1,60 @@
-
 ---
 apiVersion: v1
 kind: LimitRange
 metadata:
   namespace: lili
-  name: containers-max-min-cpu-mem-have-ratio 
+  name: containers-max-min-cpu-mem-have-ratio
 spec:
   limits:
-  - default:           # 有人为指定，最少min，最大max。
-      cpu: "200m"      
-      memory: "256Mi"
-    defaultRequest:    # 有人为指定，最少min，最大max。相关资源计算量不能大于 default 中的计算资源量
+  - default: 
+      cpu: "800m"         # 应该设置成600m 
+      memory: "1024Mi"    # 应该设置成768Mi
+    defaultRequest: 
       cpu: "200m"     
       memory: "256Mi" 
     max:
-      cpu: "600m"
-      memory: "768Mi"
+      cpu: "800m"
+      memory: "1024Mi"
     min:
       cpu: "200m"
       memory: "256Mi"
+    #
+    # 不会检查当前列表中 default / defaultRequests，max / min 间的最大比值。
+    # 它是限制Pod中主容器最终时，其 resources.limits / resources.requests的最大比值。
+    #   例如：一个Pod中只有一个主容器，未人显示定义resources，
+    #         将default作为resoruces.limits
+    #         将defaultRequests作为resources.requests
+    #   结果：此Pod不会被创建，因为不符合最大比值。
+    #   
     maxLimitRequestRatio: 
-      cpu: 3            # 限制cpu limits/requests 的最大比值，（default/defaultRequest）。
-      memory: 3         # 限制memory limits/requests 的最大比值，（default/defaultRequest）。
+      cpu: "3"
+      memory: "3"
     type: Container
 ---
-
+#
+# 此资源对象创建后，其在线manifests的关键信息如下所示
+#   spec:
+#     limits:
+#     - default:            
+#         cpu: 800m
+#         memory: 1Gi    # 等于1024Mi
+#       defaultRequest: 
+#         cpu: 200m
+#         memory: 256Mi
+#       max:
+#         cpu: 800
+#         memory: 1Gi    # 等于1024Mi
+#       min:
+#         cpu: 200m
+#         memory: 256Mi
+#       type: Container
+#
+# 此资源对象创建后，其所在namespace的describe关键信息如下所示
+#   No resource quota.
+#   
+#   Resource Limits
+#    Type       Resource  Min    Max    Default Request  Default Limit  Max Limit/Request Ratio
+#    ----       --------  ---    ---    ---------------  -------------  -----------------------
+#    Container  cpu       200m   800m   200m             800m           3
+#    Container  memory    256Mi  1Gi    256Mi            1Gi            3
+#

@@ -16,7 +16,7 @@ spec:
     resources:
       limits:
         cpu: "600m"      # 最小(min),最大(max)
-        memory: "656Mi"  # 最小(min),最大(max)
+        memory: "768Mi"  # 最小(min),最大(max)
       requests:  # requests中相关计算资源的量不能大于limits中相关计算资源的量,这是最基本的。
         cpu: "200m"      # 最小(min),最大(max)
         memory: "256Mi"  # 最小(min),最大(max)
@@ -29,14 +29,14 @@ spec:
 #     Type       Resource  Min    Max    Default Request  Default Limit  Max Limit/Request Ratio
 #     ----       --------  ---    ---    ---------------  -------------  -----------------------
 #     Container  cpu       200m   600m   600m             600m           -
-#     Container  memory    256Mi  656Mi  656Mi            656Mi          -
+#     Container  memory    256Mi  768Mi  768Mi            768Mi          -
 #
 # 此资源对象中 各主容器 有人为定义resoruces，其计算资源的值不可以随便定义，受LimitRange其min、max的限制
 #   主容器myapp01
 #     resources:
 #       limits:
 #         cpu: 600m
-#         memory: 656Mi
+#         memory: 768Mi
 #       requests:
 #         cpu: 200m
 #         memory: 256Mi

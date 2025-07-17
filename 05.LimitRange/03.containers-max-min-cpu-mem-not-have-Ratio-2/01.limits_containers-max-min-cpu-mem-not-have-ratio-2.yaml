@@ -8,13 +8,13 @@ spec:
   limits:
   - default:           # 最少min，最大max。
       cpu: "600m"      
-      memory: "656Mi"
+      memory: "768Mi"
     defaultRequest:    # 最少min，最大max。相关资源计算量不能大于 default 中的计算资源量
       cpu: "200m"     
       memory: "256Mi" 
     max:
       cpu: "600m"
-      memory: "656Mi"
+      memory: "768Mi"
     min:
       cpu: "200m"
       memory: "256Mi"
@@ -26,13 +26,13 @@ spec:
 #     limits:
 #     - default:            
 #         cpu: 600m
-#         memory: 656Mi
+#         memory: 768Mi
 #       defaultRequest: 
 #         cpu: 200m
 #         memory: 256Mi
 #       max:
 #         cpu: 600m
-#         memory: 656Mi
+#         memory: 768Mi
 #       min:
 #         cpu: 200m
 #         memory: 256Mi
@@ -45,5 +45,5 @@ spec:
 #     Type       Resource  Min    Max    Default Request  Default Limit  Max Limit/Request Ratio
 #     ----       --------  ---    ---    ---------------  -------------  -----------------------
 #     Container  cpu       200m   600m   200m             600m           -
-#     Container  memory    256Mi  656Mi  256Mi            656Mi          -
+#     Container  memory    256Mi  768Mi  256Mi            768Mi          -
 #

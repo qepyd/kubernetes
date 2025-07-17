@@ -11,7 +11,7 @@ spec:
     #     可在线更改
   - default: 
       cpu: "600m" 
-      memory: "656Mi"
+      memory: "768Mi"
     # <== 各Pod中其各container之resources.requests默认资源量
     #     可在线更改
     #     相关资源量不能大于 default 中的。
@@ -40,5 +40,5 @@ spec:
 #    Type       Resource  Min  Max  Default Request  Default Limit  Max Limit/Request Ratio
 #    ----       --------  ---  ---  ---------------  -------------  -----------------------
 #    Container  cpu       -    -    200m             600m           -
-#    Container  memory    -    -    256Mi            656Mi          -
+#    Container  memory    -    -    256Mi            768Mi          -
 #

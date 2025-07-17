@@ -37,14 +37,14 @@ spec:
 #     Type       Resource  Min    Max    Default Request  Default Limit  Max Limit/Request Ratio
 #     ----       --------  ---    ---    ---------------  -------------  -----------------------
 #     Container  cpu       200m   600m   200m             600m           -
-#     Container  memory    256Mi  656Mi  256Mi            656Mi          -
+#     Container  memory    256Mi  768Mi  256Mi            768Mi          -
 #
 # 此资源中 所有主容器 均未定义resources，各主容器的resources如下所示
 #   主容器myapp01
 #     resources:
 #       limits:
 #         cpu: 600m
-#         memory: 656Mi
+#         memory: 768Mi
 #       requests:
 #         cpu: 200m
 #         memory: 256Mi
@@ -52,7 +52,7 @@ spec:
 #     resources:
 #       limits:
 #         cpu: 600m
-#         memory: 656Mi
+#         memory: 768Mi
 #       requests:
 #         cpu: 200m
 #         memory: 256Mi
