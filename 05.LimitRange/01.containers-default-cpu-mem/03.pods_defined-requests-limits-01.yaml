@@ -32,12 +32,12 @@ spec:
 #    Container  cpu       -    -    200m             600m           -
 #    Container  memory    -    -    256Mi            768Mi          -
 #
-# 此资源对象中 各主容器 有人为定义resoruces，其计算资源的值可以随便定义，不受LimitRange的限制。
+# 此资源对象中 各主容器 有人为定义resoruces，其计算资源量可以随便定义，不受LimitRange的限制。
 #   主容器myapp01
 #     resources:
 #       limits:
-#         cpu: 800m
-#         memory: 856Mi
+#         cpu: 700m
+#         memory: 868Mi
 #       requests:
 #         cpu: 100m
 #         memory: 156Mi
