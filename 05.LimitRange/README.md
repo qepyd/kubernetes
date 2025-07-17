@@ -19,7 +19,7 @@ limitranges资源（简写limits，kind为LimitRange）是kubernetes中的标准
   ./06.pvc-max-min/
 ```
 
-# 2. 综合的示例
+# 2. 综合的配合示例
 ```
 apiVersion: v1
 kind: LimitRange
