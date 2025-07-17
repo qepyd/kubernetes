@@ -4,9 +4,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: lili
-  name: defined-requests-limits-02 
+  name: exceed-total-number 
   labels:
-    app: defined-requests-limits-02 
+    app: exceed-total-number 
 spec:
   # 主容器
   containers:
@@ -14,11 +14,11 @@ spec:
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
     resources:
       limits: 
-        cpu: "300m"
-        memory: "256Mi"
+        cpu: "500m"
+        memory: "600Mi"
       requests:
         cpu: "20m"
-        memory: "256Mi"
+        memory: "126Mi"
   - name: busybox
     image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
     command:
@@ -28,11 +28,11 @@ spec:
     - "sleep 1000000000"
     resources:
       limits:
-        cpu: "100m"
+        cpu: "200m"
         memory: "256Mi"
       requests:
         cpu: "20m"
-        memory: "256Mi"
+        memory: "126Mi"
 ---
 #
 # 此Pod所在namespace其describe关键信息如下所示
@@ -44,6 +44,11 @@ spec:
 #     Pod   cpu       -    600m   -                -              -
 #     Pod   memory    -    768Mi  -                -              -
 #
-# 此Pod中 所有主容器 均定义了resources.limits。总cpu限制未超过400m，总memory限制未超过512Mi
-#   此Pod是会被创建的。 
+# 此Pod中 所有主容器 均人为定义了resources.limits。
+#   总cpu已超过600m，总memory已超过768Mi。此Pod不会被创建。
+#     总cpu为：500m + 200m
+#     总memory为：600Mi + 256Mi
+#
+#   报错信息为 
+#     Error from server (Forbidden): error when creating "05.pods_exceed-total-number.yaml": pods "exceed-total-number" is forbidden: [maximum cpu usage per Pod is 600m, but limit is 700m, maximum memory usage per Pod is 768Mi, but limit is 897581056]
 #

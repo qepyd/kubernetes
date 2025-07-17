@@ -4,31 +4,21 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: lili
-  name: defined-requests-limits-03 
+  name: not-exceed-total-number 
   labels:
-    app: defined-requests-limits-03 
+    app: not-exceed-total-number 
 spec:
-  # 初始容器
-  initContainers:
-  - name: echo
-    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
-    command:
-    - "/bin/sh"
-    args:
-    - "-c"
-    - "echo hello world"
-
   # 主容器
   containers:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
     resources:
       limits: 
-        cpu: "300m"
+        cpu: "200m"
         memory: "256Mi"
       requests:
         cpu: "20m"
-        memory: "256Mi"
+        memory: "126Mi"
   - name: busybox
     image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
     command:
@@ -38,11 +28,11 @@ spec:
     - "sleep 1000000000"
     resources:
       limits:
-        cpu: "100m"
+        cpu: "200m"
         memory: "256Mi"
       requests:
         cpu: "20m"
-        memory: "256Mi"
+        memory: "126Mi"
 ---
 #
 # 此Pod所在namespace其describe关键信息如下所示
@@ -51,9 +41,12 @@ spec:
 #   Resource Limits
 #     Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
 #     ----  --------  ---  ---    ---------------  -------------  -----------------------
-#     Pod   cpu       -    400m   -                -              -
-#     Pod   memory    -    512Mi  -                -              -
+#     Pod   cpu       -    600m   -                -              -
+#     Pod   memory    -    768Mi  -                -              -
 #
-# 此Pod中 所有主容器 都定义了resources.limits。总cpu限制未超过400m，总memory限制未超过512Mi
-#   此Pod是会被创建的。 
+# 此Pod中 所有主容器 均人为定义了resources.limits
+#   总cpu未超过600m，总memory未超过768Mi。是可以被创建的。
+#     总cpu为：200m + 200m
+#     总memory为：256Mi + 256Mi  
+#   
 #
