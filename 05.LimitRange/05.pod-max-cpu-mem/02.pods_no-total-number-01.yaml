@@ -30,7 +30,7 @@ spec:
 #     Pod   cpu       -    600m   -                -              -
 #     Pod   memory    -    768Mi  -                -              -
 #
-# 此Pod中 所有主容器 未人为定义了resources.limits，也无法从LimitRange中获得，所以此Pod没有最大cpu、memory所说。
+# 此Pod中 所有主容器 未人为定义resources.limits，也无法从LimitRange中获得，所以此Pod没有最大cpu、memory所说。
 #    此Pod是不会被创建的，会直接报错，在kube-apiserver的准入控制处不通过。
 #    Error from server (Forbidden): error when creating "02.pods_no-total-number-01.yaml": pods "all-container-not-resources" is forbidden: [maximum cpu usage per Pod is 600m.  No limit is specified, maximum memory usage per Pod is 768Mi.  No limit is specified]
 # 
