@@ -28,10 +28,10 @@ metadata:
   name: limitranges
 spec:
   limits:
-  ## Pod中的各主容器的限制
+  ## Pod中的各主容器其相关计算资源的限制
   - type: Container
     # <== Pod中各主容器未人为配置resources时,让其根据此处的定义。
-    #     Pod中不能超过3个主容器，因为得符合 "- type: Pod" 处。
+    #     Pod中不能超过2个主容器，因为得符合 "- type: Pod" 处。
     default: 
       cpu: "2"     
       memory: "2Gi"
@@ -46,7 +46,7 @@ spec:
     min:
       cpu: "500m"
       memory: "512Mi"
-  ## Pod中所有主容器计算资源总和的限制
+  ## Pod中所有主容器其相关计算资源总和的限制
   - type: Pod
     max:
       cpu: "4"
