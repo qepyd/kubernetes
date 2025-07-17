@@ -38,6 +38,6 @@ spec:
 #         memory: 1024Mi
 #       requests:
 #         cpu: 800m
-#         memory: 7024Mi
+#         memory: 1024Mi
 #
 #
