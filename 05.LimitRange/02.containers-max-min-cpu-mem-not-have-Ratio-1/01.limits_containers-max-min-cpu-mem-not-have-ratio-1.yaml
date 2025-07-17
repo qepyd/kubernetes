@@ -3,7 +3,7 @@ apiVersion: v1
 kind: LimitRange
 metadata:
   namespace: lili
-  name: containers-max-min-cpu-mem-not-ratio-1  
+  name: containers-max-min-cpu-mem-not-have-ratio-1 
 spec:
   limits:
   - type: Container
