@@ -38,6 +38,6 @@ spec:
 #         cpu: 600m
 #         memory: 656Mi
 #       requests:
-#         cpu: 600m
-#         memory: 656Mi
+#         cpu: 200m
+#         memory: 256Mi
 #
