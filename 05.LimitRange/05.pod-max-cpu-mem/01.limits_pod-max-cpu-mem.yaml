@@ -17,8 +17,8 @@ spec:
 # spec:
 #   limits:
 #   - max:
-#       cpu: 400m
-#       memory: 512Mi
+#       cpu: 600m
+#       memory: 768Mi
 #     type: Pod
 #
 # 此资源对象创建后,其所在namespace其describe信息如下所示:
