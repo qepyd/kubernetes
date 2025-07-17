@@ -21,7 +21,7 @@ spec:
 #     - default:            # 创建LimitRange资源对象时,未指定,根据max的生成
 #         cpu: 600m
 #         memory: 768Mi
-#       defaultRequest:     # 创建LimitRange资源对象时,未指定,根据min的生成
+#       defaultRequest:     # 创建LimitRange资源对象时,未指定,根据max的生成
 #         cpu: 600m
 #         memory: 768Mi
 #       max:
