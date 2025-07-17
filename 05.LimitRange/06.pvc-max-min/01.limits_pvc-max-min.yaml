@@ -1,0 +1,33 @@
+
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  namespace: lili
+  name: pvc-max-min 
+spec:
+  limits:
+  - max:
+      storage: "50Gi"        # 限制单个pvc资源对象的最大值
+    min:
+      storage: "30Gi"        # 限制单个pvc资源对象的最小值
+    type: PersistentVolumeClaim
+---
+#
+# 此资源对象创建后,其在线manifests的关键信息如下
+#  spec:
+#    limits:
+#      - max:
+#          storage: 50Gi
+#        min:
+#          storage: 30Gi
+#        type: PersistentVolumeClaim
+#
+# 此资源对象创建后,其所在namespace其describe信息如下所示:
+#   No resource quota.
+#
+#   Resource Limits
+#     Type                   Resource  Min   Max   Default Request  Default Limit  Max Limit/Request Ratio
+#     ----                   --------  ---   ---   ---------------  -------------  -----------------------
+#     PersistentVolumeClaim  storage   30Gi  50Gi  -                -              -
+#
