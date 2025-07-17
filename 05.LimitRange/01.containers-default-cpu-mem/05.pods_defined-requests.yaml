@@ -12,8 +12,8 @@ spec:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
     # <== 资源请求和限制
-    #     有resources.requests
     #     没有resources.limits
+    #     有resources.requests
     #     resources.limits中key:value对不会根据resources.requests字段下的key:value来生成
     resources:
       #没有limits字段

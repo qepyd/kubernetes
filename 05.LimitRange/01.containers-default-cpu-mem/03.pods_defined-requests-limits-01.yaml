@@ -12,8 +12,8 @@ spec:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
     # <== 资源请求和限制
-    #     有resources.requests
     #     有resources.limits
+    #     有resources.requests
     resources:
       limits:
         cpu: "900m"

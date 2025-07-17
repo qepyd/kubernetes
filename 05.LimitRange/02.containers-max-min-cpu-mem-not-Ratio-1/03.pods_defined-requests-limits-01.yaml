@@ -1,24 +1,4 @@
 ---
-## 此资源对象所在namespace中只存在一个LimitRange资源对象,关键信息如下
-#
-#spec:
-#  limits:
-#  - default:
-#      cpu: 400m
-#      memory: 512Mi
-#    defaultRequest:
-#      cpu: 400m
-#      memory: 512Mi
-#    max:
-#      cpu: 400m
-#      memory: 512Mi
-#    min:
-#      cpu: 200m
-#      memory: 256Mi
-#    type: Container
-#
-#
----
 apiVersion: v1
 kind: Pod
 metadata:
@@ -31,12 +11,33 @@ spec:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
     # <== 资源请求和限制
-    #     有resources.requests
     #     有resources.limits
+    #     有resources.requests
     resources:
-      requests:
-        cpu: "200m"      # 最小(min),最大(max)
-        memory: "256Mi"  # 最小(min),最大(max)
       limits:
         cpu: "400m"      # 最小(min),最大(max)
         memory: "512Mi"  # 最小(min),最大(max)
+      requests:  # requests中相关计算资源的量不能大于limits中相关计算资源的量,这是最基本的。
+        cpu: "200m"      # 最小(min),最大(max)
+        memory: "256Mi"  # 最小(min),最大(max)
+---
+#
+# 此资源所在namespace的describe关键信息如下所示
+#   No resource quota.
+#   
+#   Resource Limits
+#     Type       Resource  Min    Max    Default Request  Default Limit  Max Limit/Request Ratio
+#     ----       --------  ---    ---    ---------------  -------------  -----------------------
+#     Container  cpu       200m   400m   400m             400m           -
+#     Container  memory    256Mi  512Mi  512Mi            512Mi          -
+#
+# 此资源对象中 各主容器 有人为定义resoruces，其计算资源的值不可以随便定义，受LimitRange其min、max的限制
+#   主容器myapp01
+#     resources:
+#       limits:
+#         cpu: 400m
+#         memory: 512Mi
+#       requests:
+#         cpu: 200m
+#         memory: 256Mi
+#
