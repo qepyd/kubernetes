@@ -7,12 +7,12 @@ metadata:
   name: containers-max-min-cpu-mem-have-ratio 
 spec:
   limits:
-  - default:
-      cpu: "200m"        # 最少min,最大max
-      memory: "256Mi"    # 最少min,最大max
-    defaultRequest:
-      cpu: "200m"        # 最少min,最大max
-      memory: "256Mi"    # 最少min,最大max
+  - default:           # 有人为指定，最少min，最大max。
+      cpu: "200m"      
+      memory: "256Mi"
+    defaultRequest:    # 有人为指定，最少min，最大max。相关资源计算量不能大于 default 中的计算资源量
+      cpu: "200m"     
+      memory: "256Mi" 
     max:
       cpu: "400m"
       memory: "512Mi"

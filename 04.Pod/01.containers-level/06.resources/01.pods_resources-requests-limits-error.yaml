@@ -29,7 +29,7 @@ spec:
     # <== 资源限制(limits)和请求(requests)
     #     人为显示定义resources的limits和requests
     #     这里是错误的(reques下的某资源量是不能大于limits下的某资源量)
-    #       会导致Pod不被kube-apiserver所收受。
+    #       会导致Pod不被kube-apiserver所收受,也就不会被创建。
     resources:
       limits:
         cpu: "100m"

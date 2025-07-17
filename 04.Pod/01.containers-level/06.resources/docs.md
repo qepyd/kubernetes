@@ -9,8 +9,8 @@ pods.spec.containers.resources.requests <map[string]string>
 requests中相关资源(例如：memory)量不能大于limits中相关资源(例如：memory)量。
 
 ## 注意事项2
-可以人为显示定义limits、requests。
-可以人为显示定义limits，不定义requests，其requests会依据limits中的配置而进行自动配置。
+可以人为显示定义limits，requests。
+可以人为显示定义limits，不定义requests，其requests会依据limits中的资源量进行配置。
 可以人为显示定义requests，不定义limits，其requests不会依据requests中的配置而进行自动配置。
 ```
 
