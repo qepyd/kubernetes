@@ -1,0 +1,30 @@
+
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  namespace: lili
+  name: pod-max-cpu-mem-not-ratio 
+spec:
+  limits:
+  - max:
+      cpu: "400m"        # 限制单个Pod中所有容器其最大cpu量
+      memory: "512Mi"    # 限制单个Pod中所有容器其最大memory量
+    type: Pod
+---
+#
+# 此资源对象创建后,其在线manifests的关键信息如下
+# spec:
+#   limits:
+#   - max:
+#       cpu: 400m
+#       memory: 512Mi
+#     type: Pod
+#
+# 此资源对象创建后,其所在namespace的describe信息如下
+#   Resource Limits
+#   Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
+#   ----  --------  ---  ---    ---------------  -------------  -----------------------
+#   Pod   cpu       -    400m   -                -              -
+#   Pod   memory    -    512Mi  -                -              -
+

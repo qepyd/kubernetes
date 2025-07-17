@@ -17,12 +17,4 @@ spec:
     args:
     - "-c"
     - "sleep 1000000000"
-
-#### 说明
-#  01：Pod中各容器没有resources的定义。
-#  02：Pod所在namespace中有多个LimitRange资源对象,其
-#      关键信息只有spec.limits.default和spec.limits.defaultRequests
-#  03：Pod中各容器的resources最终是一样的。
-#  04：至于所选择的是哪一个LimitRange资源对象,这个是不确定的。
-#
 ---

@@ -1,0 +1,34 @@
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: all-container-not-resources 
+  labels:
+    app: all-container-not-resources 
+spec:
+  # 主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+---
+#
+# 此Pod所在namespace的describe信息中其resource limits信息如下所示:
+#   Resource Limits
+#   Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
+#   ----  --------  ---  ---    ---------------  -------------  -----------------------
+#   Pod   cpu       -    400m   -                -              -
+#   Pod   memory    -    512Mi  -                -              -
+#
+# 此Pod中各主容器没有resources，此Pod没有最大cpu、memory所说，不满足LimitRange的限制
+#    此Pod是不会被创建的，会直接报错，在kube-apiserver的准入控制处不通过。
+#     Error from server (Forbidden): error when creating "02.pods_all-container-not-resources.yaml": pods "all-container-not-resources" is forbidden: [maximum cpu usage per Pod is 400m.  No limit is specified, maximum memory usage per Pod is 512Mi.  No limit is specified]
+# 

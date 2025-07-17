@@ -1,0 +1,57 @@
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: defined-requests-limits-03 
+  labels:
+    app: defined-requests-limits-03 
+spec:
+  # 初始容器
+  initContainers:
+  - name: echo
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "echo hello world"
+
+  # 主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    resources:
+      limits: 
+        cpu: "300m"
+        memory: "256Mi"
+      requests:
+        cpu: "20m"
+        memory: "256Mi"
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "256Mi"
+      requests:
+        cpu: "20m"
+        memory: "256Mi"
+---
+#
+# 此Pod所在namespace的describe信息中其resource limits信息如下所示:
+#   Resource Limits
+#   Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
+#   ----  --------  ---  ---    ---------------  -------------  -----------------------
+#   Pod   cpu       -    400m   -                -              -
+#   Pod   memory    -    512Mi  -                -              -
+#
+# 此Pod中 所有主容器 都定义了resources。总cpu限制未超过400m，总memory限制未超过512Mi
+#   此Pod是会被创建的。 
+#

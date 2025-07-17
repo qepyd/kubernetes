@@ -2,7 +2,7 @@ apiVersion: v1
 kind: LimitRange
 metadata:
   namespace: lili
-  name: max-min-cpu-mem-01 
+  name: containers-max-min-cpu-mem-not-ratio-1  
 spec:
   limits:
   - type: Container
@@ -17,11 +17,11 @@ spec:
 #spec:
 #  limits:
 #  - default:
-#      cpu: 400m
-#      memory: 512Mi
+#      cpu: 400m         # 来自max
+#      memory: 512Mi     # 来自max
 #    defaultRequest:
-#      cpu: 400m
-#      memory: 512Mi
+#      cpu: 400m         # 来自max
+#      memory: 512Mi     # 来自max
 #    max:
 #      cpu: 400m
 #      memory: 512Mi

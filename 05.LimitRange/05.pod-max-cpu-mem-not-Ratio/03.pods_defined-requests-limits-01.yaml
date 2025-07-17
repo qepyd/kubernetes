@@ -1,0 +1,41 @@
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: defined-requests-limits-01 
+  labels:
+    app: defined-requests-limits-01 
+spec:
+  # 主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    resources:
+      limits: 
+        cpu: "400m"
+        memory: "512Mi"
+      requests:
+        cpu: "20m"
+        memory: "256Mi"
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+---
+#
+# 此Pod所在namespace的describe信息中其resource limits信息如下所示:
+#   Resource Limits
+#   Type  Resource  Min  Max    Default Request  Default Limit  Max Limit/Request Ratio
+#   ----  --------  ---  ---    ---------------  -------------  -----------------------
+#   Pod   cpu       -    400m   -                -              -
+#   Pod   memory    -    512Mi  -                -              -
+#
+# 此Pod中非所有主容器都定义了resources。总cpu限制未超过400m，总memory限制未超过512Mi
+#   此Pod是不会被创建的，会直接报错，在kube-apiserver的准入控制处不通过。
+#   Error from server (Forbidden): error when creating "03.pods_defined-requests-limits-01.yaml": pods "defined-requests-limits-01" is forbidden: [maximum cpu usage per Pod is 400m.  No limit is specified, maximum memory usage per Pod is 512Mi.  No limit is specified]
+#
