@@ -11,8 +11,8 @@ spec:
     #     
     limits.cpu: "16"        # 所有非终止状态的 Pod，其 CPU 限额总量不能超过该值。 
     limits.memory: "32Gi"   # 所有非终止状态的 Pod，其 Memory 限额总量不能超过该值。
-    requests.cpu: "16"      # 所有非终止状态的 Pod，其 CPU 需求总量不能超过该值。
-    requests.memory: "32Gi" # 所有非终止状态的 Pod，其 Memory需求总量不能超过该值。
+    requests.cpu: "16"      # 所有非终止状态的 Pod，其 CPU 需求总量不能超过该值。等同于 cpu: "16"
+    requests.memory: "32Gi" # 所有非终止状态的 Pod，其 Memory需求总量不能超过该值。等同于 memory: "32Gi"
 ---
 #
 # 此资源对象创建后，其所属ns资源对象的describe关键信息如下所示
