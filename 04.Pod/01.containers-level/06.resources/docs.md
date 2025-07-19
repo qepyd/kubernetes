@@ -20,6 +20,10 @@ requests中相关资源(例如：memory)量不能大于limits中相关资源(例
    可以无节制的使用worker node上的资源，可能操作系统会干预(kill掉相关进程)。
 02:若进行了限制(limits),容器中的应用程序还是可以超出限制，只不过因为有了限制，
    一但超过限制，容器就可能被kill掉，还能让其进行重启。
+
+
+
+
 ```
 
 **请求(requests)**
@@ -42,7 +46,7 @@ Pod中可以有多个容器，得要有worker node能够满足各容器其资源
   换言之,要想Pod被调度,其Pod中所有容器的资源请求(requests)得满足。
 ```
 
-**常用的资源**
+**常涉及的资源**
 ```
 cpu
   https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
