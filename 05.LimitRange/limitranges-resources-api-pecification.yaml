@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  namespace: <string>
+  name: <string>
+  labels: <map[string]string>
+  annotations: <map[string]string>
+spec:
+  limits: <[]Object>
+  - type: <string> -required-
+    default: <map[string]string>
+    defaultRequest: <map[string]string>
+    max: <map[string]string>
+    min: <map[string]string>
+    maxLimitRequestRatio: <map[string]string>
+

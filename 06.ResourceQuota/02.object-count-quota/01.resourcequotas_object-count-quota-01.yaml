@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  namespace: lili
+  name: object-count-quota-01
+spec:
+  #### 每个命名资源的所需硬限制集,支持在线更改
+  hard:
+    # <== namespace资源对象其相关资源对象数量的配额示例
+    #     生产环境也是没必要。
+    pods: "4"                      # pods资源对象数量最多4个
+    #count/deployments.apps: "2"    # deployments资源对象数量最多2个
+    #count/replicasets.apps: "20"   # replicasets资源对象数量最多20个
+---
+# 
+# 此资源对象创建后，所在namespace其describe信息关键信息如下所示
+#
+#   Resource Quotas
+#     Name:     object-count-quota
+#     Resource  Used  Hard
+#     --------  ---   ---
+#     pods      0     4
+#
+#   No LimitRange resource.
+#

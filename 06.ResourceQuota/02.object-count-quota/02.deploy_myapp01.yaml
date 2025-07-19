@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: myapp01
+  labels:
+    app: myapp01
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: myapp01
+  template:
+    metadata:
+      labels:
+        app: myapp01
+    spec:
+      containers:
+      - name: myapp01
+        image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+---

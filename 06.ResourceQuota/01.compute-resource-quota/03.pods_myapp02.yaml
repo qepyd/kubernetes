@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: myapp02 
+  labels:
+    app: myapp02 
+spec:
+  containers:
+  - name: myapp02
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    # <== 资源请求和限制
+    #     有resources.limits
+    #     有resources.requests
+    resources:
+      limits:
+        cpu: "15"
+        memory: "31Gi"
+      requests:   # requests中相应计算资源的值不能大于limits中相应计算资源的值,这是最基本的哈
+        cpu: "100m"
+        memory: "156Mi"
+---
