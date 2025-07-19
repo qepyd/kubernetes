@@ -42,7 +42,7 @@ Pod中可以有多个容器，得要有worker node能够满足各容器其资源
   换言之,要想Pod被调度,其Pod中所有容器的资源请求(requests)得满足。
 ```
 
-**支持的资源**
+**常用的资源**
 ```
 cpu
   https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
