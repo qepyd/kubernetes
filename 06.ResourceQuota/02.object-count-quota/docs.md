@@ -102,17 +102,21 @@ root@master01:~#
 
 ## 列出相关资源对象
 root@master01:~#
+root@master01:~# kubectl get -f 03.deploy_myapp02.yaml
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+myapp02   0/0     0            0           5m     # 注意其READY字段
+root@master01:~#
 root@master01:~# kubectl  -n lili get replicasets | grep "^myapp02"
-myapp02-7fb9f5c457   1         0         0       100s
+myapp02-7fb9f5c457   0         0         0       100s
 root@master01:~# 
 root@master01:~# kubectl  -n lili get replicasets | grep "^myapp02-"
-myapp02-7fb9f5c457   1         0         0       106s
+myapp02-7fb9f5c457   0         0         0       106s
 root@master01:~# 
 root@master01:~# kubectl  -n lili get pods | grep "^myapp02"
 root@master01:~# 
 ```
 
-**更新deployments/myapp01对象的镜像**
+**更新deployments/myapp01对象中其Pod模式中其myapp01容器的镜像**
 ```
 ## 更新deployments/myapp01对象的image
 root@master01:~#
