@@ -104,7 +104,7 @@ root@master01:~#
 root@master01:~#
 root@master01:~# kubectl get -f 03.deploy_myapp02.yaml
 NAME      READY   UP-TO-DATE   AVAILABLE   AGE
-myapp02   0/0     0            0           5m     # 注意其READY字段
+myapp02   0/0     0            0           4s      # 此deployment/myapp02对象的副本是为1,但这里其READY为0/0。
 root@master01:~#
 root@master01:~# kubectl  -n lili get replicasets | grep "^myapp02"
 myapp02-7fb9f5c457   0         0         0       100s
