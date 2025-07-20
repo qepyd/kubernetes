@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: app-exceed-requests-but-not-execeed-limits-cpu 
+  labels:
+    app: app-exceed-requests-but-not-execeed-limits-cpu
+spec:
+  containers:
+  - name: vish-stress
+    image: swr.cn-north-1.myhuaweicloud.com/qepyd/vish-stress:latest 
+    args:
+    - -cpus
+    - "1"
+    resources:
+      limits:
+        cpu: "2"
+      requests:
+        cpu: "0.5"
+---
+#
+# 

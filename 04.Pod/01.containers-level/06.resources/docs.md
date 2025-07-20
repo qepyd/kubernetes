@@ -69,11 +69,14 @@ kubectl describe nodes/<NodeName> 可看到。
 当Pod中的容器未设置limits时，里面的应用程序可以使用所在worker node上所有可用相关资源量。
 ```
 01.当你为Container指定了资源限制（limit）时，kubelet就可以确保运行的容器不会使用超出所设限制的资源。
-   即：一量超过limits，会对容器（就是进程）采取相关的操作，例如：memory超过limits，会OOM Killer，然后重启。
+   即：一量超过limits，会对容器（就是进程）采取相关的操作
+   例如：memory超过limits，会OOM Killer，然后重启。
 
 02.相平面实践的manifests为
    ./07.pods_app-exceed-requests-but-not-execeed-limits-memory.yaml
    ./08.pods_app-exceed-limits-memory.yaml
+   ./09.pods_app-exceed-requests-but-not-execeed-limits-cpu.yaml
+   ./10.pods_app-exceed-limits-cpu.yaml
 ```
 
 ## 1.6 Pod的Qos 
@@ -92,6 +95,11 @@ Burstable
 BestEffort
   https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-besteffort
   Pod中所有主容器均没有配置cpu、memory的limits、requests。
+
+相关manifests为
+  ./11.pods_pod-qos-to-guaranteed.yaml
+  ./12.pods_pod-qos-to-burstable.yaml
+  ./13.pods_pod-qos-to-besteffort.yaml
 ```
 
 # 2 趁热打铁到LimitRange资源
