@@ -1,4 +1,4 @@
-# 1. 基本介绍及实践索引
+# 1 基本介绍及实践索引
 limitranges资源（简写limits，kind为LimitRange）是kubernetes中的标准资源，是namespace级别的资源。  
 官方参考：https://kubernetes.io/zh-cn/docs/concepts/policy/limit-range/  
 ```
@@ -19,7 +19,7 @@ limitranges资源（简写limits，kind为LimitRange）是kubernetes中的标准
   ./06.pvc-max-min/
 ```
 
-# 2. 综合的配合示例
+# 2 综合的配合示例
 建议在namespace中只创建一个LimitRange资源对象
 ```
 apiVersion: v1
