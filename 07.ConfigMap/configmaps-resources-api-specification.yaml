@@ -7,10 +7,17 @@ metadata:
   annotations: <map[string]string>
 
 binaryData: <map[string]string>
+
 data: <map[string]string>
 
 ### 不可变的(根据其值决定不可变是否)
-#  默认为nil，则可以在线修改此资源对象的中的数据。
-#  如果设置为false，则可以在线修改此资源对象中的数据
-#  如果设置为true,则不可在线修改此资源对象中的数据
+#  没有默认值
+#    不指定此字段，此资源对象在线manifests没有此字段，允许此资源对象在线更改数据。
+#  若值为false
+#    此资源对象在线manifests拥有此字段，允许此资源对象在线更改数据。
+#  若值为true
+#    此资源对象在线manifests拥有此字段，不允许此资源对象在线更改数据。
+#  注意：
+#    可在线更改此字段的值
+# 
 immutable: <boolean>

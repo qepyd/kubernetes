@@ -5,7 +5,17 @@ configmaps资源属于"配置"类的资源。我们在安装软件时会经过�
 资源对象可以将配置数据和应用程序代码分开，即Pod中容器所用image只关注程序代码和基本程序配置（启动所需）。
 
 
+# 2 将configmaps用作pod中的文件
+./02.using-configmaps-as-files-from-a-pod/
+```
 
+```
+
+# 3 使用configmaps作为环境变量
+./03.using-configmaps-as-environment-variables/
+```
+
+```
 
 
 
