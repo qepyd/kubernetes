@@ -14,11 +14,11 @@ pods.spec.containers.resources.requests <map[string]string>
 ```
 cpu
   https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
-  单位可以是: 整核数、浮点核数、豪核(m)
-  整  核: 1               # 1000m
-  浮点核：0.5 或 1.5      # 500m 或 1500m
-  豪  核: 500m 或 1500m   # 0.5  或 1.5
-  补  充：1=100%利用率
+  单  位: 整核数、浮点核数、豪核(m)
+  整  核: 1                        # 1000m 
+  浮点核：1.0   或 1.5   或 0.5    # 1000m 或 1500m 或 500m
+  豪  核: 1000m 或 1500m 或 500m  
+  补  充：1=1.0=1000m(100%利用率)、1.5=1500m(150%利用率)、0.5=500m(50%利用率)
 
 memory
   https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
