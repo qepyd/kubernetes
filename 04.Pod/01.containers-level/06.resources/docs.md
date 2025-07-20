@@ -25,8 +25,13 @@ memory
   以字节为单位进行限制，你可以使用普通的整数，或者配合相关单位，其相关单位为：k或Ki, M或Mi, G或Gi, T或Ti, P或Pi, E或Ei
 
 ephemeral-storage
+  https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#setting-requests-and-limits-for-local-ephemeral-storage
+  以字节为单位进行限制，你可以使用普通的整数，或者配合相关单位，其相关单位为：k或Ki, M或Mi, G或Gi, T或Ti, P或Pi, E或Ei
 
 hugepages-<size>
+  https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#resource-types
+  在默认页面大小为 4KiB 的系统上，你可以指定限制 hugepages-2Mi: 80Mi。 
+  如果容器尝试分配40个 2MiB 大小的巨页（总共 80 MiB ），则分配请求会失败。
 ```
 
 ## 1.3 基本要点
