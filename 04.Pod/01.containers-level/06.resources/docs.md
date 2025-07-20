@@ -2,11 +2,11 @@
 ## 1.1 相关字段
 ```
 ## 容器级别之初始容器(先于主容器启动，串行启动且完成工作后退出)
-pods.spec.initContainers.resources.limtis   <map[string]string>
+pods.spec.initContainers.resources.limits   <map[string]string>   
 pods.spec.initContainers.resources.requests <map[string]string>
 
 ## 容器级别之主容器
-pods.spec.containers.resources.limtis   <map[string]string>
+pods.spec.containers.resources.limits   <map[string]string>
 pods.spec.containers.resources.requests <map[string]string>
 ```
 
