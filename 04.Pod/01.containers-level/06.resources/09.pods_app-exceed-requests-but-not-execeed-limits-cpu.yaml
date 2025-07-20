@@ -20,4 +20,6 @@ spec:
         cpu: "0.5"
 ---
 #
-# 
+# 主容器vish-stress会占用1核的cpu，超过了requests的0.5，但没有超过limits的2
+#   容器的cpu使用率在 0.5 和 1 之间
+#

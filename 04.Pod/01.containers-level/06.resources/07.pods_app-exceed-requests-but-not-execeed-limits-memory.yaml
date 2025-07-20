@@ -31,4 +31,5 @@ spec:
         memory: "50Mi"
 ---
 #
-# 
+# 主容器stress-ng会占用60M的内存，超过了requests.memory，未超过limits.memory
+#

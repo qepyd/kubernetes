@@ -29,4 +29,7 @@ spec:
         memory: "100Mi" 
 ---
 #
-# 
+# 主容器stress-ng会占用150M的内存，超过了requests.limits
+#    会触发OOM，会把容器的进程给kill掉
+#    容器会容器（pods.spec.restartPolicy默认为Always）
+#

@@ -70,7 +70,8 @@ kubectl describe nodes/<NodeName> 可看到。
 ```
 01.当你为Container指定了资源限制（limit）时，kubelet就可以确保运行的容器不会使用超出所设限制的资源。
    即：一量超过limits，会对容器（就是进程）采取相关的操作
-   例如：memory超过limits，会OOM Killer，然后重启。
+   memory超过limits，会触发内核的OOM，会直接终止容器的进程，默认会重启容器(pods.spec.restartPolicy默认为Always)
+   cpu超过limits，Kubernetes通过Linux内核的CFS（Completely Fair Scheduler）机制限制容器CPU使用率，使其运行速度降低至限制值以下。例如，若限制为1核CPU，实际使用可能被压缩至0.5核或更低。
 
 02.相平面实践的manifests为
    ./07.pods_app-exceed-requests-but-not-execeed-limits-memory.yaml
@@ -80,7 +81,8 @@ kubectl describe nodes/<NodeName> 可看到。
 ```
 
 ## 1.6 Pod的Qos 
-Guaranteed > Bustable > BestEffort
+优   先   级：Guaranteed > Bustable > BestEffort  
+查看Pod的Qos： kubectl -n <Namespace> get Pod/<PodName> -o json | jq ".status.qosClass"  
 ```
 Guaranteed
   https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
@@ -96,7 +98,7 @@ BestEffort
   https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-besteffort
   Pod中所有主容器均没有配置cpu、memory的limits、requests。
 
-相关manifests为
+相关实践的manifests为
   ./11.pods_pod-qos-to-guaranteed.yaml
   ./12.pods_pod-qos-to-burstable.yaml
   ./13.pods_pod-qos-to-besteffort.yaml

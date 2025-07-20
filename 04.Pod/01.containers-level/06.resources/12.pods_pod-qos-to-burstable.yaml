@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -19,13 +20,14 @@ spec:
     args:
     - "-c"
     - "sleep 1000000000"
-
-
-## Pod的服务质量(Qos)之Bustable(满足)
+---
+#
+#  Pod的服务质量(Qos)之Bustable(满足)
 #
 #  Guaranteed > Bustable > BestEffort
 # 
 #  官方：https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-burstable
-#   
-#  Pod中至少得有一个容器具备cpu或memory的requests或limits。 
+#
+#  Pod中至少一个主容器有进行cpu或memory的limits或requests
+#  不要求requests中资源量得等于limits中的资源量
 #

@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -16,13 +17,13 @@ spec:
     args:
     - "-c"
     - "sleep 1000000000"
-
-
-## Pod的服务质量(Qos)之BestEffort(尽最大努力)
+---
+#
+# Pod的服务质量(Qos)之BestEffort(尽最大努力)
 #
 #  Guaranteed > Bustable > BestEffort
 #
 #  官方：https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-besteffort
-#  
-#  Pod中必须任何容器均没有 resources(pods.spec.containers.resources)
+#
+#  Pod中所有主容器均没有配置cpu、memory的limits、requests。
 #

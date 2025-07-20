@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -10,10 +11,6 @@ spec:
   - name: myapp01
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
     resources:
-      # 若显示定义,请根据limits中的保持一模一样
-      requests:
-        cpu: "100m"
-        memory: "100Mi"
       limits:
         cpu: "100m"
         memory: "100Mi"
@@ -25,18 +22,17 @@ spec:
     - "-c"
     - "sleep 1000000000"
     resources:
-      # 若未定义requests(会根据limits中的定义进行填充)
       limits:
         cpu: "50m"
         memory: "50Mi" 
-
-
-## Pod的服务质量(Qos)之Guaranteed(保证)
+---
+#
+#  Pod的服务质量(Qos)之Guaranteed(保证)
 # 
 #  Guaranteed > Bustable > BestEffort
 # 
-#  官方：https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
-#   
-#  Pod中每个容器必须指定cpu、memory的requests和limits。 
-#  requests中的cpu、memory和limits中的cpu、memory的值得相等。
+#  https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
+#
+#  Pod中所有主容器均得配置cpu、memory的limits和requests，
+#  且requests中资源量得等于limits中的资源量
 #
