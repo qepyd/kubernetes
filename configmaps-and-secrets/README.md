@@ -1,1 +1,0 @@
-configmaps资源、secrets资源

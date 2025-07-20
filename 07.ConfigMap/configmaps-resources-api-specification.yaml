@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: <string>
+  name: <string>
+  labels: <map[string]string>
+  annotations: <map[string]string>
+
+binaryData: <map[string]string>
+data: <map[string]string>
+
+### 不可变的(根据其值决定不可变是否)
+#  默认为nil，则可以在线修改此资源对象的中的数据。
+#  如果设置为false，则可以在线修改此资源对象中的数据
+#  如果设置为true,则不可在线修改此资源对象中的数据
+immutable: <boolean>
