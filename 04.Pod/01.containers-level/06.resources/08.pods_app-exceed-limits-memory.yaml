@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: app-exceed-limits-memory 
+  labels:
+    app: app-exceed-limits-memory 
+spec:
+  containers:
+  - name: stress-ng
+    image: swr.cn-north-1.myhuaweicloud.com/qepyd/stress:1.0.4 
+    # <== 启动命令
+    #     共分配了1个进程，每个进程占用150M内存
+    #     已超过resources.limits.memory
+    #     已超过resources.limits.requests
+    command:
+    - "stress"
+    args:
+    - "--vm"
+    - "1"
+    - "--vm-bytes"
+    - "150M"
+    - "--vm-hang"
+    - "1"
+    # <== 资源的请求(requests)和限制(limits)
+    resources:
+      limits:
+        memory: "100Mi" 
+---
+#
+# 

@@ -15,11 +15,9 @@ spec:
     - "stress"
     args:
     - "--vm"
-    - "1"
+    - "2"
     - "--vm-bytes"
-    - "80M"
-    - "--vm-hang"
-    - "1"
+    - "25M"
     # <== 资源的请求(requests)和限制(limits)
     resources:
       limits:

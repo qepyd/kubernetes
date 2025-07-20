@@ -12,7 +12,7 @@ spec:
     image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
     # <== 资源限制(limits)和请求(requests)
     resources:
-      requests:
+      limits:
         cpu: "50m"
         memory: "216Mi"
   - name: busybox
@@ -25,8 +25,8 @@ spec:
     # <== 资源限制(limits)和请求(requests)
     resources:
       limits:
-        cpu: "1000m"
-        memory: "1024Gi"  # requests.memory等于同，我设置得有点大 
+        cpu: "1000m"      # requests.cpu等同
+        memory: "1024Gi"  # requests.memory等同，我设置得有点大 
 ---
 #
 # 此资源对象所在namespace的describe信息为

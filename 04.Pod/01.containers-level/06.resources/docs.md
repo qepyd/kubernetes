@@ -20,6 +20,12 @@ pods.spec.containers.resources.requests <map[string]string>
    例如：主容器1的limits和requests保持一致。
    例如：主容器2的limits和requests保持一致。
    注意：应该为Pod中的各主容器均定义limits和requests，详见"limits的意义"。
+
+05.相关实践的manifests为
+   01.pods_basic-requests-greater-limits-error.yaml
+   02.pods_basic-requests-not-greater-limtis-ok.yaml
+   03.pods_basic-requestsnotexist-generate-based-on-limits.yaml
+   04.pods_basic-limitsnotexist-not-generate-based-on-requests.yaml
 ```
 
 **requests会影响Pod的调度**  
@@ -34,9 +40,10 @@ kubernetes的kube-scheduler组件在调度Pod时会把不满足Pod总请求（re
 当Pod中的容器未做limits时，理论上它是可以使用所在worker node上所有的相关资源量。
 ```
 当你为Container指定了资源限制（limit）时，kubelet就可以确保运行的容器不会使用超出所设限制的资源。
+  即：会根据相关的资源采取相关的操作，而不是让应用不能超过（限制）
 ```
 
-**常涉及的资源**
+**相关的资源**
 ```
 cpu
   https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
@@ -49,6 +56,11 @@ cpu
 memory
   https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
   以字节为单位进行限制，你可以使用普通的整数，或者配合相关单位，其相关单位为：k或Ki, M或Mi, G或Gi, T或Ti, P或Pi, E或Ei
+
+ephemeral-storage
+
+hugepages-<size>
+
 ```
 
 
