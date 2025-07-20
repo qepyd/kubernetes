@@ -1,0 +1,52 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: basic-requests-greater-limits-error 
+  labels:
+    app: basic-requests-greater-limits-error 
+spec:
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/library/nginx:1.16
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "512Mi"
+      requests:
+        cpu: "50m"
+        memory: "256Mi"
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "512Mi"
+      requests:
+        cpu: "150m"       # 大于了limits.cpu，错误之处
+        memory: "256Mi"    
+---
+#
+# 此资源对象所在namespace的describe信息为
+#   root@master01:~# kubectl describe ns lili
+#   Name:         lili
+#   Labels:       kubernetes.io/metadata.name=lili
+#   Annotations:  <none>
+#   Status:       Active
+#   
+#   No resource quota.
+#  
+#   No LimitRange resource.
+#
+#
+# 此资源对象不会kube-apiserver所接受，不会被创建。
+#   因为requests中的相关资源量大于limits中的相关资源量
+#   报错信息为： The Pod "basic-requests-greater-limits-error" is invalid: spec.containers[1].resources.requests: Invalid value: "150m": must be less than or equal to cpu limit
+#
+
