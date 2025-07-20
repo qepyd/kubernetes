@@ -1,11 +1,16 @@
 # 1 Pod中容器的资源限制(limits)和请求(requests)
-**相关字段**
+## 1.1 相关字段
 ```
+## 容器级别之初始容器(先于主容器启动，串行启动且完成工作后退出)
+pods.spec.initContainers.resources.limtis   <map[string]string>
+pods.spec.initContainers.resources.requests <map[string]string>
+
+## 容器级别之主容器
 pods.spec.containers.resources.limtis   <map[string]string>
 pods.spec.containers.resources.requests <map[string]string>
 ```
 
-**相关资源**
+## 1.2 相关资源
 ```
 cpu
   https://kubernetes.io/zh-cn/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
@@ -24,7 +29,7 @@ ephemeral-storage
 hugepages-<size>
 ```
 
-**基本说明**  
+## 1.3 基本要点
 以下的说明不涉及相关外力（例如：LimitRange资源对象），在实践时也不会存在外力（例如：LimitRange资源对象）。
 ```
 01.requests中相关计算资源（例如：memory）量不能大于limits中相关计算资源（例如：memory）量。
@@ -47,9 +52,10 @@ hugepages-<size>
    ./04.pods_basic-limitsnotexist-not-generate-based-on-requests.yaml
 ```
 
-**requests会影响Pod的调度**  
-Pod中可以有多个主容器，那么Pod会有一个总量请求(requests)。当这个Pod被成功调度到某worker node后，kubernetes的
-kubelet会将这个Pod的总请求（requests）计算到某worker node已分配请求(requests)中。kubectl describe nodes/<NodeName> 可看到。
+## 1.4 requests会影响Pod的调度
+Pod中可以有多个容器(实始容器、主容器)，那么Pod会有一个总请求(requests)量（各容器的requests之和）。当这个Pod被成功调度到
+某worker node后，kubernetes的kubelet会将这个Pod的总请求（requests）计算到某worker node已分配请求(requests)中。  
+kubectl describe nodes/<NodeName> 可看到。
 ```
 01.kubernetes的kube-scheduler组件在调度Pod时会把不满足Pod总请求（requests）的worker node给排除掉，再择优选择。
    若你的kubernetes中所有worker node都被排除掉了，那么Pod将无法调度，处于Pending状态。
@@ -59,7 +65,7 @@ kubelet会将这个Pod的总请求（requests）计算到某worker node已分配
    ./06.pods_requests-effect-pod-dispatch-but-cpu.yaml
 ```
 
-**limits的意义**
+## 1.5 limits的意义
 当Pod中的容器未设置limits时，里面的应用程序可以使用所在worker node上所有可用相关资源量。
 ```
 01.当你为Container指定了资源限制（limit）时，kubelet就可以确保运行的容器不会使用超出所设限制的资源。
@@ -68,6 +74,22 @@ kubelet会将这个Pod的总请求（requests）计算到某worker node已分配
 02.相平面实践的manifests为
    ./07.pods_app-exceed-requests-but-not-execeed-limits-memory.yaml
    ./08.pods_app-exceed-limits-memory.yaml
-  
 ```
 
+## 1.6 Pod的Qos 
+Guaranteed > Bustable > BestEffort
+```
+Guaranteed
+  https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
+  Pod中所有主容器均得配置cpu、memory的limits和requests，
+  且requests中资源量得等于limits中的资源量
+
+Burstable
+  https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-burstable
+  Pod中至少一个主容器有进行cpu或memory的limits或requests
+  不要求requests中资源量得等于limits中的资源量
+
+BestEffort
+  https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-besteffort
+  Pod中所有主容器均没有配置cpu、memory的limits、requests。
+```
