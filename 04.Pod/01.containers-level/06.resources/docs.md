@@ -52,7 +52,7 @@ hugepages-<size>
    ./04.pods_basic-limitsnotexist-not-generate-based-on-requests.yaml
 ```
 
-## 1.4 requests会影响Pod的调度
+## 1.4 requests会影响Pod调度
 Pod中可以有多个容器(实始容器、主容器)，那么Pod会有一个总请求(requests)量（各容器的requests之和）。当这个Pod被成功调度到
 某worker node后，kubernetes的kubelet会将这个Pod的总请求（requests）计算到某worker node已分配请求(requests)中。  
 kubectl describe nodes/<NodeName> 可看到。
@@ -93,3 +93,7 @@ BestEffort
   https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-besteffort
   Pod中所有主容器均没有配置cpu、memory的limits、requests。
 ```
+
+# 2 趁热打铁到LimitRange资源
+https://github.com/qepyd/kubernetes/tree/main/05.LimitRange
+
