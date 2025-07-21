@@ -22,7 +22,7 @@ spec:
       items:
         # 其cm/many-key-value-02对象中的key
       - key: "file02"
-        # 容器级别挂载此卷(busybox01-config01)到某目录下后,其文件名
+        # 容器级别挂载此卷(busybox01-config02)到某目录下后,其文件名
         path: "file022"
 
   ## 容器级别之主容器
