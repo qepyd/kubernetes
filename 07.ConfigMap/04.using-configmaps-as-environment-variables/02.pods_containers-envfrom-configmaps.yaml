@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: containers-envfrom-configmaps 
+  labels:
+    app: containers-envfrom-configmaps 
+spec:
+  containers:
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    # <== 定义环境变量
+    envFrom:
+    - configMapRef:
+        name: many-key-value-02
+        optional: false
+    # <== 容器前台运行命令
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+ 

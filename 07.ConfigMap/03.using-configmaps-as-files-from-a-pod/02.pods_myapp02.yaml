@@ -16,6 +16,15 @@ spec:
       - key: "file01"
         # 容器级别挂载此卷(busybox01-config01)到某目录下后,其文件名
         path: "file011"
+      # <== 非强制的意义
+      #   默认值为false
+      #      强制
+      #      此资源对象在创建时,不忽略所引用cm资源对象是否存在
+      #      建议强制
+      #   设置值为true
+      #      非强制，忽略所引用cm资源对象是否存在
+      #      不建议非强制 
+      optional: false
   - name: busybox01-config02
     configMap:
       name: many-key-value-02
@@ -24,6 +33,15 @@ spec:
       - key: "file02"
         # 容器级别挂载此卷(busybox01-config02)到某目录下后,其文件名
         path: "file022"
+      # <== 非强制的意义
+      #   默认值为false
+      #      强制
+      #      此资源对象在创建时,不忽略所引用cm资源对象是否存在
+      #      建议强制
+      #   设置值为true
+      #      非强制，忽略所引用cm资源对象是否存在
+      #      不建议非强制 
+      optional: false
 
   ## 容器级别之主容器
   containers: 

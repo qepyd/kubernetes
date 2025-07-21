@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: containers-env-valuefrom-configmaps 
+  labels:
+    app: containers-env-valuefrom-configmaps 
+spec:
+  containers:
+  - name: busybox
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    # <== 定义环境变量
+    env:
+    - name: MY_HOST
+      valueFrom:
+        configMapKeyRef:
+          # 引用所存在的configmaps资源对象
+          name: many-key-value-01
+          # 指定configmaps资源对象中的key
+          key: host
+          # 非强制，值为false时,即为强制
+          optional: false
+    - name: MY_PORT
+      valueFrom:
+        configMapKeyRef:
+          name: many-key-value-01
+          key: port
+          optional: false
+    # <== 容器前台运行命令
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+ 
