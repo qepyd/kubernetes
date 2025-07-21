@@ -12,7 +12,7 @@ metadata:
 #    data字段中的key不能与binaryData中的key冲突。
 #    若冲突，不允许此资源对象的创建，直接报错。
 #  binaryData中各key的value得base64加密后填写
-#    若不base64加密后填写，不允许此资源对象的创建，直接报错。
+#    若value是明文，不允许此资源对象的创建，直接报错。
 #    当key被引用后，其value会被自动解密。
 #    若base64加密后，其只会是单行数据。
 #  data中各key的value不需要任何的加密
