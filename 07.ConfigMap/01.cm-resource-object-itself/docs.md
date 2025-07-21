@@ -156,13 +156,84 @@ Events:  <none>
 ```
 
 # 3 不可变configmaps资源对象(immutable字段的值为true)
+**创建cm/immutable-true-cm对象**
+```
+## 应用manifests
+root@master01:~# kubectl apply -f 03.cm_immutable-true-cm-v1.yaml --dry-run=client
+configmap/immutable-true-cm created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 03.cm_immutable-true-cm-v1.yaml 
+configmap/immutable-true-cm created
+
+## 列出cm/immutable-true-cm对象
+root@master01:~# kubectl  -n lili get configmap/immutable-true-cm
+NAME                DATA   AGE
+immutable-true-cm   0      21s
+
+## 查看cm/immutable-true-cm对象的描述信息
+root@master01:~# kubectl  -n lili describe configmap/immutable-true-cm
+Name:         immutable-true-cm
+Namespace:    lili
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+
+BinaryData
+====
+
+Events:  <none>
+```
+
+**改变cm/immutable-true-cm对象**
+```
+## 查看cm/immutable-false-cm对象是否在线更改
+kubectl -n lili get configmap/immutable-false-cm -o yaml
+   #
+   # 通过在线manifests查看immutable字段
+   #   不存在时，configmaps资源对象是可变的。
+   #   存在且值为false，configmaps资源对象是可变的。
+   #   存在且值为true，configmaps资源对象是不可变的。
+   #
+
+## 应用manifests
+root@master01:~# kubectl apply -f 03.cm_immutable-true-cm-v2.yaml --dry-run=client
+configmap/immutable-true-cm configured (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 03.cm_immutable-true-cm-v2.yaml
+The ConfigMap "immutable-true-cm" is invalid: 
+* immutable: Forbidden: field is immutable when `immutable` is set
+* data: Forbidden: field is immutable when `immutable` is set
+```
 
 
+# 4 binaryData字段中各key的value得加密后填写
+binaryData字段中各key的value得加密后填写，不然影响configmaps资源对象的创建
+```
+root@master01:~# kubectl apply -f 04.cm_binarydata-not-base64-error.yaml --dry-run=client
+configmap/binarydata-not-base64-error created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 04.cm_binarydata-not-base64-error.yaml
+Error from server (BadRequest): error when creating "04.cm_binarydata-not-base64-error.yaml": ConfigMap in version "v1" cannot be handled as a ConfigMap: illegal base64 data at input byte 8
+```
 
+# 5 data字段中key不能与binaryData中的key冲突
+```
+root@master01:~# kubectl apply -f 05.cm_data-binarydata-key-conflict-error.yaml --dry-run=client
+configmap/data-binarydata-key-conflict-error created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 05.cm_data-binarydata-key-conflict-error.yaml 
+The ConfigMap "data-binarydata-key-conflict-error" is invalid: data[myname]: Invalid value: "myname": duplicate of key present in binaryData
+```
 
-# 4 binaryData和data字段同时存在,data中key不能与binaryData中key冲突
-会影响configmaps资源对象的创建
-
-# 5 binaryData和data字段不同时存在,key冲突,以最后一个key为准。
-不会景程configmaps资源对象的创建，以最后一个key为准
+# 6 只用data字段定义key value对即可
+因为configmaps资源对象用于将非机密性的数据保存到键值对中
+```
+root@master01:~# kubectl apply -f 06.cm_just-use-the-data-field.yaml  --dry-run=client
+configmap/just-use-the-data-field created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 06.cm_just-use-the-data-field.yaml
+configmap/just-use-the-data-field created
+```
 

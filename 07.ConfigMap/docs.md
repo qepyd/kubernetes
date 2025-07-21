@@ -23,24 +23,14 @@ configmaps资源提供定义键值对的字段有binaryData、data，两者者�
 configmaps资源对象用于将非机密性的数据保存到键值对中）。
 
 # 2 configmaps资源对象的实践理解
-参考 ./01.cm-resource-object-itself/ 目录
-
+实践参考 ./01.cm-resource-object-itself/ 目录
 
 # 3 快速编写configmaps资源对象的manifests
-参考 ./02.quickly-compile-cm-resource-object-manifests/ 目录
+实践参考 ./02.quickly-compile-cm-resource-object-manifests/ 目录
 
 # 4 将configmaps用作pod中的文件
-./02.using-configmaps-as-files-from-a-pod/
-```
-
-```
+实践参考 ./03.using-configmaps-as-files-from-a-pod/ 目录
 
 # 5 使用configmaps作为环境变量
-./03.using-configmaps-as-environment-variables/
-```
-
-```
-
-
-
+实践参考 ./04.using-configmaps-as-environment-variables/ 目录
 

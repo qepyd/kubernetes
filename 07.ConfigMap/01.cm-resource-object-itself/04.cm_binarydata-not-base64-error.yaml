@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: lili
+  name: binarydata-not-base64-error 
+binaryData:
+  # 各key的value得base64加密后填写,不然影响此资源对象创建
+  #   这里的填写的value是明文
+  myname: "chenliang"
+immutable: false

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: lili 
+  name: just-use-the-data-field
+data:
+  myname: "chenliang"
+  my.conf: |
+    [mysqld]
+    server_id=110
+    data=/data/mysql3306/data/
+immutable: false

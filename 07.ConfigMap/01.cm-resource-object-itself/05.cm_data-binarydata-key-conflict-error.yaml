@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: lili
+  name: data-binarydata-key-conflict-error 
+binaryData:
+  # 各key的value得base64加密后填写,不然影响此资源对象创建
+  #   这里的填写的value是密文
+  #   echo "chenliang" | base64
+  myname: "Y2hlbmxpYW5nCg=="
+data:
+  # 与binaryData下的key若冲突，会影响此资源对象的创建
+  #   这里与之有冲突
+  myname: "chenliang"
+immutable: false
