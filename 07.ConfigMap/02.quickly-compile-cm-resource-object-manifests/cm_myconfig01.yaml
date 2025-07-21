@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  age: "24"
+  name: lili
+  sex: girl
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-07-21T07:03:21Z"
+  name: myconfig01
+  namespace: lili
+  resourceVersion: "1816433"
+  uid: d6f94bec-df61-4b38-ab79-2c488639affe

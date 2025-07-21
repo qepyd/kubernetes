@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  file01: |
+    11111111
+    11111111
+  file02: |
+    22222222
+    22222222
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-07-21T07:15:56Z"
+  name: myconfig02
+  namespace: lili
+  resourceVersion: "1817796"
+  uid: b64e8e77-fe9e-4ef5-bd0f-2d0b6dbc278d
