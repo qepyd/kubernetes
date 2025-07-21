@@ -163,6 +163,6 @@ Events:  <none>
 # 4 binaryData和data字段同时存在,data中key不能与binaryData中key冲突
 会影响configmaps资源对象的创建
 
-# 5 binaryData和data字段不同时存在,key冲突
+# 5 binaryData和data字段不同时存在,key冲突,以最后一个key为准。
 不会景程configmaps资源对象的创建，以最后一个key为准
 
