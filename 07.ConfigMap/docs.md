@@ -25,8 +25,7 @@ configmaps资源提供定义键值对的字段之binaryData、data均不是必�
 
 
 # 3 快速编写configmaps资源对象的manifests
-参考 
-
+参考 ./02.quickly-compile-cm-resource-object-manifests/ 目录
 
 # 4 将configmaps用作pod中的文件
 ./02.using-configmaps-as-files-from-a-pod/
