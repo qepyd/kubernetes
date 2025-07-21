@@ -235,6 +235,34 @@ configmap/just-use-the-data-field created (dry run)
 root@master01:~#
 root@master01:~# kubectl apply -f 06.cm_just-use-the-data-field.yaml
 configmap/just-use-the-data-field created
+root@master01:~#
+root@master01:~# kubectl  -n lili get configmap/just-use-the-data-field
+NAME                      DATA   AGE
+just-use-the-data-field   2      18s
+root@master01:~# 
+root@master01:~# kubectl  -n lili describe configmap/just-use-the-data-field
+Name:         just-use-the-data-field
+Namespace:    lili
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+my.conf:
+----
+[mysqld]
+server_id=110
+data=/data/mysql3306/data/
+
+myname:
+----
+chenliang
+
+BinaryData
+====
+
+Events:  <none>
+
 ```
 
 # 7 清理环境
