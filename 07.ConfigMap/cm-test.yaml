@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  namespace: lili
-  name: cm-test
-binaryData:
-  myname: "Y2hlbmxpYW5nCg=="
-data:
-  myname: "chenliang"

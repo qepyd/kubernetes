@@ -237,3 +237,7 @@ root@master01:~# kubectl apply -f 06.cm_just-use-the-data-field.yaml
 configmap/just-use-the-data-field created
 ```
 
+# 7 清理环境
+```
+kubectl delete -f .
+```
