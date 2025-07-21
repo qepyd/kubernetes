@@ -11,10 +11,10 @@ data:
   my02.conf: |
     binbin
     lili 
-    lanlan
-    qinqin
 
 ## 不可变
 #  设置值为true
-#    此资源对象在线manifests有此字段，允许此资源对象在线更改。
+#    此资源对象在线manifests有此字段。
+#    不允许此资源对象在线更改。此字段也是不可在线更改的。
 immutable: true
+

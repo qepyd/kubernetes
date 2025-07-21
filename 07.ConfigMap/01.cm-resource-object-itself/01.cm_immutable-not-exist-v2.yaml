@@ -11,7 +11,5 @@ data:
   my02.conf: |
     binbin
     lili 
-    lanlan
-    qinqin
 
-## 不存在immutable字段
+## 未人为定义immutable字段

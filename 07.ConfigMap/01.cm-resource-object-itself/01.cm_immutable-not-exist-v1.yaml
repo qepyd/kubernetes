@@ -3,13 +3,5 @@ kind: ConfigMap
 metadata:
   namespace: lili
   name: immutable-not-exist 
-data:
-  # key value对，value是单行
-  my01.conf: chenliang  
 
-  # key value对，value是多行
-  my02.conf: |
-    binbin
-    lili 
-
-## 不存在immutable字段
+## 未定义immutable字段

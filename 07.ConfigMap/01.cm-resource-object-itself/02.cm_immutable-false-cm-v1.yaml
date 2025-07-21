@@ -3,16 +3,9 @@ kind: ConfigMap
 metadata:
   namespace: lili
   name: immutable-false-cm 
-data:
-  # key value对，value是单行
-  my01.conf: chenliang  
-
-  # key value对，value是多行
-  my02.conf: |
-    binbin
-    lili 
 
 ## 不可变
 #  设置值为false
-#    此资源对象在线manifests有此字段，允许此资源对象在线更改。
+#    此资源对象在线manifests有此字段，
+#    允许此资源对象在线更改，此字段也是可变的。
 immutable: false
