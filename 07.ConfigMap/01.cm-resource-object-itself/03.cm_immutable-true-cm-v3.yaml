@@ -17,4 +17,5 @@ data:
 ## 不可变
 #  设置值为true
 #    此资源对象在线manifests有此字段，允许此资源对象在线更改。
-immutable: true
+#immutable: true
+immutable: false

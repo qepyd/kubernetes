@@ -6,13 +6,23 @@ metadata:
   labels: <map[string]string>
   annotations: <map[string]string>
 
+## 提供定义key value对的字段
+#  均不是必须的
+#  可同时存在
+#      key不要冲突，冲突不影响此资源对象的创建，以最后一个键为准
+#  binaryData中的key value其value得base64加密后填写
+#     不然影响此资源对象的创建
+#     当key被引用后，其value会被自动解密
+#  data中的key value其value不需要任何的加密
+#     当key被引用后，其value没有自动解密一说
+#   
 binaryData: <map[string]string>
-
 data: <map[string]string>
 
 ### 不可变的(根据其值决定不可变是否)
 #  没有默认值
-#    不指定此字段，此资源对象在线manifests没有此字段，允许此资源对象在线更改数据。
+#    不指定此字段，此资源对象在线manifests没有此字段，
+#    此资源对象
 #  若值为false
 #    此资源对象在线manifests拥有此字段，允许此资源对象在线更改数据。
 #  若值为true

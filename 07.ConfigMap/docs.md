@@ -11,7 +11,8 @@ configmaps资源对象用于将非机密性的数据保存到键值对（key val
 中保存的数据不可超过1MiB。configmaps资源对象中的数据是存放到kube-apiserver的数据存储之etcd中的。
 
 kubernetes v1.19版本开始，configmaps资源的API规范提供了immutable字段，用于设置configmaps资源对象是否不可变，
-没有默认值，当不定义此字段时或定义此字段且值为false时，configmaps资源对象是可变的，immutable字段支持在线更改。  
+没有默认值，当不定义此字段时或此字段的值为false时，configmaps资源对象是可变的，此字段的值也是可变的。当此字
+段的值为true时，configmaps资源对象是不可变的，此字段也是不可变的。
 
 configmaps资源提供定义键值对的字段之binaryData、data均不是必须的。那么我们可以创建一个可变（immutable字段不存在
 或存在时其值为false）且没有数据的configmaps资源对象。binaryData、data字段可同时存在，同时存在时其键值对的键是
