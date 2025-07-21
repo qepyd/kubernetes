@@ -14,11 +14,12 @@ kubernetes v1.19版本开始，configmaps资源的API规范提供了immutable字
 没有默认值，当不定义此字段时或此字段的值为false时，configmaps资源对象是可变的，此字段的值也是可变的。当此字
 段的值为true时，configmaps资源对象是不可变的，此字段也是不可变的。
 
-configmaps资源提供定义键值对的字段之binaryData、data均不是必须的。那么我们可以创建一个可变（immutable字段不存在
-或存在时其值为false）且没有数据的configmaps资源对象。binaryData、data字段可同时存在，同时存在时其键值对的键是
-不能冲突的，这个很好理解，当冲突时不影响configmaps资源对象的创建，会以最后一个键为准。binaryData字段中其键值对
-（key: value）的value得加密（base64），不然会影响configmaps资源对象的创建，当有被引用到时，会自动解密。data字段
-中其键值对（key: value）的value不需要加密，当有被引用到时，没有自动解密这一说。其data字段是常用。
+configmaps资源提供定义键值对的字段有binaryData、data，两者者均不是必须的。那么我们可以创建一个可变（immutable字段不存在
+或存在时其值为false）且没有数据的configmaps资源对象。binaryData、data字段可同时存在，同时存在时其data字段中的键不能与binaryData
+中的键冲突，若冲突的话影响configmaps资源对象的创建。binaryData、data字段不同时存在，若键冲突，不影响configmaps资源对象的创建，以
+最后一个键为准。binaryData字段中其键值对（key: value）的value得加密（base64）后填写，不然会影响configmaps资源对象的创建，当有被引
+用到时，会自动解密。data字段中其键值对（key: value）的value不需要加密，当有被引用到时，没有自动解密这一说。其data字段是常用（因为
+configmaps资源对象用于将非机密性的数据保存到键值对中）。
 
 # 2 configmaps资源对象的实践理解
 参考 ./01.cm-resource-object-itself/ 目录

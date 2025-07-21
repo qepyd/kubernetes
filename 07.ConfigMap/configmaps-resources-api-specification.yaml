@@ -9,20 +9,21 @@ metadata:
 ## 提供定义键值（key value）对的字段
 #  均不是必须的
 #  可同时存在
-#    key不要冲突，冲突不影响此资源对象的创建，以最后一个键为准
-#  binaryData中的key value其value得base64加密后填写
-#    不然影响此资源对象的创建
-#    当key被引用后，其value会被自动解密
-#  data中的key value其value不需要任何的加密
+#    data字段中的key不能与binaryData中的key冲突。
+#    若冲突，不允许此资源对象的创建，直接报错。
+#  binaryData中各key的value得base64加密后填写
+#    若不base64加密后填写，不允许此资源对象的创建，直接报错。
+#    当key被引用后，其value会被自动解密。
+#    若base64加密后，其只会是单行数据。
+#  data中各key的value不需要任何的加密
 #    当key被引用后，其value没有自动解密一说
-#  当各key value对其value有多行时
-#    key后面用"|"后换行，例如：
+#    value可以是单行或多行。
+#    当value为多行时，"|"后换行填写，例如
 #      key: |
 #        数据
 #        数据
-#    另外binaryData中其key value的value经过base64加密后只会是单行
 #  只用data字段即可
-#    因为configmaps资源对象用于将非机密性的数据保存到键值对（key value）中      
+#    因为configmaps资源对象用于将非机密性的数据保存到键值对（key value）中
 binaryData: <map[string]string>
 data: <map[string]string>
 
