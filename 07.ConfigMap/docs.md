@@ -4,7 +4,8 @@
 configmaps资源（简写cm，类型为ConfigMap）是kubernetes中的标准资源，属于namespace级别的资源。  
 
 configmaps资源属于"配置"类的资源。我们在安装软件时会有三步（安装、配置、启动），利用configmaps
-资源对象可以将配置数据和应用程序代码分开，即Pod中容器所用image只关注程序代码和基本程序配置（启动所需）。
+资源对象可以将配置数据和应用程序代码分开。Pod中容器所用image只关注程序代码和基本程序配置（启动所需），
+image其version就只根据程序代码版本的变化而重新构建生成。
 
 configmaps资源对象用于将非机密性的数据保存到键值对（key value）中，configmaps资源的API规范中binaryData
 和data字段中均可以定义键值对（key value）。configmaps在设计上不是用来保存大量数据的，configmaps资源对象
