@@ -11,6 +11,7 @@ spec:
     image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
     # <== 定义环境变量
     env:
+      # 定义环境变量名，可与spec.containers.env.valueFrom.configMapKeyRef.key相同
     - name: MY_HOST
       valueFrom:
         configMapKeyRef:
