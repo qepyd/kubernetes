@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: lili
+  name: immutable-false-and-null-data
+data:
+  # key value对，value是单行
+  my01.conf: chenliang  
+
+  # key value对，value是多行
+  my02.conf: |
+    binbin
+    lili 
+    lanlan
+    qinqin
+immutable: false
