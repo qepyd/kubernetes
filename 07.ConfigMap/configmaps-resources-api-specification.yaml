@@ -6,28 +6,34 @@ metadata:
   labels: <map[string]string>
   annotations: <map[string]string>
 
-## 提供定义key value对的字段
+## 提供定义键值（key value）对的字段
 #  均不是必须的
 #  可同时存在
-#      key不要冲突，冲突不影响此资源对象的创建，以最后一个键为准
+#    key不要冲突，冲突不影响此资源对象的创建，以最后一个键为准
 #  binaryData中的key value其value得base64加密后填写
-#     不然影响此资源对象的创建
-#     当key被引用后，其value会被自动解密
+#    不然影响此资源对象的创建
+#    当key被引用后，其value会被自动解密
 #  data中的key value其value不需要任何的加密
-#     当key被引用后，其value没有自动解密一说
-#   
+#    当key被引用后，其value没有自动解密一说
+#  当各key value对其value有多行时
+#    key后面用"|"后换行，例如：
+#      key: |
+#        数据
+#        数据
+#    另外binaryData中其key value的value经过base64加密后只会是单行
+#  只用data字段即可
+#    因为configmaps资源对象用于将非机密性的数据保存到键值对（key value）中      
 binaryData: <map[string]string>
 data: <map[string]string>
 
 ### 不可变的(根据其值决定不可变是否)
 #  没有默认值
 #    不指定此字段，此资源对象在线manifests没有此字段，
-#    此资源对象
+#    此资源对象是可变的，那么此字段也是可变的。
 #  若值为false
-#    此资源对象在线manifests拥有此字段，允许此资源对象在线更改数据。
+#    此资源对象在线manifests拥有此字段，
+#    此资源对象是可变的，那么此字段也是可变的。
 #  若值为true
-#    此资源对象在线manifests拥有此字段，不允许此资源对象在线更改数据。
-#  注意：
-#    可在线更改此字段的值
-# 
+#    此资源对象在线manifests拥有此字段，
+#    此资源对象是不可变的，那么此字段也是不可变的。
 immutable: <boolean>
