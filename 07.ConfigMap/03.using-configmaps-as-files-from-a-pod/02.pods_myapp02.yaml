@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: myapp02
+  labels:
+    app: myapp02
+spec:
+  ## Pod级别
+  volumes:
+  - name: busybox01-config01
+    configMap:
+      name: many-key-value-02
+      items:
+        # 其cm/many-key-value-02对象中的key
+      - key: "file01"
+        # 容器级别挂载此卷(busybox01-config01)到某目录下后,其文件名
+        path: "file011"
+  - name: busybox01-config02
+    configMap:
+      name: many-key-value-02
+      items:
+        # 其cm/many-key-value-02对象中的key
+      - key: "file02"
+        # 容器级别挂载此卷(busybox01-config01)到某目录下后,其文件名
+        path: "file022"
+
+  ## 容器级别之主容器
+  containers: 
+  - name: busybox01
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    volumeMounts:
+    - name: busybox01-config01
+      mountPath: /dir01/
+      readOnly: false
+    - name: busybox01-config02
+      mountPath: /dir02/
+      readOnly: false
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
