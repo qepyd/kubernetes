@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  namespace: lili
-  name: myconfig
-binaryData:
-  myname: Y2hlbmxpYW5nCg==
-data:
-  myage: "24"
