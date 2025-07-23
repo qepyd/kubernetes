@@ -22,6 +22,8 @@ configmaps资源提供定义键值对的字段有binaryData、data，两者者�
 用到时，会自动解密。data字段中其键值对（key: value）的value不需要加密，当有被引用到时，没有自动解密这一说。其data字段是常用（因为
 configmaps资源对象用于将非机密性的数据保存到键值对中）。
 
+注意：静态Pod不能使用configmaps资源对象
+
 # 2 configmaps资源对象的实践理解
 实践参考 ./01.cm-resource-object-itself/ 目录
 
