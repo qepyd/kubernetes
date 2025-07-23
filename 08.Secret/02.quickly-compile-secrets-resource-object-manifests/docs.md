@@ -13,7 +13,7 @@ bootstrap.kubernetes.io/token
 ```
 
 **kubectl工具相关命令**   
-相平面命令/子命令
+相关命令/子命令
 ```
 ## 获取帮助
 kubectl create secret --help
