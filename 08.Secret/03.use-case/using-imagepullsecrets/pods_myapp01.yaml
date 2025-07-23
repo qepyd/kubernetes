@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: myapp01
+spec:
+  # Pod级别
+  imagePullSecrets: 
+  - name: "myhuaweicloud.com.image.read"
+
+  # 容器级别之主容器
+  containers:
+  - name: myapp01
+    image: swr.cn-north-1.myhuaweicloud.com/qepyd/nginx:1.16
+    imagePullPolicy: Always
