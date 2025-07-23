@@ -1,5 +1,5 @@
 # 1 kubectl工具快速编写secrets资源对象的manifests的说明
-**secrets的类型有**  
+**secrets的类型有**   
 https://kubernetes.io/zh-cn/docs/concepts/configuration/secret/#secret-types
 ```
 Opaque
@@ -12,7 +12,7 @@ kubernetes.io/tls
 bootstrap.kubernetes.io/token
 ```
 
-**kubectl工具相关命令**
+**kubectl工具相关命令**   
 相平面命令/子命令
 ```
 ## 获取帮助
