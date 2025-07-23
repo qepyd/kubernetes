@@ -19,10 +19,6 @@ bootstrap.kubernetes.io/token
 kubectl create secret --help
 
 ## 子命令
-docker-registry
-  #
-  # 创建 kubernetes.io/dockerconfigjson 类型的secrets资源对象
-  #
 generic
   #
   # 可创建任意类型的secrets
@@ -31,10 +27,29 @@ tls
   #
   # 创建 kubernetes.io/tls 类型的secrets资源对象
   #
+docker-registry
+  #
+  # 创建 kubernetes.io/dockerconfigjson 类型的secrets资源对象
+  #
 ```
 
 各子命令格式
 ```
+## 子命令generic的格式
+kubectl -n <Namespace>   create secret generic  NAME   \
+  [--type=string]                                       \
+  [--from-literal=key1=value1]                           \
+  [--from-file=[key=]source]                              \
+  [--dry-run=server|client|none]                           \
+  [options]
+
+## 子命令tls的格式
+kubectl -n <Namespace>  create secret tls NAME \
+  --cert=path/to/cert/file                       \
+  --key=path/to/key/file                          \
+  [--dry-run=server|client|none]                   \
+  [options]
+
 ## 子命令docker-registry的格式
 kubectl -n <Namespace>   create secret docker-registry NAME  \
   [--docker-server=string]                                    \
@@ -44,20 +59,30 @@ kubectl -n <Namespace>   create secret docker-registry NAME  \
   [--from-file=[key=]source]                                      \
   [--dry-run=server|client|none]                                   \
   [options]
+```
 
-## 子命令generic的格式
-kubectl -n <Namespace>   create secret generic  NAME   \
-  [--type=string]                                       \
-  [--from-literal=key1=value1]                           \
-  [--from-file=[key=]source]                              \
-  [--dry-run=server|client|none]                           \
-  [options]
+# 2 kubectl create secret generic
+```
+../03.using-secrets-as-files-from-a-pod/ 有涉及
+../04.using-secrets-as-environment-variables/ 有涉及
+```
 
+# 3 kubectl create secret tls
+```
+kubectl -n lili create secret  tls  front-proxy-client  \
+  --cert=/etc/kubernetes/pki/front-proxy-client.crt   \
+  --key=/etc/kubernetes/pki/front-proxy-client.key    \
+  --dry-run=client                                \
+  -o yaml 
 
-## 子命令tls的格式
-kubectl  -n <Namespace>  create secret tls NAME \
-  --cert=path/to/cert/file                       \
-  --key=path/to/key/file                          \
-  [--dry-run=server|client|none]                   \
-  [options]
+kubectl -n lili create secret  tls  front-proxy-client  \
+  --cert=/etc/kubernetes/pki/front-proxy-client.crt   \
+  --key=/etc/kubernetes/pki/front-proxy-client.key    \
+  --dry-run=client                                \
+  -o yaml >./secrets_front-proxy-client.yaml
+```
+
+# 4 kubectl create secret docker-registry 
+```
+../05.using-imagepullsecrets 有涉及
 ```

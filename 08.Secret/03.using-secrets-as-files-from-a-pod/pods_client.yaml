@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: lili
+  name: client
+spec:
+  # Pod级别
+  volumes:
+  - name: dbsecret
+    secret:
+      secretName: db-secret
+      optional: false
+  
+  # 容器级别之主容器
+  containers:
+  - name: client
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    imagePullPolicy: Always
+    volumeMounts:
+    - name: dbsecret
+      mountPath: /db/secrets/
+      readOnly: false
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000"
+---
