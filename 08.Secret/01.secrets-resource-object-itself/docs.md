@@ -348,6 +348,15 @@ secret/just-use-the-data-field created (dry run)
 root@master01:~#
 root@master01:~# kubectl apply -f 07.secrets_just-use-the-data-field.yaml
 secret/just-use-the-data-field created
+root@master01:~#
+root@master01:~# kubectl -n lili get secret/just-use-the-data-field
+NAME                      TYPE     DATA   AGE
+just-use-the-data-field   Opaque   1      4m16s
+root@master01:~#
+root@master01:~# kubectl -n lili get secret/just-use-the-data-field -o json | jq ".data"
+{
+  "myname": "Y2hlbmxpYW5nCg=="
+}
 ```
 
 # 8 清理环境
