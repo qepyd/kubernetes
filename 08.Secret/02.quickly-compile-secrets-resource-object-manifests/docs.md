@@ -59,6 +59,9 @@ kubectl -n <Namespace>   create secret docker-registry NAME  \
   [--from-file=[key=]source]                                      \
   [--dry-run=server|client|none]                                   \
   [options]
+
+## 注意
+kubectl create secret 时，其相应key的value不需要人为base64编码，会自动base64编码。
 ```
 
 # 2 kubectl create secret generic
