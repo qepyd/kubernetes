@@ -11,5 +11,6 @@ spec:
   # 容器级别之主容器
   containers:
   - name: myapp01
+    # 此镜像是私有的,pull时需要认证，得用到pods.spec.imagePullSecrets中所指定的secrets资源对象
     image: swr.cn-north-1.myhuaweicloud.com/qepyd/nginx:1.16
     imagePullPolicy: Always
