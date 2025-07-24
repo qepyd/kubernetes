@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  # pv资源属于非namespace级别的资源
+  name: <string>
+  labels: <map[string]string>
+  annotations: <map[string]string>
+spec:
+  # 
+  nfs: <Object>
+
+  # 块存储
+  rbd: <Object>
+
+  ## 能力(必须)
+  capacity: <Object>
+
+  ## 卷模式("必须")
+  #  默认为Filesystem(文件存储/共享存储)
+  #  还支持Block(块存储)  
+  volumeMode: <string>
+  
+  ## 访问模式(必须)
+  #  访问模式：
+  #    ReadWriteOnce(单路读写)，此资源对象状态显示 RWO
+  #    ReadOnlyMany(多路只读)，此资源对象状态显示为 ROX
+  #    ReadWriteMany(多路读写)，此资源对象状态显示为 RWX
+  #    ReadWriteOncePod(单Pod读写),此资源对象状态显示为 RWOP，Kubernetes v1.29 stable(稳定)
+  #  单路/多路
+  #    单路即单个Pod，一个应用以Pod交付到k8s中，它的Pod副本只能有一个，有状态应用。
+  #    多路即多个Pod，一个应用以Pod交付到k8s中，它的Pod副本可能有多个。无状态应用。
+  #  具体设置访问模式与此资源对象对接的是什么存储有关。不要看此资源对象的spec.volumeMode字段。
+  #    文件存储： 
+  #       支持的访问模式：RWO、ROX、RWX
+  #       例如相关卷插件：nfs、cephfs(k8s 1.28弃用，1.31删除)
+  #    块 存 储：
+  #       支持的访问模式：RWO、ROX
+  #       例如相关卷插件：rbd(k8s 1.28弃用，1.31删除)
+  #   
+  accessModes: <map[string]string>
+ 
+  storageClassName: <string>
+  
