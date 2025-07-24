@@ -1,5 +1,5 @@
 # 1 服务的服务器
-应使用"k8s学习环境"的master01服务器。
+这里使用"k8s学习环境"的master01服务器。  
 https://github.com/qepyd/kubernetes/blob/main/01.k8s-study-env-install/kubeadm-ubuntu20.04-install-kubernetes1.24.4-and-containerd.md
 ```
 操作系统     IP地址        主机名
