@@ -206,6 +206,12 @@ immutable: false
 kind: Secret
 metadata:
 type: Opaque
+
+## 从资源对象的在线manifests中查看data字段中所有的键值对（value得人为base64编码解码）
+root@master01:~# kubectl  -n lili get secret/immutable-false -o json | jq ".data"
+{
+  "myname": "Y2hlbmxpYW5nCg=="
+}
 ```
 
 # 3 不可变secrets资源对象(immutable字段的值为true)
@@ -316,8 +322,36 @@ root@master01:~# kubectl  -n lili get secret/data-stringdata-key-conflic-based-o
 }
 ```
 
-
-
 # 6 data和stringData中的键值对归档于data字段中
+```
+root@master01:~# kubectl apply -f 06.secrets_data-stringdata-archiving-to-data.yaml --dry-run=client
+secret/data-stringdata-archiving-to-data created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 06.secrets_data-stringdata-archiving-to-data.yaml
+secret/data-stringdata-archiving-to-data created
+root@master01:~#
+root@master01:~# kubectl -n lili get secret/data-stringdata-archiving-to-data
+NAME                                TYPE     DATA   AGE
+data-stringdata-archiving-to-data   Opaque   2      27s
+root@master01:~#
+root@master01:~# kubectl -n lili get secret/data-stringdata-archiving-to-data -o json | jq ".data"
+{
+  "myage": "MjQ=",
+  "myname": "Y2hlbmxpYW5nCg=="
+}
+```
 
 # 7 只使用data字段定义键值对即可 
+```
+root@master01:~# kubectl apply -f 07.secrets_just-use-the-data-field.yaml --dry-run=client
+secret/just-use-the-data-field created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 07.secrets_just-use-the-data-field.yaml
+secret/just-use-the-data-field created
+```
+
+# 8 清理环境
+```
+kubectl delete -f ./
+```
+
