@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: app61
+  labels:
+    deploy: app61
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app61 
+  template:
+    metadata:
+      labels:
+        app: app61
+        env: prod
+    spec:
+      # Pod级别
+      volumes:
+        - name: data-volume
+          nfs:
+            server: 172.31.7.203     # nfs server的地址
+            path: /data/lili/app61   # nfs server中路径
+            readOnly: false        
+
+      # 容器级别之主容器
+      containers:
+        - name: app01
+          image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: data-volume
+            mountPath: /data/
+            readOnly: false
+          command:
+          - "/bin/sh"
+          args: 
+          - "-c"
+          - "sleep 10000000000"
+---
+

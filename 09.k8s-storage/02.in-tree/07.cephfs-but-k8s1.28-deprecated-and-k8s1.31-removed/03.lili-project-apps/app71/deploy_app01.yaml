@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili 
+  name: app01
+  labels:
+    deploy: app01
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app01
+  template:
+    metadata:
+      labels:
+        app: app01
+        project: wyc
+        env: prod
+    spec:
+      # Pod级别
+      volumes:
+        - name: logs
+          cephfs:
+            # 其存储系统之Ceph之monitors组件的连接地址和相应volume（subvolume）的路径
+            monitors:                                                            # 根据存储管理员所提供的信息
+              - "172.31.7.211:6789"
+              - "172.31.7.212:6789"
+              - "172.31.7.213:6789"
+            path:  "/volumes/app01/logs/9b573841-abed-419e-b8f8-c8a18c50930b"   # 根据存储管理员所提供的信息
+
+            # 认证的用户和secret(不是keyring哈)
+            # 需要将Ceph存储系统中的client.wyc用户的secret文件拷贝至相应的worker node上(得事先与k8s管理员沟通)
+            # user: "client.wyc"
+            user: "wycfs"                                                          # 根据存储管理员所提供的信息
+            secretFile: "/etc/ceph/ceph.client.wycfs.secret"                       # 根据k8s管理员所提供的信息,wyc项目的各worker node上得有
+
+            # 在Pod级别加载volume后,在这一层面,允许其读写
+            readOnly: false
+
+      # 容器级别之主容器
+      containers:
+        - name: app01
+          image: docker.io/library/nginx:latest
+          volumeMounts:
+            - name: logs
+              mountPath: /var/log/nginx/
+              readOnly: false
+          
