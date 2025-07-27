@@ -15,7 +15,7 @@ systemctl enable      status nfs-server.service
 systemctl is-enabled  status nfs-server.service
 ```
 
-# 3 expose相关目录的方式(这里正好做好测试)
+# 3 expose相关目录的方式(这里正好做一下测试)
 ```
 ## 创建/data/test/目录,这个目录是给wyc项目的相关应用所使用的
 mkdir -p /data/test/
