@@ -67,12 +67,13 @@ curl https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/refs/tags/v
 # 4 相关manifests的修改
 **查看所用的namspace**
 ```
-root@node01:~# grep "namespace:" 01.csi-node/*.yaml
+root@master01:~# grep "namespace:" 01.csi-node/*.yaml
 01.csi-node/01.sa_csi-nfs-node-sa.yaml:#  namespace: kube-system
 01.csi-node/01.sa_csi-nfs-node-sa.yaml:  namespace: kube-system
 01.csi-node/01.sa_csi-nfs-node-sa.yaml:#    namespace: kube-system
 01.csi-node/02.ds_csi-nfs-node.yaml:  namespace: kube-system
-root@node01:~# grep "namespace:" 02.csi-controller/*.yaml
+root@master01:~#
+root@master01:~# grep "namespace:" 02.csi-controller/*.yaml
 02.csi-controller/01.rbac_csi-nfs-controller-sa.yaml:  namespace: kube-system
 02.csi-controller/01.rbac_csi-nfs-controller-sa.yaml:#  namespace: kube-system
 02.csi-controller/01.rbac_csi-nfs-controller-sa.yaml:    namespace: kube-system
@@ -86,7 +87,8 @@ root@node01:~# grep "image:" 01.csi-node/*.yaml | sort
 01.csi-node/02.ds_csi-nfs-node.yaml:          image: registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.10.0
 01.csi-node/02.ds_csi-nfs-node.yaml:          image: registry.k8s.io/sig-storage/livenessprobe:v2.12.0
 01.csi-node/02.ds_csi-nfs-node.yaml:          image: registry.k8s.io/sig-storage/nfsplugin:v4.7.0
-
+root@master01:~#
+root@master01:~#
 root@node01:~# grep "image:" 02.csi-controller/*.yaml | sort
 02.csi-controller/02.deploy_csi-nfs-controller.yaml:          image: registry.k8s.io/sig-storage/csi-provisioner:v4.0.0
 02.csi-controller/02.deploy_csi-nfs-controller.yaml:          image: registry.k8s.io/sig-storage/csi-snapshotter:v6.3.3
