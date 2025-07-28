@@ -128,6 +128,23 @@ kubectl apply -f ./03.csidrivers-storageclass/
 
 **列出关键资源**
 ```
+root@master01:~# kubectl  -n kube-system get pods | grep csi-nfs-node
+csi-nfs-node-946vz                    3/3     Running   0               32s
+csi-nfs-node-94nsj                    3/3     Running   0               32s
+csi-nfs-node-c462t                    3/3     Running   0               32s
+csi-nfs-node-k5xq6                    3/3     Running   0               32s
+csi-nfs-node-xg4xm                    3/3     Running   0               32s
+root@master01:~# 
+root@master01:~# 
+root@master01:~# kubectl  -n kube-system get pods | grep csi-nfs-controller
+csi-nfs-controller-77697d9647-l6k8n   4/4     Running   0               23s
+root@master01:~#
+root@master01:~#
+root@master01:~# kubectl get csidrivers,storageclasses
+NAME                                      ATTACHREQUIRED   PODINFOONMOUNT   STORAGECAPACITY   TOKENREQUESTS   REQUIRESREPUBLISH   MODES        AGE
+csidriver.storage.k8s.io/nfs.csi.k8s.io   false            false            false             <unset>         false               Persistent   39s
 
+NAME                                  PROVISIONER      RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+storageclass.storage.k8s.io/nfs-csi   nfs.csi.k8s.io   Delete          Immediate           false                  39s
 ```
 
