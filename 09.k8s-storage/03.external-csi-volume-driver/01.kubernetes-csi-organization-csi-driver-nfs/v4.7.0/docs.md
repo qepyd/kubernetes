@@ -7,10 +7,10 @@ https://github.com/kubernetes-csi/csi-driver-nfs
 ```
 mkdir 01.csi-node
 mkdir 02.csi-controller
-mkdir 03.csidrivers-resources-object
+mkdir 03.csidrivers-storageclass 
 ```
 
-# 2 下载相关的manifests
+# 3 下载相关的manifests
 **相关manifests所在路径**
 ```
 https://github.com/kubernetes-csi/csi-driver-nfs/tree/v4.7.0/deploy/v4.7.0
@@ -64,7 +64,7 @@ curl https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/refs/tags/v
    #
 ```
 
-# 3. 相关manifests的修改
+# 4 相关manifests的修改
 **查看所用的namspace**
 ```
 root@node01:~# grep "namespace:" 01.csi-node/*.yaml
@@ -113,5 +113,21 @@ sed -i  's#registry.k8s.io/sig-storage/livenessprobe:v2.12.0#swr.cn-north-1.myhu
 sed -i  's#registry.k8s.io/sig-storage/nfsplugin:v4.7.0#swr.cn-north-1.myhuaweicloud.com/qepyd/sig-storage-nfsplugin:v4.7.0#g'                                    02.csi-controller/*.yaml
 ```
 
+# 5 应用manifests
+**应用manifests**
+```
+kubectl apply -f ./01.csi-node/ --dry-run=client
+kubectl apply -f ./01.csi-node/
 
+kubectl apply -f ./02.csi-controller/  --dry-run=client
+kubectl apply -f ./02.csi-controller/ 
+
+kubectl apply -f ./03.csidrivers-storageclass/ --dry-run=client
+kubectl apply -f ./03.csidrivers-storageclass/
+```
+
+**列出关键资源**
+```
+
+```
 
