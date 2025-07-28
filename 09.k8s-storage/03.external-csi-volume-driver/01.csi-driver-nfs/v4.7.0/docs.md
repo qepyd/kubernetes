@@ -151,3 +151,10 @@ NAME                                  PROVISIONER      RECLAIMPOLICY   VOLUMEBIN
 storageclass.storage.k8s.io/nfs-csi   nfs.csi.k8s.io   Delete          Immediate           false                  39s
 ```
 
+
+# 6 k8s各worker node安装nfs-common软件包
+```
+## ubuntu 操作系统下
+apt update
+apt install -y nfs-common
+```
