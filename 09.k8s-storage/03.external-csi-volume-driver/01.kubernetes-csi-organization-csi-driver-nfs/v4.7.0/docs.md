@@ -65,6 +65,20 @@ curl https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/refs/tags/v
 ```
 
 # 3. 相关manifests的修改
+**查看所用的namspace**
+```
+root@node01:~# grep "namespace:" 01.csi-node/*.yaml
+01.csi-node/01.sa_csi-nfs-node-sa.yaml:#  namespace: kube-system
+01.csi-node/01.sa_csi-nfs-node-sa.yaml:  namespace: kube-system
+01.csi-node/01.sa_csi-nfs-node-sa.yaml:#    namespace: kube-system
+01.csi-node/02.ds_csi-nfs-node.yaml:  namespace: kube-system
+root@node01:~# grep "namespace:" 02.csi-controller/*.yaml
+02.csi-controller/01.rbac_csi-nfs-controller-sa.yaml:  namespace: kube-system
+02.csi-controller/01.rbac_csi-nfs-controller-sa.yaml:#  namespace: kube-system
+02.csi-controller/01.rbac_csi-nfs-controller-sa.yaml:    namespace: kube-system
+02.csi-controller/02.deploy_csi-nfs-controller.yaml:  namespace: kube-system
+```
+
 **修改image**
 ```
 ## 查看所用到的镜像
