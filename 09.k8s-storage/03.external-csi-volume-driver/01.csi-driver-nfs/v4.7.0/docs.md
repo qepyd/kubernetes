@@ -1,3 +1,4 @@
+
 # 1 csi-driver-nfs项目地址
 ```
 https://github.com/kubernetes-csi/csi-driver-nfs
@@ -66,7 +67,7 @@ curl https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/refs/tags/v
 
 # 4 相关manifests的修改
 **查看所用的namspace**
-```
+``
 root@master01:~# grep "namespace:" 01.csi-node/*.yaml
 01.csi-node/01.sa_csi-nfs-node-sa.yaml:#  namespace: kube-system
 01.csi-node/01.sa_csi-nfs-node-sa.yaml:  namespace: kube-system
@@ -78,10 +79,10 @@ root@master01:~# grep "namespace:" 02.csi-controller/*.yaml
 02.csi-controller/01.rbac_csi-nfs-controller-sa.yaml:#  namespace: kube-system
 02.csi-controller/01.rbac_csi-nfs-controller-sa.yaml:    namespace: kube-system
 02.csi-controller/02.deploy_csi-nfs-controller.yaml:  namespace: kube-system
-```
+``
 
 **修改image**
-```
+``
 ## 查看所用到的镜像
 root@node01:~# grep "image:" 01.csi-node/*.yaml | sort
 01.csi-node/02.ds_csi-nfs-node.yaml:          image: registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.10.0
@@ -113,7 +114,7 @@ sed -i  's#registry.k8s.io/sig-storage/csi-provisioner:v4.0.0#swr.cn-north-1.myh
 sed -i  's#registry.k8s.io/sig-storage/csi-snapshotter:v6.3.3#swr.cn-north-1.myhuaweicloud.com/qepyd/sig-storage-csi-snapshotter:v6.3.3#g'                        02.csi-controller/*.yaml
 sed -i  's#registry.k8s.io/sig-storage/livenessprobe:v2.12.0#swr.cn-north-1.myhuaweicloud.com/qepyd/sig-storage-livenessprobe:v2.12.0#g'                          02.csi-controller/*.yaml
 sed -i  's#registry.k8s.io/sig-storage/nfsplugin:v4.7.0#swr.cn-north-1.myhuaweicloud.com/qepyd/sig-storage-nfsplugin:v4.7.0#g'                                    02.csi-controller/*.yaml
-```
+``
 
 # 5 应用manifests
 **应用manifests**
