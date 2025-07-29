@@ -1,8 +1,8 @@
 # 1 卷类型(树内卷插件)
-参考：https://kubernetes.io/zh-cn/docs/concepts/storage/volumes/#volume-types
-参考：kubectl explain pods.spec.volumes
+参考：https://kubernetes.io/zh-cn/docs/concepts/storage/volumes/#volume-types  
+参考：kubectl explain pods.spec.volumes  
 从官网可以看到有些卷类型已标记为弃用（将来会移除）、有些已移除。  
-这些类类型由kubernetes提供，所以也称为树内（in-tree）卷插件。
+这些卷类型由kubernetes提供，所以也称为树内（in-tree）卷插件。  
 ```
 特殊卷类型
   configMap
@@ -44,7 +44,7 @@
   存储平台：quobyte、portworxVolume、storageos、scaleIO
   云 存 储：awsElasticBlockStore、gcePersistentDisk、azureFile、azureDisk
 
-扩展接口(为了对接"外部卷驱动程序"而准备的树内插件)
+扩展接口(为了对接"外部卷驱动程序"而准备的树内卷插件)
   flexVolume
   csi
 ```
