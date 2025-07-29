@@ -6,6 +6,7 @@ metadata:
   name: volume-downwardapi-fieldref
   labels:
     project: lili
+    env: prod
     app: volume-downwardapi-fieldref
   annotations:
     author: chenliang
@@ -28,9 +29,9 @@ spec:
       - path: labels
         fieldRef: 
           fieldPath: metadata.labels
-      - path: annotations
+      - path: annotations.author
         fieldRef:
-          fieldPath: metadata.annotations.author
+          fieldPath: metadata.annotations['author']  # 其中括号只只能写一个
 
   # 容器级别之主容器
   containers:

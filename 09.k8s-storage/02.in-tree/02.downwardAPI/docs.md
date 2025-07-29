@@ -44,8 +44,80 @@ resource: limits.ephemeral-storage
 resource: requests.ephemeral-storage
 ```
 
+# 2 pods.spec.volumes.downwardAPI.items.fieldRef
+```
+## 应用manifests
+root@master01:~#
+root@master01:~# kubectl apply -f 01.pods_volume-downwardapi-fieldref.yaml  --dry-run=client
+pod/volume-downwardapi-fieldref created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 01.pods_volume-downwardapi-fieldref.yaml
+pod/volume-downwardapi-fieldref created
+
+## 列出资源对象
+root@master01:~#
+root@master01:~# kubectl  -n lili get pod/volume-downwardapi-fieldref
+NAME                          READY   STATUS    RESTARTS   AGE
+volume-downwardapi-fieldref   1/1     Running   0          26s
 
 
+## 进入Pod中的容器查看
+root@master01:~#
+root@master01:~# kubectl  -n lili exec -it  pod/volume-downwardapi-fieldref -c busybox /bin/sh -- ls -l /data
+total 0
+drwxrwxrwt    3 root     root           180 Jul 29 03:02 pod-info-metadata
+root@master01:~#
+root@master01:~# kubectl  -n lili exec -it  pod/volume-downwardapi-fieldref -c busybox /bin/sh -- ls -l /data/pod-info-metadata
+total 0
+lrwxrwxrwx    1 root     root            25 Jul 29 03:02 annotations.author -> ..data/annotations.author
+lrwxrwxrwx    1 root     root            13 Jul 29 03:02 labels -> ..data/labels
+lrwxrwxrwx    1 root     root            11 Jul 29 03:02 name -> ..data/name
+lrwxrwxrwx    1 root     root            16 Jul 29 03:02 namespace -> ..data/namespace
+lrwxrwxrwx    1 root     root            10 Jul 29 03:02 uid -> ..data/uid
+root@master01:~#
+root@master01:~# kubectl  -n lili exec -it  pod/volume-downwardapi-fieldref -c busybox /bin/sh -- cat /data/pod-info-metadata/namespace
+lili
+```
 
 
+# 3 pods.spec.volumes.downwardAPI.items.resourceFieldRef
+```
+## 应用manifests
+root@master01:~# 
+root@master01:~# kubectl apply -f 02.pods_volume-downwardapi-resourcefieldref.yaml  --dry-run=client
+pod/volume-downwardapi-resourcefieldref created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 02.pods_volume-downwardapi-resourcefieldref.yaml
+pod/volume-downwardapi-resourcefieldref created
 
+## 列出资源对象
+root@master01:~# 
+root@master01:~# kubectl  -n lili get pod/volume-downwardapi-resourcefieldref
+NAME                                  READY   STATUS    RESTARTS   AGE
+volume-downwardapi-resourcefieldref   1/1     Running   0          34s
+
+## 进入Pod中的容器查看
+root@master01:~# 
+root@master01:~# kubectl  -n lili exec -it  pod/volume-downwardapi-resourcefieldref -c busybox /bin/sh  -- ls -l /data
+total 0
+drwxrwxrwt    3 root     root           160 Jul 29 03:05 busybox-container-resources
+root@master01:~# 
+root@master01:~# kubectl  -n lili exec -it  pod/volume-downwardapi-resourcefieldref -c busybox /bin/sh  -- ls -l /data/busybox-container-resources
+total 0
+lrwxrwxrwx    1 root     root            17 Jul 29 03:05 limits-cpu -> ..data/limits-cpu
+lrwxrwxrwx    1 root     root            20 Jul 29 03:05 limits-memory -> ..data/limits-memory
+lrwxrwxrwx    1 root     root            19 Jul 29 03:05 requests-cpu -> ..data/requests-cpu
+lrwxrwxrwx    1 root     root            22 Jul 29 03:05 requests-memory -> ..data/requests-memory
+root@master01:~#
+root@master01:~# kubectl  -n lili exec -it  pod/volume-downwardapi-resourcefieldref -c busybox /bin/sh  -- cat /data/busybox-container-resources/limits-cpu
+100
+root@master01:~#
+root@master01:~# kubectl  -n lili exec -it  pod/volume-downwardapi-resourcefieldref -c busybox /bin/sh  -- cat /data/busybox-container-resources/limits-memory
+256
+```
+
+# 4 清理环境
+```
+kubectl delete -f  ./01.pods_volume-downwardapi-fieldref.yaml
+kubectl delete -f  ./02.pods_volume-downwardapi-resourcefieldref.yaml
+```
