@@ -25,12 +25,6 @@
     # 此树内卷插件可以将若干现有的卷源进行映射/投射。
     #  configmaps、secrets、downwardAPI、serviceAccountToken、clusterTrustBundle
     #  
-  persistentVolumeClaim
-    # 
-    # 此树内卷插件对接的存储为persistentvolumeclaims（简写pvc）资源对象。
-    # pvc资源对象的实际状态数据是存放在kube-apiserver的后端存储之etcd中的
-    # pvc资源对象会与pv资源对象(持久卷)进行一对一绑定。
-    # 
 
 临时卷类型
   emptyDir
@@ -48,6 +42,12 @@
 扩展接口(为了对接"外部卷驱动程序"而准备的树内卷插件)
   flexVolume
   csi
+    #
+    # 通过PersistentVolumeClaim对象引用是最常用的
+    # persistentVolumeClaim卷插件指定pvc资源对象。
+    # pvc资源对象会与pv进行一一绑定。
+    # pv中使用csi卷插件。  
+    # 
 ```
 
 
