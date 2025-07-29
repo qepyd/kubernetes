@@ -29,7 +29,8 @@
     # 
     # 此树内卷插件对接的存储为persistentvolumeclaims（简写pvc）资源对象。
     # pvc资源对象的实际状态数据是存放在kube-apiserver的后端存储之etcd中的
-    #
+    # pvc资源对象会与pv资源对象(持久卷)进行一对一绑定。
+    # 
 
 临时卷类型
   emptyDir
