@@ -1,12 +1,12 @@
 # 1 树内卷插件之downwardAPI的介绍
 参考：https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/downward-api  
-Pod在创建并运行后，其对象自身有一些信息，这些信息可以利用起来（比如给Pod中容器里面的程序使用）。有两种
-方法可以将Pod信息和容器字段暴露给运行中的容器：环境变量和由特殊卷类型承载的文件。这两种暴露Pod和容器字段
-的方法统称为Downward API。
+Pod在创建并运行后，自身有一些信息，这些信息可以利用起来（服务Pod中容器里面的应用程序）。通常有两种
+方法可以将Pod信息和Pod中容器字段暴露给运行中的容器：环境变量和由特殊卷类型(包含有树内卷插件之downwardAPI)承
+载的文件。这两种暴露Pod和容器字段的方法统称为Downward API。
 
 参考：https://kubernetes.io/zh-cn/docs/concepts/storage/volumes/#downwardapi  
-而这里主要是涉及树内卷插件之downwardAPI。其也被分类于投射卷类。这这类卷中，所公开的数据以纯文本格式的
-只读文件形式存在。树内卷插件之downwardAPI的规范可通过kubectl explain pods.spec.volumes.downwardAPI查看。
+downwardAPI 卷用于为应用提供 downward API 数据。 在这类卷中，所公开的数据以纯文本格式的只读文件形式存在。
+树内卷插件之downwardAPI的规范可通过kubectl explain pods.spec.volumes.downwardAPI查看。
 ```
 defaultMode: <integer>
 items: <[]Object>

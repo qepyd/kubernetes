@@ -1,49 +1,63 @@
-# 1 kubernetes的存储基本介绍
-## 1.1 所谓的kubernetes存储
-任何应用要交付到kubernetes中就得以Pod方式交付（不一定是用pods资源来进行编排哈）。Pod中
-
-
-## 1.1 csi的设计方案
-**参考**  
+# 1 卷类型(树内卷插件)
+参考：https://kubernetes.io/zh-cn/docs/concepts/storage/volumes/#volume-types
+参考：kubectl explain pods.spec.volumes
+从官网可以看到有些卷类型已标记为弃用（将来会移除）、有些已移除。  
+这些类类型由kubernetes提供，所以也称为树内（in-tree）卷插件。
 ```
-https://github.com/kubernetes/design-proposals-archive/blob/main/storage/container-storage-interface.md
+特殊卷类型
+  configMap
+    #
+    # 此树内卷插件对接的存储为configmaps资源对象。
+    # configmaps资源对象中的数据(键值对)是放在kube-apiserver的后端存储之etcd中的。
+    #
+  secret
+    # 
+    # 此树内卷插件对接的存储为secrets资源对象。
+    # configmaps资源对象中的数据(键值对)是放在kube-apiserver的后端存储之etcd中的。
+    #
+  downwardAPI
+    #
+    # 此树内卷插件对接的存储为自身所在Pod。用于获取Pod级别、容器级别相关信息(字段)。
+    # Pod的实际状态数据是存放在kube-apiserver的后端存储之etcd中的。
+    # 
+  projected
+    #
+    # 此树内卷插件可以将若干现有的卷源进行映射/投射。
+    #  configmaps、secrets、downwardAPI、serviceAccountToken、clusterTrustBundle
+    #  
+  persistentVolumeClaim
+    # 
+    # 此树内卷插件对接的存储为persistentvolumeclaims（简写pvc）资源对象。
+    # pvc资源对象的实际状态数据是存放在kube-apiserver的后端存储之etcd中的
+    #
+
+临时卷类型
+  emptyDir
+
+本地卷类型
+  local
+  hostPath
+
+网络存储卷类型
+  文件系统：nfs、glusterfs、cephfs、cinder
+  块 设 备：iscsi、fc、rbd、vsphereVolume
+  存储平台：quobyte、portworxVolume、storageos、scaleIO
+  云 存 储：awsElasticBlockStore、gcePersistentDisk、azureFile、azureDisk
+
+扩展接口(为了对接"外部卷驱动程序"而准备的树内插件)
+  flexVolume
+  csi
 ```
-**术语(Terminology)**
-```
-## csi(Container Storage Interface,容器存储接口)
-
-## in-tree（树内）
-
-## out-of-tree(树外)
-
-## CSI Volume Plugin
-
-## CSI Volume Driver
-```
 
 
-## 1.1 此阶段会涉及到的资源(resources)
-```
-persistentvolumeclaims
-   #
-   # 简写pvc，类型为PersistentVolumeClaim
-   # kubernetes的标准资源，属于namespace级别的资源
-   #
-persistentvolumes
-   #
-   # 简写pv，类型为PersistentVolume
-   # kubernetes的标准资源，属于非namespace级别的资源
-   # 
-storageclasses
-   #
-   # 简写sc，类型为StorageClass
-   # kubernetes的标准资源，属于非namespace级别的资源
-   #
-csidrivers
-   #
-   # 无简写，类型为CSIDriver
-   # kubernetes的标准资源，属于非namespace级别的资源
-   # 
-```
+# 2 持久卷申领、持久卷、存储类
 
-## 1.2 
+
+
+
+
+
+
+
+
+
