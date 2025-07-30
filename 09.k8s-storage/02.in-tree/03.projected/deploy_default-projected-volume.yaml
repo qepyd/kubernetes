@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: default-projected-volume 
+  labels:
+    project: lili
+    env: prod
+    app: default-projected-volume 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: lili
+      env: prod
+      app: default-projected-volume 
+  template:
+    metadata:
+      labels:
+        project: lili
+        env: prod
+        app: default-projected-volume 
+    spec:
+      containers:
+      - name: busybox
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+        command:
+        - "/bin/sh"
+        args: 
+        - "-c"
+        - "sleep 10000000000"
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+---
