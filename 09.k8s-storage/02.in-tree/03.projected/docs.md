@@ -16,7 +16,7 @@ downwardAPI
   #
 serviceAccountToken
   #
-  # 将api-server为serviceAccount的token进行挂载
+  # 将Pod所指定serviceAccount资源对象的token(api-server会为其生成)进行挂载
   # 
 clusterTrustBundle
   #
@@ -78,6 +78,9 @@ default-projected-volume-697665b54b-khzmq   1/1     Running   0          109s
 default-projected-volume-697665b54b-rbzr5   1/1     Running   0          109s
 
 ## 以deployment/default-projected-volume对象所编排的pod/default-projected-volume-697665b54b-khzmq来查看
+root@master01:~# kubectl  -n lili get pods/default-projected-volume-697665b54b-khzmq -o json | jq ".spec.serviceAccountName"
+"default"
+
 root@master01:~# kubectl  -n lili get pods/default-projected-volume-697665b54b-khzmq -o json  | jq ".spec.volumes[]"
 {
   "name": "kube-api-access-zkt6n",
