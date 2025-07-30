@@ -1,0 +1,97 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: projected-downwardapi
+  labels:
+    project: lili
+    env: prod
+    app: projected-downwardapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: lili
+      env: prod
+      app: projected-downwardapi
+  template:
+    metadata:
+      labels:
+        project: lili
+        env: prod
+        app: projected-downwardapi 
+      annotations:
+        author: chenliang
+        email: 158317096@qq.com
+    spec:
+      # Pod级别
+      volumes:
+      - name: pod-info-metadata
+        projected:
+          sources: 
+          - downwardAPI:
+              items:
+              - path: namespace
+                fieldRef:  
+                  fieldPath: metadata.namespace
+              - path: name
+                fieldRef: 
+                  fieldPath: metadata.name
+              - path: uid
+                fieldRef: 
+                  fieldPath: metadata.uid
+              - path: labels
+                fieldRef: 
+                  fieldPath: metadata.labels
+              - path: annotations.author
+                fieldRef:
+                  fieldPath: metadata.annotations['author']  # 其中括号只只能写一个
+      - name: busybox-container-resources
+        projected:
+          sources:
+          - downwardAPI:
+              items:
+              - path: limits-cpu
+                resourceFieldRef:
+                  containerName: busybox
+                  resource: limits.cpu
+                  divisor: 1m
+              - path: limits-memory
+                resourceFieldRef:
+                  containerName: busybox
+                  resource: limits.memory
+                  divisor: 1Mi 
+              - path: requests-cpu
+                resourceFieldRef:
+                  containerName: busybox
+                  resource: requests.cpu
+                  divisor: 1m
+              - path: requests-memory
+                resourceFieldRef:
+                  containerName: busybox
+                  resource: requests.memory
+                  divisor: 1Mi
+       
+      # 容器级别之主容器
+      containers:
+      - name: busybox
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+        volumeMounts:
+        - name: pod-info-metadata
+          mountPath: /data/pod-info-metadata/
+          readOnly: true
+        - name: busybox-container-resources
+          mountPath: /data/busybox-container-resources/
+          readOnly: true
+        command:
+        - "/bin/sh"
+        args: 
+        - "-c"
+        - "sleep 10000000000"
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+---
+
