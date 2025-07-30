@@ -3,18 +3,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: lili
-  name: app61
+  name: app71
   labels:
-    deploy: app61
+    deploy: app71
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: app61 
+      app: app71 
   template:
     metadata:
       labels:
-        app: app61
+        app: app71
         env: prod
     spec:
       # Pod级别
@@ -22,7 +22,7 @@ spec:
         - name: data-volume
           nfs:
             server: 172.31.7.203     # nfs server的地址
-            path: /data/lili/app61   # nfs server中路径
+            path: /data/lili/app71   # nfs server中路径
             readOnly: false        
 
       # 容器级别之主容器
