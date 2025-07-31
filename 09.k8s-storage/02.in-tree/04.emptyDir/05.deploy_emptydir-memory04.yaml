@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: emptydir-memory04
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: emptydir-memory04
+  template:
+    metadata:
+      labels:
+        app: emptydir-memory04
+    spec:
+      ## Pod级别
+      volumes:
+      - name: emptydir-memory04
+        emptyDir:
+          # 指定存储介质为Memory
+          medium: "Memory"
+          # 设置大小为500Mi
+          sizeLimit: 500Mi
+
+      ## 容器级别之主容器
+      containers:
+      - name: busybox01
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+        volumeMounts:
+        - name: emptydir-memory04
+          mountPath: /data/emptydir-memory
+          readOnly: false
+        command:
+        - "/bin/sh"
+        args: 
+        - "-c"
+        - "sleep 10000000000"
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"    
+      - name: busybox02
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+        volumeMounts:
+        - name: emptydir-memory04
+          mountPath: /data/emptydir-memory
+          readOnly: false
+        command:
+        - "/bin/sh"
+        args:
+        - "-c"
+        - "sleep 100000000"
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "512Mi"
+---

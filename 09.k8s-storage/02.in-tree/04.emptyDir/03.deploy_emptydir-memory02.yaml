@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: emptydir-memory02
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: emptydir-memory02
+  template:
+    metadata:
+      labels:
+        app: emptydir-memory02
+    spec:
+      ## Pod级别
+      volumes:
+      - name: emptydir-memory02
+        emptyDir:
+          # 指定存储介质为Memory
+          medium: "Memory"
+          # 没有设置大小
+          #   所有主容器均有mount其emptyDir卷,所有主容器均未设置resources.limits.memory或只有一个设置了resources.limits.memory时，其大小即为所在worker node上的所有内存空间。
+          #   所有主容器均有mount其emptyDir卷,所有主容器均有设置resources.limits.memory，其大小为所有主容器resources.limits.memory的总和。
+          #sizeLimit: 500Mi
+
+      ## 容器级别之主容器
+      containers:
+      - name: busybox01
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+        volumeMounts:
+        - name: emptydir-memory02
+          mountPath: /data/emptydir-memory
+          readOnly: false
+        command:
+        - "/bin/sh"
+        args: 
+        - "-c"
+        - "sleep 10000000000"
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"    
+      - name: busybox02
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+        volumeMounts:
+        - name: emptydir-memory02
+          mountPath: /data/emptydir-memory
+          readOnly: false
+        command:
+        - "/bin/sh"
+        args:
+        - "-c"
+        - "sleep 100000000"
+        #resources:
+        #  limits:
+        #    cpu: "100m"
+        #    memory: "512Mi"
+---

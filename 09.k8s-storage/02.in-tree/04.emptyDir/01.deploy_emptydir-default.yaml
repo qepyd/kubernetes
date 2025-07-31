@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili
+  name: emptydir-default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: emptydir-default
+  template:
+    metadata:
+      labels:
+        app: emptydir-default
+    spec:
+      ## Pod级别
+      volumes:
+      - name: emptydir-default
+        emptyDir: 
+          # 默认值为""，在Pod所在worker node上是一个目录
+          #  /var/lib/kubelet/pods/<Pod的Uid>/volumes/kubernetes.io~empty-dir/<emptyDir的Name>
+          medium: ""
+          sizeLimit: "500Mi"
+
+      ## 容器级别之主容器
+      containers:
+      - name: busybox01
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+        volumeMounts:
+        - name: emptydir-default
+          mountPath: /data/emptydir-default
+          readOnly: false
+        command:
+        - "/bin/sh"
+        args: 
+        - "-c"
+        - "sleep 100000000"
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+      - name: busybox02
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+        volumeMounts:
+        - name: emptydir-default
+          mountPath: /data/emptydir-default
+          readOnly: false
+        command:
+        - "/bin/sh"
+        args:
+        - "-c"
+        - "sleep 100000000"
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "512Mi"
+---
