@@ -36,7 +36,8 @@ kubectl explain pods.spec.volumes.emptyDir.sizeLimit
   #      所有主容器均有设置resources.limits.memory，其大小为所有主容器resources.limits.memory的总和。
   #    应该设置大小
   #      根据所共享数据的大小(一般是少量数据、可丢失的数据)。
-  #    
+  #      不会计算到Pod调度时的总resources.requests.memory 
+  # 
 ```
 
 # 2 默认存储介质
