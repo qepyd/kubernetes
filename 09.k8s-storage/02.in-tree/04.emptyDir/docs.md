@@ -21,10 +21,9 @@ kubectl explain pods.spec.volumes.emptyDir.medium
   # 默认值为""，可设值也只能是""或Memory。
   # 当为默认值时
   #    其emptyDir卷在worker node上所使用的存储介质可能是磁盘、SSD或网络存储，这取决于你的环境.
-  #    其实就是个目录。/var/lib/kubelet/pods/<Pod的Uid>/volumes/kubernetes.io~empty-dir/<emptyDir的Name>
+  #    其实就是个目录。即 /var/lib/kubelet/pods/<Pod的Uid>/volumes/kubernetes.io~empty-dir/<emptyDir的Name> ，不会被挂载。
   # 当为Memory时
-  #    会将/var/lib/kubelet/pods/<Pod的Uid>/volumes/kubernetes.io~empty-dir/<emptyDir的Name>在worker node上进行挂载
-  #    其Filesystem为tmpfs
+  #    会将 /var/lib/kubelet/pods/<Pod的Uid>/volumes/kubernetes.io~empty-dir/<emptyDir的Name> 目录进行挂载，其Filesystem为tmpfs
   #
 kubectl explain pods.spec.volumes.emptyDir.sizeLimit
   #
@@ -119,8 +118,53 @@ root@master01:~#
 ```
 
 
-# 2 Memory
+# 3 Memory作为存储介质
+这里就以 02.deploy_emptydir-memory01.yaml 这个manifests为例，主要是看看各Pod副本所在worker node上其emptyDir卷的位置(位置均是统一的,只不过会被挂载)
+```
+## 应用manifests
+root@master01:~# kubectl apply -f 02.deploy_emptydir-memory01.yaml  --dry-run=client
+deployment.apps/emptydir-memory01 created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 02.deploy_emptydir-memory01.yaml
+deployment.apps/emptydir-memory01 created
+
+## 列出相关资源对象
+root@master01:~# kubectl -n lili get deploy/emptydir-memory01 
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+emptydir-memory01   2/2     2            2           22s
+root@master01:~#
+root@master01:~# kubectl -n lili describe deploy/emptydir-memory01  | grep "NewReplicaSet:" | cut -d " " -f4
+emptydir-memory01-c77bcc566
+root@master01:~#
+root@master01:~# kubectl  -n lili get pods -o wide | grep emptydir-memory01-c77bcc566
+emptydir-memory01-c77bcc566-gbqn2   2/2     Running   0          87s     10.0.3.114   node01   <none>           <none>
+emptydir-memory01-c77bcc566-nd4jj   2/2     Running   0          87s     10.0.4.106   node02   <none>           <none>
+
+## node01上其pod/emptydir-memory01-c77bcc566-gbqn2的emptyDir卷
+root@master01:~# kubectl -n lili get pods/emptydir-memory01-c77bcc566-gbqn2 -o json | jq ".metadata.uid"
+"ff647282-e10d-4a0b-a2eb-0489c34ad4d7"
+root@master01:~# 
+
+root@node01:~# df -h | grep ff647282-e10d-4a0b-a2eb-0489c34ad4d7
+tmpfs           7.7G     0  7.7G   0% /var/lib/kubelet/pods/ff647282-e10d-4a0b-a2eb-0489c34ad4d7/volumes/kubernetes.io~empty-dir/emptydir-memory01
+tmpfs           7.7G   12K  7.7G   1% /var/lib/kubelet/pods/ff647282-e10d-4a0b-a2eb-0489c34ad4d7/volumes/kubernetes.io~projected/kube-api-access-9jjgk
+  #
+  # 其第一个，大小是7.7G，是因为我没有设置emptyDir卷的大小，会使用worker node上所有的内存
+  #
+root@node01:~# free -h
+              total        used        free      shared  buff/cache   available
+Mem:          7.7Gi       643Mi       4.0Gi       2.0Mi       3.1Gi       6.8Gi
+Swap:            0B          0B          0B
+
+## node02上其pod/emptydir-memory01-c77bcc566-nd4jj的emptyDir卷
+参考上述的操作。
 ```
 
-
+# 4 清理环境
+```
+kubectl delete -f ./01.deploy_emptydir-default.yaml
+kubectl delete -f ./02.deploy_emptydir-memory01.yaml
+kubectl delete -f ./03.deploy_emptydir-memory02.yaml
+kubectl delete -f ./04.deploy_emptydir-memory03.yaml
+kubectl delete -f ./05.deploy_emptydir-memory04.yaml
 ```
