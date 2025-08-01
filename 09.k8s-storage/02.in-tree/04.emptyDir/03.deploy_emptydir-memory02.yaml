@@ -21,8 +21,10 @@ spec:
           # 指定存储介质为Memory
           medium: "Memory"
           # 没有设置大小
-          #   所有主容器均有mount其emptyDir卷,所有主容器均未设置resources.limits.memory或只有一个设置了resources.limits.memory时，其大小即为所在worker node上的所有内存空间。
-          #   所有主容器均有mount其emptyDir卷,所有主容器均有设置resources.limits.memory，其大小为所有主容器resources.limits.memory的总和。
+          #   所有主容器均未设置resources.limits.memory 或 多主容器下只要有一个主容器未设置resources.limits.memory
+          #     其大小为所在worker node其物理内存的配置大小
+          #   所有主容器均有设置resources.limits.memory
+          #     其大小为所有主容器resources.limits.memory之和
           #sizeLimit: 500Mi
 
       ## 容器级别之主容器

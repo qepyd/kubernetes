@@ -21,6 +21,13 @@ spec:
           # 指定存储介质为Memory
           medium: "Memory"
           # 设置大小为500Mi
+          #   具体大小应该根据其数据占用空间而设置，因为使用的是Memory。
+          #   当设置的很大很大(超过worker node的内存)，所有主容器均未设置resources.limits.memory 或 多主容器下只要有一个主容器未设置resources.limits.memory
+          #     其大小为所在worker node其物理内存的配置大小
+          #     不会影响Pod的调度，即不会计入Pod的总resources.requests.memory。
+          #     挂载它的容器若设置有resources.limits.memory,是受限制的。
+          #   当设置的很大很大(超过worker node的内存)。所有主容器均有设置resources.limits.memory
+          #     大小为所有主容器resources.limits.memory之和
           sizeLimit: 500Mi
 
       ## 容器级别之主容器
