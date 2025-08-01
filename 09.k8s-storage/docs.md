@@ -1,36 +1,46 @@
 # 1 卷类型(树内卷插件)
-参考：https://kubernetes.io/zh-cn/docs/concepts/storage/volumes/#volume-types  
-参考：kubectl explain pods.spec.volumes  
-从官网可以看到有些卷类型已标记为弃用（将来会移除）、有些已移除。  
-这些卷类型由kubernetes提供，所以也称为树内（in-tree）卷插件。  
+官方参考：https://kubernetes.io/zh-cn/docs/concepts/storage/volumes/#volume-types 
+ 
+从官网可以看到有些卷类型已标记为弃用（将来会移除）、有些已移除。由kubernetes提供，所以也称为树内（in-tree）卷插件。  
+
+这些卷类型可以在pods资源(简写pv)、persistentvolumes资源(简写pv)的API规范中可以看到，以下对其做了一些分类。
 ```
 特殊卷类型
   configMap
     #
-    # 此树内卷插件对接的存储为configmaps资源对象。
-    # configmaps资源对象中的数据(键值对)是放在kube-apiserver的后端存储之etcd中的。
+    # pods.spec.volumes.configMap
+    #
+    # 树内卷插件之configMap的后端存储是configmaps资源对象
+    # configmaps资源对象中的数据(key value)是存放到kube-apiserver的后端之etcd中的。
     #
   secret
+    #
+    # pods.spec.volumes.secret 
     # 
-    # 此树内卷插件对接的存储为secrets资源对象。
-    # configmaps资源对象中的数据(键值对)是放在kube-apiserver的后端存储之etcd中的。
+    # 树内卷插件之secret的后端存储是secrets资源对象。
+    # secrets资源对象中的数据(key value)是存放到kube-apiserver的后端之etcd中的。
     #
   downwardAPI
+    # 
+    # pods.spec.volumes.downwardAPI
     #
-    # 此树内卷插件对接的存储为自身所在Pod。用于获取Pod级别、容器级别相关信息(字段)。
-    # Pod的实际状态数据是存放在kube-apiserver的后端存储之etcd中的。
+    # 树内卷插件之downwardAPI的后端存储即Pod副本的相关信息(通过相关字段引用)
+    # Pod副本自身相关信息是存放到kube-apiserver的后端之etcd中的。
     # 
   projected
+    # 
+    # pods.spec.volumes.projected
     #
-    # 此树内卷插件可以将若干现有的卷源进行映射/投射。
+    # 树内卷插件之projected的后端是现有的卷源，可以将若干现有的卷源进行映射/投射
     #  configmaps、secrets、downwardAPI、serviceAccountToken、clusterTrustBundle
     #  
 
 临时卷类型
   emptyDir
-
+    #
+    # pods.spec.volumes.emptyDir
+    # 
 本地卷类型
-  local
   hostPath
 
 网络存储卷类型
