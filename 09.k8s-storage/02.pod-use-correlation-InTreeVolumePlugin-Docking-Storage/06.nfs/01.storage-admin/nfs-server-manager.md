@@ -13,9 +13,10 @@ root@master01:~# exportfs -arv | grep /data/lili
 exporting *:/data/lili
 ```
 
-# 2 为项目中相关应用创建目录
+# 2 为lili项目的相关应用准备存储
 ```
 mkdir  /data/lili/app61/
 ls -ld /data/lili/app61/
 ```
+
 
