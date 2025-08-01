@@ -40,19 +40,54 @@
     #
     # pods.spec.volumes.emptyDir
     # 
+    # 树内卷插件之emptyDir的后端存储由Pod副本所在worker node上的kubelet进行创建（是个空目录）
+    # 
+
 本地卷类型
   hostPath
+    # 
+    # pods.spec.volumes.hostPath
+    # pv.spec.hostPath
+    #
+  local
+    # 
+    # pv.spec.local
+    #
+    # 
 
 网络存储卷类型
   文件系统：nfs、glusterfs、cephfs、cinder
+    #
+    # pods.spec.volumes.
+    # pv.spec
+    # 
   块 设 备：iscsi、fc、rbd、vsphereVolume
+    #
+    # pods.spec.volumes
+    # pv.spec.
+    #
   存储平台：quobyte、portworxVolume、storageos、scaleIO
+    #
+    # pods.spec.volumes
+    # pv.spec
+    # 
   云 存 储：awsElasticBlockStore、gcePersistentDisk、azureFile、azureDisk
+    #
+    # pods.spec.volumes
+    # pv.spec.
+    # 
 
 扩展接口(为了对接"外部卷驱动程序"而准备的树内卷插件)
   flexVolume
-  csi
     #
+    # pods.spec.volumes
+    # pv.spec
+    # 
+  csi
+    # 
+    # pods.spec.volumes
+    # pv.spec
+    # 
     # 通过PersistentVolumeClaim对象引用是最常用的
     # persistentVolumeClaim卷插件指定pvc资源对象。
     # pvc资源对象会与pv进行一一绑定。
