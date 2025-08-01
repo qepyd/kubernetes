@@ -1,13 +1,16 @@
-静态pv的实践
+# 01.static-pv-correlation-InTreeVolumePlugin-Docking-Storage
 ```
-jmsco项目
-  pv.spec.nfs
-  pv.spec.cephfs
-  pv.spec.rbd
+本地卷类型
+  local
 
-wyc项目
-  pv.csi  # nfs
-  pv.csi  # ceph-cephfs
-  pv.csi  # ceph-rbd
+网络存储卷类型
+  nfs
+  cephfs  # 不实践, 因为k8s1.28-deprecated-and-k8s1.31-removed
+  rbd     # 不实践，因为k8s1.28-deprecated-and-k8s1.31-removed
 ```
 
+# 02.static-pv-use-csi-InTreeVolumePlugin-Docking-Storage
+
+```
+
+```
