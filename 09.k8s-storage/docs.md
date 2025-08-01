@@ -1,9 +1,9 @@
 # 1 卷类型(树内卷插件)
 官方参考：https://kubernetes.io/zh-cn/docs/concepts/storage/volumes/#volume-types 
  
-从官网可以看到有些卷类型已标记为弃用（将来会移除）、有些已移除。由kubernetes提供，所以也称为树内（in-tree）卷插件。  
+从官网可以看到有些卷类型已标记为弃用（将来会移除）、有些已移除。它们由kubernetes提供，所以也称为树内（in-tree）卷插件。  
 
-这些卷类型可以在pods资源(简写pv)、persistentvolumes资源(简写pv)的API规范中可以看到，以下对其做了一些分类。
+这些树内（in-tree）卷插件可以在pods资源(简写pv)、persistentvolumes资源(简写pv)的API规范中可以看到，以下对其做了一些分类。
 ```
 特殊卷类型
   configMap
