@@ -15,7 +15,7 @@ exporting *:/data/lili
 
 # 2 为项目中相关应用创建目录
 ```
-mkdir  /data/lili/app71/
-ls -ld /data/lili/app71/
+mkdir  /data/lili/app61/
+ls -ld /data/lili/app61/
 ```
 
