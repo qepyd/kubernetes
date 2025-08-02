@@ -1,0 +1,31 @@
+apiVersion:  v1
+kind: PersistentVolume
+metadata:
+  name: pv-local
+  labels:
+    pv: pv-local
+spec:
+  # 树内插件
+  local:
+    path: /data-local
+
+
+  volumeMode: Filesystem
+
+  capacity:
+    storage: 10Gi
+  
+  accessModes:
+  - ReadWriteOnce
+
+  storageClassName: local-storage 
+  persistentVolumeReclaimPolicy: Delete  
+
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/os 
+          operator: In
+          values:
+          - linux
