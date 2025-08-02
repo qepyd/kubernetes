@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  # 其pv资源是非namespace级别的资源
+  name: binbin-prod-app21
+  labels:
+    project: binbin
+    env: prod
+    app: app21
+spec:
+  # 树内卷插件之nfs对接存储系统
+  nfs:
+    server: "172.31.7.203"
+    path: "/data/binbin/app21/"
+    readOnly: false
+
+  # 卷模式，pvc来匹配时是第一顺序
+  volumeMode: Filesystem
+
+  # 所属的storageClass, pvc来匹配时是第三顺序(第二顺序是pv的标签)
+  # 静态pv也可属于某个storageClass，只不过这个storageClass并非storagesclasses资源对象
+  storageClassName: "binbin-project-prod-static-pv"
+
+  # 访问模式
+  accessModes: 
+  - ReadWriteMany
+
+  # 能力(大小)
+  capacity: 
+    storage: 10Gi
+ 
+  # pv的回收策略
+  persistentVolumeReclaimPolicy: Delete
