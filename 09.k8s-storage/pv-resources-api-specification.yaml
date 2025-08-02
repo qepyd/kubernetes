@@ -1,26 +1,38 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  # pv资源属于非namespace级别的资源
+  # pv资源属于非namespace级别的资源，各pv资源对象的name可不能冲突
   name: <string>
   labels: <map[string]string>
   annotations: <map[string]string>
 spec:
-  # 
-  nfs: <Object>
+  ## 相关树内卷插件，如下例
+  local: <Object>    # 了解
+  nfs: <Object>      # 了解
+  cephfs: <Object>   # 了解，k8s1.28-deprecated-and-k8s1.31-removed
+  rbd: <Object>      # 了解，k8s1.28-deprecated-and-k8s1.31-removed
+  csi: <Object>      # 常用它，它为是为支持"外部卷驱动程序"而内置的树内卷插件，前提是k8s中安装有"外部卷驱动程序"
 
-  # 块存储
-  rbd: <Object>
-
-  ## 能力(必须)
-  capacity: <Object>
 
   ## 卷模式("必须")
+  #  pvc在匹配pv时，其优先顺序位于第1.
   #  默认为Filesystem(文件存储/共享存储)
   #  还支持Block(块存储)  
   volumeMode: <string>
-  
+
+
+  ## 所属的storageClass("必须")
+  #  pvc在匹配pv时，其优先顺序位于第3（第2为pv的labels）
+  #  pv要么属于某个storageClass,要么不属于任何storageClass
+  #  静态pv属于可以属于某个storageClass,也可以不属于任何storageClass。
+  #    若属于某个storageClass，其并非storageclasses资源对象
+  #  动态pv一定会属于某个storageClass
+  #    若属于某个storageClass，一定是storageclasses资源对象
+  storageClassName: <string>
+
+
   ## 访问模式(必须)
+  #  pvc在匹配pv时，其优先顺序位于第4
   #  访问模式：
   #    ReadWriteOnce(单路读写)，此资源对象状态显示 RWO
   #    ReadOnlyMany(多路只读)，此资源对象状态显示为 ROX
@@ -39,5 +51,19 @@ spec:
   #   
   accessModes: <map[string]string>
  
-  storageClassName: <string>
-  
+
+  ## 能力(必须)
+  #  pvc在匹配pv时，其优先顺序位于第5
+  capacity: <Object> 
+
+
+  ## pv的回收策略(删除与之一对一匹配的pvc资源对象后，其pv的回收策略)
+  #  默认值: Retain
+  #  可设值：Retain、Delete、Recycle
+  persistentVolumeReclaimPolicy: Delete
+
+
+  ## 节点新和性
+  #  例如：使用local这个树内卷插件时就得用到它
+  nodeAffinity	<Object>
+

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: <string>
+  name: <string>
+  labels: <map[string]string>
+  annotations: <map[string]string>
+spec:
+  volumeMode: <string>
+  selector: <Object>
+  storageClassName: <string>
+  accessModes: <[]string>
+  resources: <Object>
+    limits: <map[string]string>
+    requests: <map[string]string>
+
+
+  volumeName: <string>
+
+  dataSource: <Object>
+
+  dataSourceRef: <Object>
