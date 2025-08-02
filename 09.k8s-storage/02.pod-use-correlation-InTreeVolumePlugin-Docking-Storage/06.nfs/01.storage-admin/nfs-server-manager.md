@@ -17,6 +17,9 @@ exporting *:/data/lili
 ```
 mkdir  /data/lili/app61/
 ls -ld /data/lili/app61/
+
+mkdir  /data/lili/app62/
+ls -ld /data/lili/app62/
 ```
 
 
