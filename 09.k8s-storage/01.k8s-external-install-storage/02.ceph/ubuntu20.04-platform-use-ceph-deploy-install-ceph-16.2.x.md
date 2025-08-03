@@ -278,7 +278,7 @@ visudo -c
 ## 1.3 部署服务器安装部署工具ceph-deploy
 部署服务器(172.31.8.201   ceph-mon01)的admin用户下操作
 
-## 1.3.1 安装部署工具ceph-deploy
+### 1.3.1 安装部署工具ceph-deploy
 eph-deploy工具是用户ceph集群工具集中的一种。这里只在ceph-deploy服务器上部署。
 
 **安装pip2**
@@ -308,7 +308,7 @@ which ceph-deploy
 ceph-deploy --version       # 版本是2.0.1
 ```
 
-## 1.3.2 生成ssh密钥对
+### 1.3.2 生成ssh密钥对
 **编写脚本**
 ```
 mkdir  $HOME/tools/
@@ -334,7 +334,7 @@ EOF
 bash $HOME/tools/01.create-key-pair.sh
 ```
 
-## 1.3.3 实现ssh单向免密钥
+### 1.3.3 实现ssh单向免密钥
 **安装sshpass工具**
 ```
 sudo apt update
@@ -437,7 +437,6 @@ EOF
 cd $HOME/tools
 bash 02.sshpass-cp-publickey-to-target-host.sh
 ```
-
 
 
 
