@@ -68,6 +68,26 @@ EOF
 
 ### 1.2.3 更新apt源
 ```
+#### 更新apt源为阿里云
+cat >/etc/apt/sources.list<<'EOF'
+deb https://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+
+deb https://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+
+deb https://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+
+# deb https://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+# deb-src https://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+
+deb https://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+EOF
+
+#### 更新
+apt-get update
 ```
 
 ### 1.2.4 各主机上设置ceph的源
