@@ -63,5 +63,20 @@ cat >>/etc/hosts<<'EOF'
 EOF
 ```
 
+## 1.3 部署服务器安装部署工具ceph-deploy
+部署服务器为(172.31.8.201   ceph-mon01)
+```
+
+```
+
+
+# 2 部署服务器上部署ceph集群
+## 2.1 为new cluster生成默认配置
+
+## 2.2 部署ceph的Rados Cluster
+
+## 2.3 部署ceph cluster子集组件
+
+
 
 
