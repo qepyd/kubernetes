@@ -38,35 +38,45 @@ ubuntu 20.04  ceph-osd03    172.31.8.212/16   /dev/sda   /dev/sdb至/dev/sdf，�
 ```
 
 ## 1.2 操作系统优化
-### 1.2.1 设置主机名
-参考 1.1 章节中 "ceph集群的服务器"
+### 1.2.1 停止ufw防火墙
 ```
-hostnamectl set-hostname <HostName>
+systemctl stop ufw.service
+systemctl disable ufw.service
 ```
 
-### 1.2.2 DNS解析(/etc/hosts)
+### 1.2.2 选择默认的编辑器为vim
 ```
-cat >>/etc/hosts<<'EOF'
-172.31.8.201   ceph-mon01
-172.31.8.202   ceph-mon02
-172.31.8.203   ceph-mon03
+echo 'export EDITOR=/usr/bin/vi' >>/etc/profile
+source /etc/profile
+```
 
-172.31.8.204   ceph-mgr01
-172.31.8.205   ceph-mgr02
+### 1.2.3 解决apt安装软件时让其交互式设置
+```
+echo "export DEBIAN_FRONTEND=noninteractive" >>/etc/profile
+source /etc/profile
+```
 
-172.31.8.206   ceph-mds01
-172.31.8.207   ceph-mds02
+### 1.2.4 确保/etc/resolv.conf文件不被systemd-resolved.service重启后覆盖
+/etc/resolv.conf是个软链接文件，指向的是/run/systemd/resolve/stub-resolv.conf文件。
+当systemd-resolved.service应用一但重启，会重新生成内容到/run/systemd/resolve/stub-resolv.conf文件中。
+另外：当服务器的网卡未公网/私网DNS服务器，那么是无法Ping通FQDN(公网、私网)的。
+```
+## 删除软链接文件/etc/resolv.conf 
+find /etc/ -maxdepth 1 -type l  -name "resolv.conf" 
+find /etc/ -maxdepth 1 -type l  -name "resolv.conf" | xargs rm -f
 
-172.31.8.208   ceph-rgw01
-172.31.8.209   ceph-rgw02
-
-172.31.8.210   ceph-osd01
-172.31.8.211   ceph-osd02
-172.31.8.212   ceph-osd03
+## 创建/etc/resolv.conf文件,并指定DNS服务器(阿里云)
+cat >/etc/resolv.conf<<'EOF'
+nameserver 223.5.5.5
+nameserver 223.6.6.6
 EOF
+
+## 其 systemd-resolved.service 应用可停可不停， 其停止的命令为
+systemctl stop systemd-resolved.service
+systemctl disable systemd-resolved.service
 ```
 
-### 1.2.3 更新apt源
+### 1.2.5 更新apt源
 ```
 #### 更新apt源为阿里云
 cat >/etc/apt/sources.list<<'EOF'
@@ -89,6 +99,115 @@ EOF
 #### 更新
 apt-get update
 ```
+
+### 1.2.6 定时更新时间
+修改时区为CST，以及时间为24小时制
+```
+## 安装软件
+apt update
+apt-get install -y tzdata
+
+## 修改时区为CST,其实默认下/etc/localtime是/usr/share/zoneinfo/Etc/UTC文件的软链接
+ln -svf /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
+
+## 修改时间为24小时,该操作后,退出当前连接,重新连接后就会生效
+echo "LC_TIME=en_DK.UTF-8" >>/etc/default/locale
+```
+
+更新时间的脚本
+```
+## 创建相关的目录
+mkdir -p /opt/scripts/
+ls -ld /opt/scripts
+
+## 编写脚本
+cd /opt/scripts/
+
+cat >update_os_time.sh<<'EOF'
+#!/bin/bash
+#
+# Define variables
+RETVAL=0
+Ntp_server=(
+ntp.aliyun.com
+ntp1.aliyun.com
+ntp2.aliyun.com
+ntp3.aliyun.com
+ntp4.aliyun.com
+ntp5.aliyun.com
+ntp6.aliyun.com
+ntp7.aliyun.com
+)
+ 
+# Determine the user to execute
+if [ $UID -ne $RETVAL ];then
+   echo "Must be root to run scripts"
+   exit 1
+fi
+ 
+# Install ntpdate command
+apt-get install ntpdate -y >/dev/null 2>&1
+ 
+# for loop update os time
+for((i=0;i<${#Ntp_server[*]};i++))
+do
+    /usr/sbin/ntpdate ${Ntp_server[i]} >/dev/null 2>&1 &
+    RETVAL=$?
+    if [ $RETVAL -eq 0 ];then
+       echo "Update os time success"
+       break
+      else
+       echo "Update os time fail"
+       continue
+    fi  
+done
+ 
+# Scripts return values
+exit $RTVAL
+EOF
+```
+
+添加定时任务
+```
+cat >>/var/spool/cron/crontabs/root<<EOF
+
+## crond update os time
+*/05 * * * * /bin/bash  /opt/scripts/update_os_time.sh >/dev/null 2>&1
+EOF
+
+## 检查
+crontab -u root -l
+```
+
+
+### 1.2.7 设置主机名
+参考 1.1 章节中 "ceph集群的服务器"
+```
+hostnamectl set-hostname <HostName>
+```
+
+### 1.2.8 DNS解析(/etc/hosts)
+```
+cat >>/etc/hosts<<'EOF'
+172.31.8.201   ceph-mon01
+172.31.8.202   ceph-mon02
+172.31.8.203   ceph-mon03
+
+172.31.8.204   ceph-mgr01
+172.31.8.205   ceph-mgr02
+
+172.31.8.206   ceph-mds01
+172.31.8.207   ceph-mds02
+
+172.31.8.208   ceph-rgw01
+172.31.8.209   ceph-rgw02
+
+172.31.8.210   ceph-osd01
+172.31.8.211   ceph-osd02
+172.31.8.212   ceph-osd03
+EOF
+```
+
 
 ### 1.2.4 各主机上设置ceph的源
 ```
