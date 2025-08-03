@@ -208,8 +208,7 @@ cat >>/etc/hosts<<'EOF'
 EOF
 ```
 
-
-### 1.2.4 各主机上设置ceph的源
+### 1.2.9 各主机上设置ceph的源
 ```
 ## 安装一些工具
 sudo apt-get update
@@ -230,12 +229,17 @@ sudo apt update
 apt-cache madison ceph
     # 可看到不同源对应的有不同的ceph版本。
     # 只会有ceph pacific版本，因为前面添加源的时候指定了ceph的版本
-
+    # 结果为
+    #  ceph | 16.2.15-1focal | https://mirrors.tuna.tsinghua.edu.cn/ceph/debian-pacific focal/main amd64 Packages
+    #  ceph | 15.2.17-0ubuntu0.20.04.6 | https://mirrors.aliyun.com/ubuntu focal-security/main amd64 Packages
+    #  ceph | 15.2.17-0ubuntu0.20.04.6 | https://mirrors.aliyun.com/ubuntu focal-updates/main amd64 Packages
+    #  ceph | 15.2.1-0ubuntu1 | https://mirrors.aliyun.com/ubuntu focal/main amd64 Packages
+    #  ceph | 15.2.1-0ubuntu1 | https://mirrors.aliyun.com/ubuntu focal/main Sources
+    #  ceph | 15.2.17-0ubuntu0.20.04.6 | https://mirrors.aliyun.com/ubuntu focal-security/main Sources
+    #  ceph | 15.2.17-0ubuntu0.20.04.6 | https://mirrors.aliyun.com/ubuntu focal-updates/main Sources
 ```
 
-
-
-### 1.2.5 各主机上安装Python 2.7
+### 1.2.10 各主机上安装Python 2.7
 ```
 sudo apt update
 sudo chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow 
@@ -246,18 +250,195 @@ sudo ln -svf /usr/bin/python2.7 /usr/bin/python2
 sudo which python2
 ```
 
-### 1.2.6 定时更新系统时间
+### 1.2.11 创建普通用户admin并visudo
+```
+#### 用途：相当于root用户,因为root用户我们会禁止远程登录
+01：用来充当root用户的角色。
+02：它不会用来运行任何的应用。
 
-### 1.2.7 创建特权用户admin
+#### 用户的基本要求
+01：用户要能够远程登录，要有家目录。
+02：用户不能过期、密码得复杂化，密码是否过期是另外一回事。
+03：用户的主组为admin,用户的辅组为wheel。
+04：用户得被visudo授权为：admin ALL=(ALL:ALL) NOPASSWD: ALL
 
- 
+#### 创建用户的命令
+chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
+groupadd -g 91 wheel
+groupadd -g 1000 admin
+useradd admin -u 1000 -g admin -G wheel -m -s /bin/bash
+echo "admin:123456"|chpasswd
+
+#### visudo
+echo "admin ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+visudo -c
+```
 
 
 ## 1.3 部署服务器安装部署工具ceph-deploy
-部署服务器为(172.31.8.201   ceph-mon01)
+部署服务器(172.31.8.201   ceph-mon01)的admin用户下操作
+
+## 1.3.1 安装部署工具ceph-deploy
+eph-deploy工具是用户ceph集群工具集中的一种。这里只在ceph-deploy服务器上部署。
+
+**安装pip2**
+```
+## 启用 universe 源仓库
+sudo add-apt-repository universe
+sudo apt update
+
+## 安装pip2
+#  Python 2的 pip 没有被包含在 Ubuntu 20.04源仓库中。使用get-pip.py脚本来为 Python 2安装 pip。
+wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
+sudo python2 get-pip.py   # 前面已经安装了python2
+
+## 验证pip2
+pip2 --version
+pip --version
 ```
 
+**安装ceph-deploy工具**
 ```
+## 查看ceph-deploy版本，apt源里面自带的 
+apt-cache madison ceph-deploy
+
+## pip2来安装ceph-deploy
+sudo pip2 install ceph-deploy
+which ceph-deploy
+ceph-deploy --version       # 版本是2.0.1
+```
+
+## 1.3.2 生成ssh密钥对
+**编写脚本**
+```
+mkdir  $HOME/tools/
+ls -ld $HOME/tools/
+
+cat >$HOME/tools/01.create-key-pair.sh<<'EOF'
+#!/bin/bash
+#
+#  此脚本是在需要生成密钥对的用户下执行，它会判断是否存在密钥对（当然有不同的类型），若存在,就不会生成密钥对。
+# 
+if   [ ! -d $HOME/.ssh ];then
+	 ssh-keygen -t rsa -f $HOME/.ssh/id_rsa -P ""
+elif [  ! -f $HOME/.ssh/id_rsa -a   ! -f $HOME/.ssh/id_rsa.pub  ];then
+	  ssh-keygen -t rsa -f $HOME/.ssh/id_rsa -P ""
+else 
+	 echo "**** The current user has an RSA key pair. Procedure,exit script" && exit 0
+fi
+EOF
+```
+
+**执行脚本**
+```
+bash $HOME/tools/01.create-key-pair.sh
+```
+
+## 1.3.3 实现ssh单向免密钥
+**安装sshpass工具**
+```
+sudo apt update
+sudo chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
+sudo apt install -y sshpass
+which sshpass
+```
+
+**准备主机清单**
+```
+cat >$HOME/tools/host.txt<<'EOF'
+172.31.8.201   ceph-mon01
+172.31.8.202   ceph-mon02
+172.31.8.203   ceph-mon03
+
+172.31.8.204   ceph-mgr01
+172.31.8.205   ceph-mgr02
+
+172.31.8.206   ceph-mds01
+172.31.8.207   ceph-mds02
+
+172.31.8.208   ceph-rgw01
+172.31.8.209   ceph-rgw02
+
+172.31.8.210   ceph-osd01
+172.31.8.211   ceph-osd02
+172.31.8.212   ceph-osd03
+EOF
+```
+
+**编写脚本**
+```
+cat >$HOME/tools/02.sshpass-cp-publickey-to-target-host.sh<<'EOF'
+#!/bin/bash
+#
+#
+#### 01：此脚本是将A主机上某用户的公钥[单向]拷贝至目标主机上的某用户下，以实现A主机上的某用户与目标主机上的某用户实现单向免密钥。
+#### 02：此脚本不负责A主机上某用户的公钥生成。
+#### 03：此脚本结合A主机上的sshpass工具将公钥拷贝至目标主机上，当A主机上没有sshpass工具时,此脚本不负责安装，因为A主机上的某用户
+####     可能不具备安装软件的权限。
+#
+#
+#### 定义变量
+Local_Host_User_Ssh_Pub="$HOME/.ssh/id_rsa.pub"  # public key
+Target_Host_Ssh_Port="22"                        # remote host ssh port, please change
+Target_Host_User="admin"                     # remote host user name, please change
+Target_Host_User_Pass="123456"          # remote host user password, please change
+Target_Host=( $(cat ./hostip.txt) )              # 查看此脚本所在路径下的hostip.txt文件内容,用来作为数组中的元素。
+
+#### 检查本机是否有sshpass工具,当没有时,此脚本不负责安装
+#### 因为拷贝A主机上某用户的公钥至other主机的用户时,A主机上的某用户有可能不具备安装软件的权限
+which sshpass >/dev/null 2>&1
+if [ $? -eq 0 ];then
+   echo "01：[INFO] sshpass command is exists"
+ else
+   echo "01：[ERROR] sshpass command is not exists,script is not responsible for installation,exit"
+   exit 1
+fi
+
+#### 判断 $Local_Host_User_Ssh_Pub 公钥是否存在,不存在则退出脚本
+if [ -f "$Local_Host_User_Ssh_Pub"  ];then
+   echo "02: [INFO] \"$Local_Host_User_Ssh_Pub\" file is exists"
+  else
+   echo "02：[ERROR] \"$Local_Host_User_Ssh_Pub\" file is not exists,exit script,please check"
+   exit 1
+fi
+
+#### 本地结合sshpass工具将A host相关用户的公钥 拷贝 至目标机器的相应用户下
+echo "03: [INFO] Copy local user(public key) to target host user"
+for((i=0;i<${#Target_Host[*]};i++))
+do
+	sshpass -p "$Target_Host_User_Pass" \
+	ssh-copy-id -o StrictHostKeyChecking=no -i $Local_Host_User_Ssh_Pub -p $Target_Host_Ssh_Port   $Target_Host_User@${Target_Host[i]}  >/dev/null 2>&1
+	RETVAL=$?
+	if [ $RETVAL -eq 0 ];then
+	   echo "  [INFO] ssh-copy-id local(\"$Local_Host_User_Ssh_Pub\")  to \"${Target_Host[i]}\" host \"$Target_Host_User\" user successful"
+	  else
+	   echo "  [ERROR] ssh-copy-id local(\"$Local_Host_User_Ssh_Pub\")  to \"${Target_Host[i]}\" host \"$Target_Host_User\" user failure"
+	fi
+done
+
+
+#### 本地ssh客户端远程连接目标端(首次测试）
+echo "04: [INFO] Local user(ssh connection target host user test)"
+for((i=0;i<${#Target_Host[*]};i++))
+do
+	ssh -o StrictHostKeyChecking=no -o PasswordAuthentication=no -p $Target_Host_Ssh_Port $Target_Host_User@${Target_Host[i]} hostname >/dev/null 2>&1
+	RETVAL=$?
+	if [ $RETVAL -eq 0 ];then
+	   echo "  [INFO] local user ssh connection(\"${Target_Host[i]}\") user(\"$Target_Host_User\")test succeeded."
+	  else
+	   echo "  [ERROR] local user ssh connection(\"${Target_Host[i]}\") user(\"$Target_Host_User\")test failure."
+	fi
+done
+EOF
+```
+
+**执行脚本**
+```
+cd $HOME/tools
+bash 02.sshpass-cp-publickey-to-target-host.sh
+```
+
+
 
 
 # 2 部署服务器上部署ceph集群
