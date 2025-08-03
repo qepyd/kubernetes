@@ -70,7 +70,7 @@ kubernetes版本：
 
 Nod网络：
    类型：Underlay
-   CIDR：172.31.0.0/16
+   CIDR：172.31.0.0/16   # 我的学习环境下没有划分子网
 
 Pod网络：
    类型：Overlay
@@ -125,8 +125,8 @@ container-resource-monitoring：
 所准备的服务器得要能够访问互联网(公网IP,FQDN)。
 ```
 操作系统     主机名   业务网卡  业务网卡IP   
-ubuntu20.04  lb01     eth0      172.31.7.201
-ubuntu20.04  lb02     eth0      172.31.7.202
+ubuntu20.04  lb01     eth0      172.31.7.201/16
+ubuntu20.04  lb02     eth0      172.31.7.202/16
    #
    # vip01: 172.31.7.199
    # vip02: 172.31.7.200
@@ -136,9 +136,9 @@ ubuntu20.04  lb02     eth0      172.31.7.202
    # 例如：集群外部的应用(jenkins)中的任务使用kubectl工具来连接kbue-apiserver
    # 
 
-ubuntu20.04  master01 eth0      172.31.7.203
-ubuntu20.04  master02 eth0      172.31.7.204
-ubuntu20.04  master03 eth0      172.31.7.205
+ubuntu20.04  master01 eth0      172.31.7.203/16
+ubuntu20.04  master02 eth0      172.31.7.204/16
+ubuntu20.04  master03 eth0      172.31.7.205/16
    #
    # 得安装部署工具
    #   kubeadm
@@ -153,8 +153,8 @@ ubuntu20.04  master03 eth0      172.31.7.205
    #   kube-controller-manager: 以静态Pod方式运行
    # 
 
-ubuntu20.04  node01   eth0      172.31.7.206
-ubuntu20.04  node02   eth0      172.31.7.207
+ubuntu20.04  node01   eth0      172.31.7.206/16
+ubuntu20.04  node02   eth0      172.31.7.207/16
    #
    # 得安装部署工具
    #   kubeadm
@@ -164,8 +164,6 @@ ubuntu20.04  node02   eth0      172.31.7.207
    #   kube-proxy(部署工具kubeadm会用Pod控制器之Daemonset来编排Pod,并以交付到k8s中)
    #
 ```
-
-
 
 ## 1.4 所准备服务器的优化
 ### 1.4.1 修改主机名
