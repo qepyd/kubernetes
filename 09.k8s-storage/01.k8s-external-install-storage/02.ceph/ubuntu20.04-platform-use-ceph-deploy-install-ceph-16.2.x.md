@@ -382,7 +382,7 @@ Local_Host_User_Ssh_Pub="$HOME/.ssh/id_rsa.pub"  # public key
 Target_Host_Ssh_Port="22"                        # remote host ssh port, please change
 Target_Host_User="admin"                     # remote host user name, please change
 Target_Host_User_Pass="123456"          # remote host user password, please change
-Target_Host=( $(cat ./hostip.txt) )              # 查看此脚本所在路径下的hostip.txt文件内容,用来作为数组中的元素。
+Target_Host=( $(cat ./host.txt) )              # 查看此脚本所在路径下的hostip.txt文件内容,用来作为数组中的元素。
 
 #### 检查本机是否有sshpass工具,当没有时,此脚本不负责安装
 #### 因为拷贝A主机上某用户的公钥至other主机的用户时,A主机上的某用户有可能不具备安装软件的权限
