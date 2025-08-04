@@ -3,7 +3,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   # 其pv资源是非namespace级别的资源
-  name: binbin-prod-app31
+  name: binbin-prod-app31-data
   labels:
     project: binbin
     env: prod
