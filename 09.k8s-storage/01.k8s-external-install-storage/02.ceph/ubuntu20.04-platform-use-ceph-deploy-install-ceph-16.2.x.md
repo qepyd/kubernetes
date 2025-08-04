@@ -529,18 +529,125 @@ admin@ceph-mon01:~/ceph-cluster$ cat ceph.conf
 fsid = 2004f705-b556-4d05-9e73-7884379e07bb
 public_network = 172.31.0.0/16
 cluster_network = 172.31.0.0/16
-mon_initial_members = ceph-mon01, ceph-mon02, ceph-mon3
+mon_initial_members = ceph-mon01, ceph-mon02, ceph-mon03
 mon_host = 172.31.8.201,172.31.8.202,172.31.8.203
 auth_cluster_required = cephx
 auth_service_required = cephx
 auth_client_required = cephx
 ```
 
-
-
 ## 2.2 部署ceph的Rados Cluster
+https://docs.ceph.com/en/pacific/glossary/   # 搜索rados cluster
+这里我要部署ceph的Rados Cluster。它包含ceph monitors、ceph managers、osds。
 
-## 2.3 部署ceph cluster子集组件
+### 2.2.1 相应主机上安装ceph monitors 
+注意：ceph monitor一定是要先部署的哈。至少1个，要想高可用的话，至少得3个。
+**各主机上安装ceph-mon命令**
+```
+cd $HOME/ceph-cluster   # 进入到相应的目录
+ceph-deploy install --mon --no-adjust-repos --nogpgcheck  ceph-mon01
+ceph-deploy install --mon --no-adjust-repos --nogpgcheck  ceph-mon02
+ceph-deploy install --mon --no-adjust-repos --nogpgcheck  ceph-mon03
+  #
+  # 01：一条命令可以指定多个ceph mon host，多个时用空格分隔。安装软件的嘛。
+  # 02：ceph-mon01、ceph-mon02、ceph-mon03就是主机,得要能够经过dns解析,我的
+  #     部署服务器上是可以解析成相应IP地址的,用的是/etc/host文件。
+  # 03：--no-adjust-repos表示不添加ceph源,因为我在前面为各ceph cluster node手
+  #     动添加了的。
+  # 04：--nogpgcheck 表示不进行包检查。
+  # 
+  # PS：会在相应主机上安装ceph-common、ceph-base、ceph-mon等软件包,对应就会有很多的命令。
+  #
+```
+
+**各主机上创建并初始化ceph-mon，其实就是安装、启动**
+```
+## 创建和初始化命令
+cd $HOME/ceph-cluster   # 进入到相应的目录
+ceph-deploy mon  create-initial
+  #
+  # ceph-deploy 
+  #   部署工具
+  # 
+  # mon
+  #   是部署工具的命令，含义为：Ceph MON Daemon management
+  #   
+  # create-initial
+  #   是部署工具其mon命令的子命令,表示创建和初始化一起做。
+  # 
+  # PS：这里ceph-deploy会读取当前目录下的ceph.conf文件中的mon_initial_members
+  #      参数的所有值，然后经过dns解析得到IP地址，再ssh去连接。
+  # PS：会把当前目录下集群配置文件(ceph.conf)推送到各mon node的/etc/ceph/目录下
+
+## 初始化完成后，其部署服务器的当前目录下会生成"bootstrap-组件.keyring文件"，所以
+#  得先部署ceph monitor。后面用部署工具部署其它组件时,会把bootstrap-组件.keyring
+#  文件推送到相应组件所在的host上。这里生成的bootstrap-组件.keyring文件如下。
+
+admin@ceph-mon01:~/ceph-cluster$ ls -l
+total 368
+-rw-rw-r-- 1 admin admin 336991 Aug  4 08:34 ceph-deploy-ceph.log
+-rw------- 1 admin admin    113 Aug  4 08:34 ceph.bootstrap-mds.keyring
+-rw------- 1 admin admin    113 Aug  4 08:34 ceph.bootstrap-mgr.keyring
+-rw------- 1 admin admin    113 Aug  4 08:34 ceph.bootstrap-osd.keyring
+-rw------- 1 admin admin    113 Aug  4 08:34 ceph.bootstrap-rgw.keyring
+-rw------- 1 admin admin    151 Aug  4 08:34 ceph.client.admin.keyring
+-rw-rw-r-- 1 admin admin    313 Aug  4 08:27 ceph.conf
+-rw------- 1 admin admin     73 Aug  4 08:11 ceph.mon.keyring
+-rw-rw-r-- 1 admin admin     37 Aug  4 08:04 cluster-fsid.txt
+admin@ceph-mon01:~/ceph-cluster$
+admin@ceph-mon01:~/ceph-cluster$
+admin@ceph-mon01:~/ceph-cluster$ ll /etc/ceph/ceph.conf 
+-rw-r--r-- 1 root root 313 Aug  4 08:34 /etc/ceph/ceph.conf
+
+## 查看ceph的状态
+admin@ceph-mon01:~/ceph-cluster$ sudo cp -a ceph.client.admin.keyring /etc/ceph/
+admin@ceph-mon01:~/ceph-cluster$
+admin@ceph-mon01:~/ceph-cluster$ ls -l /etc/ceph/
+total 12
+-rw------- 1 admin admin 151 Aug  4 08:34 ceph.client.admin.keyring
+-rw-r--r-- 1 root  root  313 Aug  4 08:34 ceph.conf
+-rw-r--r-- 1 root  root   92 Feb 27  2024 rbdmap
+-rw------- 1 root  root    0 Aug  4 08:24 tmpIttqYs
+-rw------- 1 root  root    0 Aug  4 08:34 tmpXLsRGP
+-rw------- 1 root  root    0 Aug  4 08:33 tmpg_CwGp
+-rw------- 1 root  root    0 Aug  4 08:28 tmpl2RpTn
+-rw------- 1 root  root    0 Aug  4 08:30 tmpxvMllf
+admin@ceph-mon01:~/ceph-cluster$
+
+
+admin@ceph-mon01:~$ ceph -s
+  cluster:
+    id:     2004f705-b556-4d05-9e73-7884379e07bb
+    health: HEALTH_WARN
+            mons are allowing insecure global_id reclaim
+ 
+  services:
+    mon: 3 daemons, quorum ceph-mon01,ceph-mon02,ceph-mon03 (age 18s)
+    mgr: no daemons active
+    osd: 0 osds: 0 up, 0 in
+ 
+  data:
+    pools:   0 pools, 0 pgs
+    objects: 0 objects, 0 B
+    usage:   0 B used, 0 B / 0 B avail
+    pgs:
+```
+
+### 2.2.2 集群状态查看(分发密钥、推送配置文件)
+这里我要在部署服务器（ceph-mon01）的admin用户下，将ceph cluster其超级用户client.admin的keyring文件（ceph.client.admin.keyring）分发到ceph-mon02、ceph-mon03主机上（有/etc/ceph/目录、有ceph命令、还有ceph cluster的配置文件conf)。
+**分发** 
+```
+cd $HOME/ceph-cluster
+ceph-deploy  admin   ceph-mon02
+ceph-deploy  admin   ceph-mon03
+```
+
+**ceph-mon02、ceph-mon03主机上查看ceph状态**
+```
+sudo ceph -s
+```
+
+### 2.2.3 部署ceph cluster子集组件
 
 
 
