@@ -648,7 +648,66 @@ sudo ceph -s
 ```
 
 ### 2.2.3 部署ceph cluster子集组件
+注意：在ceph-deploy主机的admin用户下操作。ceph-mgr进程至少1个，高可用的话，至少得2个。
+**各主机上安装ceph-mgr命令**
+```
+cd $HOME/ceph-cluster
+ceph-deploy install --mgr --no-adjust-repos  --nogpgcheck  ceph-mgr01
+ceph-deploy install --mgr --no-adjust-repos  --nogpgcheck  ceph-mgr02
+  #
+  # 01：一条命令可以指定多个ceph mgr host，多个时用空格分隔。安装软件的嘛。
+  # 02：ceph-mgr01、ceph-mgr02就是主机,得要能够经过dns解析,我的
+  #     部署服务器上是可以解析成相应IP地址的,用的是/etc/hosts文件。所以这
+  #     里，其ceph-deploy部署工具没有读取ceph.conf文件。
+  # 03：--no-adjust-repos表示不添加ceph源,因为我在前面为各ceph cluster node手
+  #     动添加了的。
+  # 04：--nogpgcheck 表示不进行包检查。
+  #  
+  # PS：会在相应主机上安装ceph-common、ceph-base、ceph-mon等软件包,对应就会有很
+  #     多的命令。
+  #
+```
 
+**在远端主机上初始化ceph mgr，安装、配置、启动**
+```
+cd $HOME/ceph-cluster
+ceph-deploy  mgr  create  ceph-mgr01:mgr1
+ceph-deploy  mgr  create  ceph-mgr02:mgr2
+  #
+  # ceph-deploy  是部署工具
+  # mgr          是部署工具的子命令
+  # create       是部署工具其mgr子命令的子命令
+  # ceph-mgr01:mgr1  前面表示主机,后面是ceph-mgr的进程ID
+  # ceph-mgr02:mgr2  前面表示主机,后面是ceph-mgr的进程ID
+  #
+  # PS：ceph-mgr进程至少1个，高可用的话，至少得2个。
+  #     A：我准备了两台服务器：ceph-mgr01、ceph-mgr02
+  #     B：若1条命令搞定：ceph-deploy mgr create ceph-mgr01  ceph-mgr02
+  #        但这样的话，其各host上ceph-mgr进程的id就是其主机名。
+  #        我这不想，因为我写文档的话，我得给区分开。
+  #
+```
+
+**查看ceph集群状态**
+```
+admin@ceph-mon01:~$ sudo ceph -s
+  cluster:
+    id:     2004f705-b556-4d05-9e73-7884379e07bb
+    health: HEALTH_WARN
+            mons are allowing insecure global_id reclaim
+            OSD count 0 < osd_pool_default_size 3
+ 
+  services:
+    mon: 3 daemons, quorum ceph-mon01,ceph-mon02,ceph-mon03 (age 18m)
+    mgr: mgr1(active, since 37s), standbys: mgr2
+    osd: 0 osds: 0 up, 0 in
+ 
+  data:
+    pools:   0 pools, 0 pgs
+    objects: 0 objects, 0 B
+    usage:   0 B used, 0 B / 0 B avail
+    pgs: 
+```
 
 
 
