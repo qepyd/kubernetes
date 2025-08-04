@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lili 
+  name: app72
+  labels:
+    project: lili
+    env: prod
+    app: app72
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: lili
+      env: prod
+      app: app72
+  template:
+    metadata:
+      labels:
+        project: lili
+        env: prod
+        app: app72
+    spec:
+      # Pod级别
+      volumes:
+        - name: share-data
+          cephfs:
+            # 其存储系统之Ceph之monitors组件的连接地址和相应volume（subvolume）的路径
+            monitors:                                                          # 根据存储管理员所提供的信息
+            - "172.31.8.201:6789"
+            - "172.31.8.202:6789"
+            - "172.31.8.203:6789"
+            path:  "/volumes/app72/data/450d8c88-4bc6-4ed1-b369-4fddcf68ef35"  # 根据存储管理员所提供的信息
+
+            # 认证的用户和secret(不是keyring哈)
+            # user: "client.lilifs"
+            user: "lilifs"                                          # 根据存储管理员所提供的信息
+            secretRef: 
+              name: "lili-project-cephfs-in-lilifs-user-key"        # 所引用的secrets资源对象,此资源对象所在namespace中得存在
+
+            # 在Pod级别加载volume后,在这一层面,允许其读写
+            readOnly: false
+
+      # 容器级别之主容器
+      containers:
+      - name: app72
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31 
+        volumeMounts:
+        - name: share-data
+          mountPath: /data/
+          readOnly: false
+        command:
+        - "/bin/sh"
+        args: 
+        - "-c"
+        - "sleep 10000000000"
+--- 
