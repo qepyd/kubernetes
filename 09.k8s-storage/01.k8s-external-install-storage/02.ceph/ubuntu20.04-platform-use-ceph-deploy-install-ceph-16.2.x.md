@@ -114,71 +114,41 @@ ln -svf /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
 echo "LC_TIME=en_DK.UTF-8" >>/etc/default/locale
 ```
 
-更新时间的脚本
+安装chrony
 ```
-## 创建相关的目录
-mkdir -p /opt/scripts/
-ls -ld /opt/scripts
+chattr -i /etc/passwd /etc/shadow /etc/group /etc/gshadow
+apt update 
+apt install -y chrony
+systemctl status chrony.service     # ubuntu下安装好以后,它会给你启动的
+systemctl is-enabled chrony.service # ubuntu下会给你加入开机自启动的
+systemctl enable chrony.service     # 加入开机自启动 
+```
 
-## 编写脚本
-cd /opt/scripts/
+配置chrony
+```
+### 将以pool开头的行给删除掉
+grep "^pool" /etc/chrony/chrony.conf
+sed   '/^pool/'d /etc/chrony/chrony.conf
+sed -i '/^pool/'d /etc/chrony/chrony.conf
 
-cat >update_os_time.sh<<'EOF'
-#!/bin/bash
-#
-# Define variables
-RETVAL=0
-Ntp_server=(
-ntp.aliyun.com
-ntp1.aliyun.com
-ntp2.aliyun.com
-ntp3.aliyun.com
-ntp4.aliyun.com
-ntp5.aliyun.com
-ntp6.aliyun.com
-ntp7.aliyun.com
-)
- 
-# Determine the user to execute
-if [ $UID -ne $RETVAL ];then
-   echo "Must be root to run scripts"
-   exit 1
-fi
- 
-# Install ntpdate command
-apt-get install ntpdate -y >/dev/null 2>&1
- 
-# for loop update os time
-for((i=0;i<${#Ntp_server[*]};i++))
-do
-    /usr/sbin/ntpdate ${Ntp_server[i]} >/dev/null 2>&1 &
-    RETVAL=$?
-    if [ $RETVAL -eq 0 ];then
-       echo "Update os time success"
-       break
-      else
-       echo "Update os time fail"
-       continue
-    fi  
-done
- 
-# Scripts return values
-exit $RTVAL
+### 往文件中追加内容
+cat >>/etc/chrony/chrony.conf <<'EOF'
+
+server ntp1.aliyun.com iburst
+server ntp2.aliyun.com iburst
+server ntp3.aliyun.com iburst
+server ntp4.aliyun.com iburst
+server ntp5.aliyun.com iburst
+server ntp6.aliyun.com iburst
+server ntp7.aliyun.com iburst
 EOF
 ```
 
-添加定时任务
+重启并检查
 ```
-cat >>/var/spool/cron/crontabs/root<<EOF
-
-## crond update os time
-*/05 * * * * /bin/bash  /opt/scripts/update_os_time.sh >/dev/null 2>&1
-EOF
-
-## 检查
-crontab -u root -l
+systemctl restart chrony.service
+chronyc  sources -v
 ```
-
 
 ### 1.2.7 设置主机名
 参考 1.1 章节中 "ceph集群的服务器"
