@@ -958,4 +958,66 @@ admin@ceph-mon01:~$ sudo ceph mds stat
  4 up:standby
 ```
 
+## 2.4 ceph集群完全停机的顺序
+我现在想把ceph cluster完全停止掉(包括虚拟服务器)，然后对各虚拟主机打个快照。
+
+### 2.4.1 停机的顺序
+```
+01:标记所有osd不out，避免osd host主机关闭服务后,osd被踢出ceph集群外。
+   admin@ceph-mon01:~$ ceph osd set noout
+   noout is set
+
+   admin@ceph-mon01:~$ ceph osd stat    # 可以看到flags noout
+   15 osds: 15 up (since 46m), 15 in (since 46m); epoch: e97
+   flags noout
+
+02：关闭ceph集群的client(应用程序、hos/vm)
+    我们这没有,我们才把ceph clsuter部署好,用都没用,哪来的client
+
+03：关闭ceph cluster的相关组件。
+    A：在相应 rados gateway host 上停止 radosgw 服务
+    B：在相应 ceph metadata host 上停止 ceph-mds 服务
+    C：在相应 ceph osd host 上停止 ceph-osd服务，前面已标记osd不out了
+    D：在相应 ceph manager host上停止 ceph-mgr服务
+    E：在相应 ceph monitor host上停止 ceph-mon服务
+
+04：关闭ceph cluster集群中的各host
+```
+
+
+### 2.4.2 启动的顺序
+```
+01：启动ceph clsuter
+    (1):启动ceph clsuter的ceph monitor服务
+        A：对相应主机开机
+	B：检查ceph-mon服务是否运行
+		
+    (2):启动ceph clsuter的ceph manager服务
+	A：对相应主机开机
+	B：检查ceph-mgr服务是否运行
+		
+    (3):启动ceph cluster的ceph osd 服务 
+	A：对相应主机开机
+	B：检查ceph-osd服务是否运行
+		
+    (4):启动ceph cluster的rados gateway服务
+	A：对相应主机开机
+	B：检查radosgw服务是否运行
+		
+    (5):启动ceph cluster的ceph metadata服务
+	A：对相应主机开机
+	B：检查ceph-mds服务是否运行
+	
+    (6):检查ceph集群状态
+	看相应的services是否存在,数量是否和之前的一样。
+	
+    (7):取消所有osd的不退出，PS：也可在（3）步骤中做了。
+	命令：ceph osd unset noout
+	检查：ceph osd stat  # 没有flags noout表示达到预期效果
+
+02：启动ceph cluster的client
+    A：相应的服务器。
+    B：相应服务器上的"应用程序"
+```
+
 
