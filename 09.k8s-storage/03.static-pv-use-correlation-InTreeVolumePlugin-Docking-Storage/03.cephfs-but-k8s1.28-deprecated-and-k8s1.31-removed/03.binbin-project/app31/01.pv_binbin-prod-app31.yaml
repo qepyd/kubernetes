@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  # 其pv资源是非namespace级别的资源
+  name: binbin-prod-app31
+  labels:
+    project: binbin
+    env: prod
+    app: app31
+spec:
+  # 树内插件对拉存储系统
+  cephfs:
+    monitors:                                                             # 根据存储管理员所提供
+    - "172.31.8.201:6789"
+    - "172.31.8.202:6789"
+    - "172.31.8.203:6789"
+    path: "/volumes/app31/data/a05e623d-60ea-4ef2-9167-fcd944225fe0"      # 根据存储管理员所提供
+    user: "binbinfs"                                                      # 根据存储管理员所提供
+    secretFile: "/etc/ceph/ceph.client.binbinfs.secret"                   # k8s集群其binbin项目相关worker node上得存在
+    readOnly: false
+   
+  # 卷模式，pvc来匹配时是第一顺序
+  volumeMode: Filesystem
+
+  # 所属的storageClass, pvc来匹配时是第三顺序(第二顺序是pv的标签)
+  # 静态pv也可属于某个storageClass，只不过这个storageClass并非storagesclasses资源对象
+  storageClassName: "binbin-project-prod-static-pv"
+
+  # 访问模式
+  accessModes: 
+  - ReadWriteMany
+
+  # 能力(大小)
+  capacity: 
+    storage: 10Gi
+ 
+  # pv的回收策略
+  persistentVolumeReclaimPolicy: Delete
+--- 
