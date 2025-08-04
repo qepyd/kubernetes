@@ -507,9 +507,8 @@ auth_client_required = cephx
 ```
 
 ## 2.2 部署ceph的Rados Cluster
-https://docs.ceph.com/en/pacific/glossary/   # 搜索rados cluster
+https://docs.ceph.com/en/pacific/glossary/   # 搜索rados cluster  
 这里我要部署ceph的Rados Cluster。它包含ceph monitors、ceph managers、osds。
-注意：在部署服务器(ceph-mon01)主机的admin用户下操作
 
 ### 2.2.1 相应主机上安装ceph monitors 
 ceph monitor一定是要先部署的哈。至少1个，要想高可用的话，至少得3个。
@@ -957,3 +956,5 @@ admin@ceph-mon01:~$ sudo ceph -s   # 其services下看不到mds，是因为还�
 admin@ceph-mon01:~$ sudo ceph mds stat
  4 up:standby
 ```
+
+
