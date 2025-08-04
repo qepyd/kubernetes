@@ -511,7 +511,8 @@ https://docs.ceph.com/en/pacific/glossary/   # 搜索rados cluster
 这里我要部署ceph的Rados Cluster。它包含ceph monitors、ceph managers、osds。
 
 ### 2.2.1 相应主机上安装ceph monitors 
-ceph monitor一定是要先部署的哈。至少1个，要想高可用的话，至少得3个。
+ceph monitor一定是要先部署的哈。至少1个，要想高可用的话，至少得3个。  
+
 **各主机上安装ceph-mon命令**
 ```
 cd $HOME/ceph-cluster   # 进入到相应的目录
