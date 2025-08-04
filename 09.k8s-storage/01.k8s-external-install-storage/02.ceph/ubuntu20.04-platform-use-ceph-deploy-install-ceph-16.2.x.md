@@ -569,8 +569,10 @@ admin@ceph-mon01:~/ceph-cluster$
 admin@ceph-mon01:~/ceph-cluster$
 admin@ceph-mon01:~/ceph-cluster$ ll /etc/ceph/ceph.conf 
 -rw-r--r-- 1 root root 313 Aug  4 08:34 /etc/ceph/ceph.conf
+```
 
-## 查看ceph的状态
+**查看ceph的状态**
+```
 admin@ceph-mon01:~/ceph-cluster$ sudo cp -a ceph.client.admin.keyring /etc/ceph/
 admin@ceph-mon01:~/ceph-cluster$
 admin@ceph-mon01:~/ceph-cluster$ ls -l /etc/ceph/
@@ -584,7 +586,6 @@ total 12
 -rw------- 1 root  root    0 Aug  4 08:28 tmpl2RpTn
 -rw------- 1 root  root    0 Aug  4 08:30 tmpxvMllf
 admin@ceph-mon01:~/ceph-cluster$
-
 
 admin@ceph-mon01:~$ ceph -s
   cluster:
@@ -604,6 +605,12 @@ admin@ceph-mon01:~$ ceph -s
     pgs:
 ```
 
+**查看mon的状态**
+```
+admin@ceph-mon01:~$ sudo ceph mon stat
+e3: 3 mons at {ceph-mon01=[v2:172.31.8.201:3300/0,v1:172.31.8.201:6789/0],ceph-mon02=[v2:172.31.8.202:3300/0,v1:172.31.8.202:6789/0],ceph-mon03=[v2:172.31.8.203:3300/0,v1:172.31.8.203:6789/0]} removed_ranks: {2}, election epoch 16, leader 0 ceph-mon01, quorum 0,1,2 ceph-mon01,ceph-mon02,ceph-mon03
+```
+
 ### 2.2.2 集群状态查看(分发密钥、推送配置文件)
 将ceph cluster其超级用户client.admin的keyring文件（ceph.client.admin.keyring）分发到ceph-mon02、ceph-mon03主机上（有/etc/ceph/目录、有ceph命令、还有ceph cluster的配置文件conf)。
 
@@ -618,6 +625,7 @@ ceph-deploy  admin   ceph-mon03
 ```
 sudo ceph -s
 ```
+
 
 ### 2.2.3 部署ceph manager
 ceph-mgr进程至少1个，高可用的话，至少得2个。
@@ -679,6 +687,17 @@ admin@ceph-mon01:~$ sudo ceph -s
     objects: 0 objects, 0 B
     usage:   0 B used, 0 B / 0 B avail
     pgs: 
+```
+
+**查看mgr状态**
+```
+admin@ceph-mon01:~$ sudo ceph mgr stat
+{
+    "epoch": 5,
+    "available": true,
+    "active_name": "mgr1",
+    "num_standby": 1
+}
 ```
 
 ### 2.2.4 相应主机上安装osds
@@ -781,6 +800,37 @@ admin@ceph-mon01:~$ sudo ceph -s
     pgs:     1 active+clean
 ```
 
+**查看osd状态**
+```
+admin@ceph-mon01:~$ ceph osd stat
+15 osds: 15 up (since 34m), 15 in (since 34m); epoch: e96
+```
+
+**显示osd的tree**
+```
+admin@ceph-mon01:~$ ceph osd tree
+ID  CLASS  WEIGHT   TYPE NAME            STATUS  REWEIGHT  PRI-AFF
+-1         1.46530  root default                                  
+-3         0.48843      host ceph-osd01                           
+ 0    hdd  0.09769          osd.0            up   1.00000  1.00000
+ 1    hdd  0.09769          osd.1            up   1.00000  1.00000
+ 2    hdd  0.09769          osd.2            up   1.00000  1.00000
+ 3    hdd  0.09769          osd.3            up   1.00000  1.00000
+ 4    hdd  0.09769          osd.4            up   1.00000  1.00000
+-5         0.48843      host ceph-osd02                           
+ 5    hdd  0.09769          osd.5            up   1.00000  1.00000
+ 6    hdd  0.09769          osd.6            up   1.00000  1.00000
+ 7    hdd  0.09769          osd.7            up   1.00000  1.00000
+ 8    hdd  0.09769          osd.8            up   1.00000  1.00000
+ 9    hdd  0.09769          osd.9            up   1.00000  1.00000
+-7         0.48843      host ceph-osd03                           
+10    hdd  0.09769          osd.10           up   1.00000  1.00000
+11    hdd  0.09769          osd.11           up   1.00000  1.00000
+12    hdd  0.09769          osd.12           up   1.00000  1.00000
+13    hdd  0.09769          osd.13           up   1.00000  1.00000
+14    hdd  0.09769          osd.14           up   1.00000  1.00000
+```
+
 ### 2.2.5 解决HEALTH_WARN
 **EALTH_WARN  mons are allowing insecure global_id reclaim**
 ```
@@ -804,4 +854,106 @@ admin@ceph-mon01:~$ sudo ceph -s
     objects: 0 objects, 0 B
     usage:   4.3 GiB used, 1.5 TiB / 1.5 TiB avail
     pgs:     1 active+clean
+```
+
+
+## 2.3 部署ceph cluster子集组件
+部署服务器(172.31.8.201 ceph-mon01)的admin用户下操作
+
+### 2.3.1 相应主机上安装ceph-rgw并添加
+当我们要让ceph来提供"对象存储"时，应该为了client（应用程序）在ceph cluster中安装RADOS Gateway（即：radosgw进程，默认端口7480），RADOS Gateway提供的是REST风格的API接口，client（应用程序）通http或https与其进行交互，完成数据的增删改等管理操作。
+为了RADOS Gateway（即radosgw进程）的高可用，至少在两台服务器上分别部署radosgw进程。也可在其前面加上LB，这样client（应用程序）连接RADOS Gateway前面的LB即可。
+
+**部署rados gateway**
+```
+cd $HOME/ceph-cluster    # 进入相应的目录
+ceph-deploy install --rgw  --no-adjust-repos  --nogpgcheck  ceph-rgw01
+ceph-deploy install --rgw  --no-adjust-repos  --nogpgcheck  ceph-rgw02
+  #
+  # 其中ceph-rgw01和ceph-rgw02是主机的连接地址,我的部署服务器上可以正向解析
+  # 只要是安装软件，就可以一条命令指定多个Host
+  # 会安装相应软件包(有radosgw命令)
+  #
+```
+
+**初始化**
+```
+cd $HOME/ceph-cluster
+ceph-deploy rgw  create  ceph-rgw01:rgw1
+ceph-deploy rgw  create  ceph-rgw02:rgw2
+  #
+  # --overwrite-conf是ceph-deploy工具的参数,它表示会强制替换rados gateway host
+  #   上的配置文件之/etc/ceph/ceph.conf。我这的rados gateway host是全新的。
+  # rgw是关键字,即ceph-deploy工具的command，那么create是rgw命令的子命令。
+  # rados gateway是可以同时初始化的，多个host时，用空格分隔。
+  # 相应主机上radowgw进程的端口为7480,若你没有部署osd,则端口你是看不到的。
+  #
+```
+
+**查看ceph集群状态**
+```
+admin@ceph-mon01:~$ sudo ceph -s
+  cluster:
+    id:     2004f705-b556-4d05-9e73-7884379e07bb
+    health: HEALTH_OK
+ 
+  services:
+    mon: 3 daemons, quorum ceph-mon01,ceph-mon02,ceph-mon03 (age 62m)
+    mgr: mgr1(active, since 44m), standbys: mgr2
+    osd: 15 osds: 15 up (since 24m), 15 in (since 24m)
+    rgw: 2 daemons active (2 hosts, 1 zones)
+ 
+  data:
+    pools:   5 pools, 129 pgs
+    objects: 189 objects, 4.9 KiB
+    usage:   4.3 GiB used, 1.5 TiB / 1.5 TiB avail
+    pgs:     129 active+clean
+ 
+  io:
+    recovery: 36 B/s, 1 objects/s
+```
+
+### 2.3.2 相应主机上安装ceph-mds并添加
+我们知道，若我们不用ceph的文件系统(cephfs)功能，我们是可以不用安装ceph-mds服务的哈。
+**安装ceph-mds**
+```
+cd $HOME/ceph-cluster      # 进入到相应的目录
+ceph-deploy install --mds --no-adjust-repos  --nogpgcheck ceph-mds01
+ceph-deploy install --mds --no-adjust-repos  --nogpgcheck ceph-mds02
+```
+
+**初始化**
+```
+cd $HOME/ceph-cluster      # 进入到相应的目录
+ceph-deploy  --overwrite-conf mds create ceph-mds01:mds1
+ceph-deploy  --overwrite-conf mds create ceph-mds02:mds2
+
+ceph-deploy  --overwrite-conf mds create ceph-mds01:mds3
+ceph-deploy  --overwrite-conf mds create ceph-mds02:mds4
+```
+
+**查看集群状态**
+```
+admin@ceph-mon01:~$ sudo ceph -s   # 其services下看不到mds，是因为还没有文件系统(fs volume)
+  cluster:
+    id:     2004f705-b556-4d05-9e73-7884379e07bb
+    health: HEALTH_OK
+ 
+  services:
+    mon: 3 daemons, quorum ceph-mon01,ceph-mon02,ceph-mon03 (age 68m)
+    mgr: mgr1(active, since 49m), standbys: mgr2
+    osd: 15 osds: 15 up (since 29m), 15 in (since 30m)
+    rgw: 2 daemons active (2 hosts, 1 zones)
+ 
+  data:
+    pools:   5 pools, 129 pgs
+    objects: 189 objects, 4.9 KiB
+    usage:   4.3 GiB used, 1.5 TiB / 1.5 TiB avail
+    pgs:     129 active+clean
+```
+
+**查看mds的状态**
+```
+admin@ceph-mon01:~$ sudo ceph mds stat
+ 4 up:standby
 ```
