@@ -509,9 +509,10 @@ auth_client_required = cephx
 ## 2.2 部署ceph的Rados Cluster
 https://docs.ceph.com/en/pacific/glossary/   # 搜索rados cluster
 这里我要部署ceph的Rados Cluster。它包含ceph monitors、ceph managers、osds。
+注意：在部署服务器(ceph-mon01)主机的admin用户下操作
 
 ### 2.2.1 相应主机上安装ceph monitors 
-注意：ceph monitor一定是要先部署的哈。至少1个，要想高可用的话，至少得3个。
+ceph monitor一定是要先部署的哈。至少1个，要想高可用的话，至少得3个。
 **各主机上安装ceph-mon命令**
 ```
 cd $HOME/ceph-cluster   # 进入到相应的目录
@@ -604,7 +605,8 @@ admin@ceph-mon01:~$ ceph -s
 ```
 
 ### 2.2.2 集群状态查看(分发密钥、推送配置文件)
-这里我要在部署服务器（ceph-mon01）的admin用户下，将ceph cluster其超级用户client.admin的keyring文件（ceph.client.admin.keyring）分发到ceph-mon02、ceph-mon03主机上（有/etc/ceph/目录、有ceph命令、还有ceph cluster的配置文件conf)。
+将ceph cluster其超级用户client.admin的keyring文件（ceph.client.admin.keyring）分发到ceph-mon02、ceph-mon03主机上（有/etc/ceph/目录、有ceph命令、还有ceph cluster的配置文件conf)。
+
 **分发** 
 ```
 cd $HOME/ceph-cluster
@@ -617,8 +619,8 @@ ceph-deploy  admin   ceph-mon03
 sudo ceph -s
 ```
 
-### 2.2.3 部署ceph cluster子集组件
-注意：是在部署服务器(ceph-mon01)的admin用户下操作。ceph-mgr进程至少1个，高可用的话，至少得2个。
+### 2.2.3 部署ceph manager
+ceph-mgr进程至少1个，高可用的话，至少得2个。
 **各主机上安装ceph-mgr命令**
 ```
 cd $HOME/ceph-cluster
@@ -680,7 +682,6 @@ admin@ceph-mon01:~$ sudo ceph -s
 ```
 
 ### 2.2.4 相应主机上安装osds
-注意：是在部署服务器(ceph-mon01)的admin用户下操作。
 **安装ceph-osd命令**
 ```
 cd $HOME/ceph-cluster
