@@ -441,7 +441,70 @@ bash 02.sshpass-cp-publickey-to-target-host.sh
 
 
 # 2 部署服务器上部署ceph集群
+部署服务器(172.31.8.201 ceph-mon01)的admin用户下操作
+
 ## 2.1 为new cluster生成默认配置
+```
+### 创建相应的目录
+mkdir $HOME/ceph-cluster
+ls -ld $HOME/ceph-cluster
+
+### 进入相应的目录
+cd $HOME/ceph-cluster
+pwd
+
+### 人为使用uuidgen命令生成ceph cluster fsid，后面我就用它，因为我这是写文档。
+admin@ceph-deploy:~/ceph-cluster$ uuidgen >cluster-fsid.txt
+admin@ceph-deploy:~/ceph-cluster$ cat cluster-fsid.txt 
+48944a2c-b6e4-411d-a566-7a3716fe959e
+
+### 初始化集群的命令
+cd $HOME/ceph-cluster    # 进入到相应的目录
+ceph-deploy  new --fsid  $( cat ./cluster-fsid.txt ) \
+  --public-network=172.31.0.0/16  \
+  --cluster-network=192.168.0.0/16 \
+  --no-ssh-copykey                 \
+  ceph-mon-node01 ceph-mon-node02
+
+    # ceph-deploy
+    #     # 是部署工具
+    # 
+    # new
+    #     # 部署工具的命令。
+    #     # 为部署一个新的ceph集群而生成集群配置文件和相应的keyring文件。
+    # 
+    # --fsid
+    #     # 指定ceph cluster的id
+    #     # 例如：123456，这里是不会出错,后面部署其它组件时就会有问题了。
+    #     # 例如：--fsid $( uuidgen )
+    #     # 例如：--fsid $( cat ./cluster-fsid.txt ),用uuidgen事先生成并保存到文件
+    #     # 我这人为指定了的,若不人为指定,会随机生成。
+    # 
+    # --public-network
+    #     # 指定ceph cluster的业务网络地址段。
+    # 
+    # --cluster-network
+    #     # 指定 ceph clsuter的集群网络地址段。
+    #
+    # --no-ssh-copykey
+    #     # 不拷贝ssh的公钥至各mon node。
+    # 
+    # ceph-mon-node01 ceph-mon-node02
+    #     # 相应mon node的主机名
+    #     # 我这台部署服务器是可以解析成IP地址(public network)的,用的是
+    #     # /etc/hosts文件来实现dns功能。
+    #     # 注意：我规划的是3个mon node，这里只指定了2个mon node
+    # 
+
+### 上面命令会在其所在目录生成相应的文件
+ceph-deploy-ceph.log   
+# 记录部署工具ceph-deploy执行相关命令的日志文件
+# 后面我们还要在部署服务器上用ceph-deploy工具部署ceph的其它组件
+ceph.conf             
+# ceph cluster集群的配置文件
+ceph.mon.keyring    
+    # 连接ceph cluster中各ceph monitor服务时要用到的认证key。
+```
 
 ## 2.2 部署ceph的Rados Cluster
 
