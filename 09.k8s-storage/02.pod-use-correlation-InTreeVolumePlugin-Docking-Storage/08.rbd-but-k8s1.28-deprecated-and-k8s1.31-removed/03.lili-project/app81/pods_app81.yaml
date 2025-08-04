@@ -1,0 +1,50 @@
+---
+apiVersion: v1
+kind: Pod 
+metadata:
+  namespace: lili
+  name: app81
+  labels:
+    project: lili
+    env: prod
+    app: app81
+spec:
+  # Pod级别
+  volumes:
+  - name: rbd-volume-data
+    rbd:
+      # 其存储系统之Ceph之monitors组件的连接地址和相应volume（subvolume）的路径
+      monitors:                                                            # 根据存储管理员所提供的信息
+      - "172.31.8.201:6789"
+      - "172.31.8.202:6789"
+      - "172.31.8.203:6789"
+      pool: rbd-lili-project-data                                           # 根据存储管理员所提供的信息
+      image: app81-data                                                     # 根据存储管理员所提供的信息
+
+      # 认证的用户和kerying(不是secret哈)
+      # 需要将Ceph存储系统中的client.wycrbd用户的keyring文件拷贝至相应的worker node上(得事先与k8s管理员沟通)
+      # user: "client.lilirbd"
+      user: "lilirbd"                                                       # 根据存储管理员所提供的信息
+      keyring: "/etc/ceph/ceph.client.lilirbd.keyring"                      # 根据k8s管理员所提供的信息,lili项目的各worke node上得存在。
+
+      # 在格式化时,格式化成什么文件系统
+      fsType: ext4
+
+      # 在Pod级别加载volume后,在这一层面,指定是否只读,为false表示可读写
+      readOnly: false
+
+  # 容器级别之主容器
+  containers:
+  - name: app81
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31 
+    volumeMounts:
+    - name: rbd-volume-data 
+      mountPath: /data
+      readOnly: false
+    command: 
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 1000000000000"
+---
+

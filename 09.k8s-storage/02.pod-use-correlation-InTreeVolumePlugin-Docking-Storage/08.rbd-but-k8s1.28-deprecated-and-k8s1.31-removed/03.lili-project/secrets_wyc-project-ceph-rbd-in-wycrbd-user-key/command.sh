@@ -1,8 +1,12 @@
-## 其 -n wyc 是指wyc名称空间
-kubectl create secret  generic  wyc-project-ceph-rbd-in-wycrbd-user-key \
+#!/bin/bash
+#
+# 定义变量
+ScriptDir=$(dirname "$0")
+
+# 快速编写secrets资源对象的manifests
+kubectl -n lili  create secret  generic  lili-project-ceph-rbd-in-lilirbd-user-key \
    --type=Opaque \
-   --from-file=key=./ceph.client.wycrbd.secret \
-   -n wyc \
+   --from-file=key=$ScriptDir/ceph.client.lilirbd.secret \
    --dry-run=client \
-   -o yaml >./secrets_wyc-project-ceph-rbd-in-wycrbd-user-key.yaml 
+   -o yaml >./secrets_lili-project-ceph-rbd-in-lilirbd-user-key.yaml 
 
