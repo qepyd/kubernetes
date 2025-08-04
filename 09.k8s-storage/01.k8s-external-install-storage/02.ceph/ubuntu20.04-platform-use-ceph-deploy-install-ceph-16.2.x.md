@@ -505,7 +505,38 @@ ceph.conf
   # ceph cluster集群的配置文件
 ceph.mon.keyring    
   # 连接ceph cluster中各ceph monitor服务时要用到的认证key。
+
+
+### 查看一下ceph.conf这个配置文件,是可以修改的
+admin@ceph-mon01:~/ceph-cluster$ cat ceph.conf 
+[global]
+fsid = 2004f705-b556-4d05-9e73-7884379e07bb
+public_network = 172.31.0.0/16
+cluster_network = 172.31.0.0/16
+mon_initial_members = ceph-mon01, ceph-mon02
+mon_host = 172.31.8.201,172.31.8.202
+auth_cluster_required = cephx
+auth_service_required = cephx
+auth_client_required = cephx
+
+
+### 前面我为ceph monitor规划了三台主机,但在生成new ceph cluster配置文件和mon 的
+#   key文件时，只指定了两台,这里我要把另外一台加进入来。就直接修改ceph.conf文件。
+01：我们应该手动修改ceph.conf文件中mon_initial_members和mon_host的值
+02：其修改后的结果如下所示：
+admin@ceph-mon01:~/ceph-cluster$ cat ceph.conf 
+[global]
+fsid = 2004f705-b556-4d05-9e73-7884379e07bb
+public_network = 172.31.0.0/16
+cluster_network = 172.31.0.0/16
+mon_initial_members = ceph-mon01, ceph-mon02, ceph-mon3
+mon_host = 172.31.8.201,172.31.8.202,172.31.8.203
+auth_cluster_required = cephx
+auth_service_required = cephx
+auth_client_required = cephx
 ```
+
+
 
 ## 2.2 部署ceph的Rados Cluster
 
