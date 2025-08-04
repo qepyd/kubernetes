@@ -648,7 +648,7 @@ sudo ceph -s
 ```
 
 ### 2.2.3 部署ceph cluster子集组件
-注意：在ceph-deploy主机的admin用户下操作。ceph-mgr进程至少1个，高可用的话，至少得2个。
+注意：是在部署服务器(ceph-mon01)的admin用户下操作。ceph-mgr进程至少1个，高可用的话，至少得2个。
 **各主机上安装ceph-mgr命令**
 ```
 cd $HOME/ceph-cluster
@@ -709,5 +709,128 @@ admin@ceph-mon01:~$ sudo ceph -s
     pgs: 
 ```
 
+### 2.2.4 相应主机上安装osds
+注意：是在部署服务器(ceph-mon01)的admin用户下操作。
+**安装ceph-osd命令**
+```
+cd $HOME/ceph-cluster
+ceph-deploy install --osd --no-adjust-repos  --nogpgcheck ceph-osd01
+ceph-deploy install --osd --no-adjust-repos  --nogpgcheck ceph-osd02
+ceph-deploy install --osd --no-adjust-repos  --nogpgcheck ceph-osd03
+  #
+  # 01：一条命令可以指定多个ceph mon host，多个时用空格分隔。安装软件的嘛。
+  # 02：ceph-osd01、ceph-osd02、ceph-osd03就是主机,得要能够
+  #     经过dns解析,我的部署服务器上是可以解析成相应IP地址的,用的是/etc/hosts
+  #     文件。所以这里，其ceph-deploy部署工具没有读取ceph.conf文件。
+  # 03：--no-adjust-repos表示不添加ceph源,因为我在前面为各ceph cluster node手
+  #     动添加了的。
+  # 04：--nogpgcheck 表示不进行包检查。
+  # 
+  # PS：会在相应主机上安装ceph-common、ceph-base、ceph-mon等软件包,对应就会有很
+  #     多的命令。
+  #
+```
 
+**擦除各ceph osd host上的磁盘**
+```
+### 列出各ceph osd host上有哪些磁盘(注意：会显示操作系统上所有的盘符和分区标识)
+ceph-deploy disk list ceph-osd01
+ceph-deploy disk list ceph-osd02
+ceph-deploy disk list ceph-osd03
 
+### 擦除各node上的磁盘(注意：可不能选择系统盘/dev/sda)
+ceph-deploy disk zap ceph-osd01  /dev/sdb
+ceph-deploy disk zap ceph-osd01  /dev/sdc 
+ceph-deploy disk zap ceph-osd01  /dev/sdd 
+ceph-deploy disk zap ceph-osd01  /dev/sde 
+ceph-deploy disk zap ceph-osd01  /dev/sdf
+   # 
+   # 你也可一条命令指定多个磁盘(盘符),用空格分隔
+   # 小心、小心、再小心。
+   # 
+
+ceph-deploy disk zap ceph-osd02  /dev/sdb  
+ceph-deploy disk zap ceph-osd02  /dev/sdc 
+ceph-deploy disk zap ceph-osd02  /dev/sdd 
+ceph-deploy disk zap ceph-osd02  /dev/sde 
+ceph-deploy disk zap ceph-osd02  /dev/sdf
+
+ceph-deploy disk zap ceph-osd03  /dev/sdb  
+ceph-deploy disk zap ceph-osd03  /dev/sdc 
+ceph-deploy disk zap ceph-osd03  /dev/sdd 
+ceph-deploy disk zap ceph-osd03  /dev/sde 
+ceph-deploy disk zap ceph-osd03  /dev/sdf
+```
+
+**添加osds，会启动相应的ceph osd daemon**
+```
+### 注意：
+01：每个磁盘(盘符)对应着一个ceph-osd的进程。进程id其自动编号(会从0开始)
+02：下面的操作是串行执行(部署服务器上开一个shell容器,手动串行执行)
+
+### 添加ceph-osd-node01主机上的相应磁盘
+ceph-deploy osd create ceph-osd01 --data /dev/sdb    # id 0
+ceph-deploy osd create ceph-osd01 --data /dev/sdc    # id 1
+ceph-deploy osd create ceph-osd01 --data /dev/sdd    # id 2
+ceph-deploy osd create ceph-osd01 --data /dev/sde    # id 3
+ceph-deploy osd create ceph-osd01 --data /dev/sdf    # id 4
+
+### 添加ceph-osd-node02主机上的相应磁盘
+ceph-deploy osd create ceph-osd02 --data /dev/sdb    # id 5
+ceph-deploy osd create ceph-osd02 --data /dev/sdc    # id 6
+ceph-deploy osd create ceph-osd02 --data /dev/sdd    # id 7
+ceph-deploy osd create ceph-osd02 --data /dev/sde    # id 8
+ceph-deploy osd create ceph-osd02 --data /dev/sdf    # id 9
+
+### 添加ceph-osd-node03主机上的相应磁盘
+ceph-deploy osd create ceph-osd03 --data /dev/sdb    # id 10
+ceph-deploy osd create ceph-osd03 --data /dev/sdc    # id 11
+ceph-deploy osd create ceph-osd03 --data /dev/sdd    # id 12
+ceph-deploy osd create ceph-osd03 --data /dev/sde    # id 13
+ceph-deploy osd create ceph-osd03 --data /dev/sdf    # id 14
+```
+
+**查看ceph集群状态**
+```
+admin@ceph-mon01:~$ sudo ceph -s
+  cluster:
+    id:     2004f705-b556-4d05-9e73-7884379e07bb
+    health: HEALTH_WARN
+            mons are allowing insecure global_id reclaim
+ 
+  services:
+    mon: 3 daemons, quorum ceph-mon01,ceph-mon02,ceph-mon03 (age 38m)
+    mgr: mgr1(active, since 20m), standbys: mgr2
+    osd: 15 osds: 15 up (since 4s), 15 in (since 14s)
+ 
+  data:
+    pools:   1 pools, 1 pgs
+    objects: 0 objects, 0 B
+    usage:   4.3 GiB used, 1.5 TiB / 1.5 TiB avail
+    pgs:     1 active+clean
+```
+
+### 2.2.5 解决HEALTH_WARN
+**EALTH_WARN  mons are allowing insecure global_id reclaim**
+```
+cd $HOME/ceph-cluster
+ceph config set mon  auth_allow_insecure_global_id_reclaim  false
+```
+**查看ceph集群状态**
+```
+admin@ceph-mon01:~$ sudo ceph -s
+  cluster:
+    id:     2004f705-b556-4d05-9e73-7884379e07bb
+    health: HEALTH_OK
+ 
+  services:
+    mon: 3 daemons, quorum ceph-mon01,ceph-mon02,ceph-mon03 (age 40m)
+    mgr: mgr1(active, since 22m), standbys: mgr2
+    osd: 15 osds: 15 up (since 2m), 15 in (since 2m)
+ 
+  data:
+    pools:   1 pools, 1 pgs
+    objects: 0 objects, 0 B
+    usage:   4.3 GiB used, 1.5 TiB / 1.5 TiB avail
+    pgs:     1 active+clean
+```
