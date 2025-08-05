@@ -22,19 +22,19 @@ spec:
    
   # 卷模式，pvc来匹配时是第一顺序
   volumeMode: Filesystem
-
+  
   # 所属的storageClass, pvc来匹配时是第三顺序(第二顺序是pv的标签)
   # 静态pv也可属于某个storageClass，只不过这个storageClass并非storagesclasses资源对象
   storageClassName: "binbin-project-prod-static-pv"
-
+  
   # 访问模式
   accessModes: 
   - ReadWriteMany
-
+  
   # 能力(大小)
   capacity: 
     storage: 10Gi
- 
+   
   # pv的回收策略
   persistentVolumeReclaimPolicy: Delete
 --- 
