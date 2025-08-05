@@ -7,3 +7,4 @@ kubectl -n binbin  create secret  generic  binbin-project-cephfs-in-binbinfs-use
    --from-file=key=$ScriptDir/ceph.client.binbinfs.secret \
    --dry-run=client \
    -o yaml >$ScriptDir/secrets_binbin-project-cephfs-in-binbinfs-user-key.yaml
+

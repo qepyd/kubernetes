@@ -1,0 +1,16 @@
+```
+root@master01:~# kubectl -n binbin get deploy
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+app31   0/2     2            0           17s
+
+root@master01:~# kubectl -n binbin get pods -o wide | grep app31
+app31-77b667bdbf-mm57h   0/1     ContainerCreating   0          42s   <none>   node02   <none>           <none>
+app31-77b667bdbf-zf6t2   0/1     ContainerCreating   0          42s   <none>   node01   <none>           <none>
+
+# kubectl -n binbin describe pods/app31-77b667bdbf-zf6t2
+  Warning  FailedMount  22s  kubelet  MountVolume.SetUp failed for volume "binbin-prod-app31-data" : CephFS: mount failed: mount failed: exit status 32
+Mounting command: systemd-run
+Mounting arguments: --description=Kubernetes transient mount for /var/lib/kubelet/pods/ebd311f9-6727-4a2b-b126-e1d7cab0c283/volumes/kubernetes.io~cephfs/binbin-prod-app31-data --scope -- mount -t ceph -o <masked>,<masked> 172.31.8.201:6789,172.31.8.202:6789,172.31.8.203:6789:/volumes/app31/data/a05e623d-60ea-4ef2-9167-fcd944225fe0 /var/lib/kubelet/pods/ebd311f9-6727-4a2b-b126-e1d7cab0c283/volumes/kubernetes.io~cephfs/binbin-prod-app31-data
+Output: Running scope as unit: run-r142a504f90fe4a73bfe3730e18e3225d.scope
+mount error 2 = No such file or directory
+```

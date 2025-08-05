@@ -15,11 +15,9 @@ spec:
     - "172.31.8.201:6789"
     - "172.31.8.202:6789"
     - "172.31.8.203:6789"
-    path: "/volumes/app31/data/a05e623d-60ea-4ef2-9167-fcd944225fe0"      # 根据存储管理员所提供
+    path: "/volumes/app31/data/a05e623d-60ea-4ef2-9167-fcd944225fe0"     
+    #user: "client.binbinfs"                                              # 根据存储管理员所提供
     user: "binbinfs"                                                      # 根据存储管理员所提供
-    #secretRef:
-    #  name: "binbin-project-cephfs-in-binbinfs-user-key" 
-       
     secretFile: "/etc/ceph/ceph.client.binbinfs.secret"                   # k8s集群其binbin项目相关worker node上得存在
     readOnly: false
    
