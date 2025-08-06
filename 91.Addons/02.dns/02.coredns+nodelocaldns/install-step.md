@@ -183,17 +183,17 @@ kubectl get -f ./02.nodelocaldns.yaml
 ```
 
 # 7.测试
-应用上一级目录中的ds_pod-in-container-visit-fqdn.yaml这个manifests
+应用上一级目录中的ds_pod-internal-container-visit-fqdn.yaml这个manifests
 ```
-ls -l ../ds_pod-in-container-visit-fqdn.yaml
+ls -l ../ds_pod-internal-container-visit-fqdn.yaml
 
-kubectl apply -f  ../ds_pod-in-container-visit-fqdn.yaml --dry-run=client
-kubectl apply -f  ../ds_pod-in-container-visit-fqdn.yaml 
+kubectl apply -f  ../ds_pod-internal-container-visit-fqdn.yaml --dry-run=client
+kubectl apply -f  ../ds_pod-internal-container-visit-fqdn.yaml 
 
-kubectl get   -f  ../ds_pod-in-container-visit-fqdn.yaml 
+kubectl get   -f  ../ds_pod-internal-container-visit-fqdn.yaml 
    #
    # 观察其READY是否所有副本就绪
    # 
 
-kubectl delete -f  ../ds_pod-in-container-visit-fqdn.yaml
+kubectl delete -f  ../ds_pod-internal-container-visit-fqdn.yaml
 ```

@@ -320,7 +320,7 @@ https://github.com/qepyd/kubernetes/blob/main/91.Addons/01.cni/ds_pod-internal-c
 
 **测试Pod访问互联网FQDN**
 ```
-https://github.com/qepyd/kubernetes/blob/main/91.Addons/02.dns/ds_pod-in-container-visit-fqdn.yaml
+https://github.com/qepyd/kubernetes/blob/main/91.Addons/02.dns/ds_pod-internal-container-visit-fqdn.yaml
 ```
 
 
