@@ -309,7 +309,7 @@ which calicoctl
 ## 2.4 测试Pod访问互联网IPv4
 当然k8s的worker node得要能够访问互联网。
 ```
-https://github.com/qepyd/kubernetes/blob/main/91.Addons/01.cni/ds_pod-in-container-visit-ipv4.yaml
+https://github.com/qepyd/kubernetes/blob/main/91.Addons/01.cni/ds_pod-internal-container-visit-ipv4.yaml
 ```
 
 ## 2.5 测试Pod访问互联网FQDN

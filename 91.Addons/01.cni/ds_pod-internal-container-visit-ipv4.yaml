@@ -3,15 +3,15 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   namespace: default
-  name: pod-in-container-visit-ipv4
+  name: pod-internal-container-visit-ipv4 
 spec:
   selector:
     matchLabels:
-      app: pod-in-container-visit-ipv4 
+      app: pod-internal-container-visit-ipv4 
   template:
     metadata:
       labels:
-        app: pod-in-container-visit-ipv4 
+        app: pod-internal-container-visit-ipv4 
     spec:
       containers:
       - name: admin-toolbox
@@ -19,3 +19,5 @@ spec:
         imagePullPolicy: IfNotPresent
         args:
         - "ping -c 2  223.5.5.5 && sleep 100000000"
+---
+
