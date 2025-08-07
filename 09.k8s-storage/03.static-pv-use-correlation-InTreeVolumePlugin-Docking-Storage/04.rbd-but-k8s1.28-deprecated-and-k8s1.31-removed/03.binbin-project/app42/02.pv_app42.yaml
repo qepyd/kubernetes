@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: binbin
+  name: app42
+  labels:
+    project: binbin
+    env: prod
+    app: app42
+spec:
+  # 准备集群级别pv的顺序为
+  # volumeMode--->labels--->storageClassName--->accessModes-->capacity
+  
+  #volumeMode: Block
+  volumeMode: Filesystem 
+
+
+  selector:
+    matchLabels:
+      project: binbin
+      env: prod
+      app: app42
+ 
+  storageClassName: "binbin-project-prod-static-pv"
+  
+  accessModes: 
+  - ReadWriteOnce 
+  
+  resources: 
+    limits:
+      storage: 5Gi 
+    requests:
+      storage: 5Gi 
+---
+

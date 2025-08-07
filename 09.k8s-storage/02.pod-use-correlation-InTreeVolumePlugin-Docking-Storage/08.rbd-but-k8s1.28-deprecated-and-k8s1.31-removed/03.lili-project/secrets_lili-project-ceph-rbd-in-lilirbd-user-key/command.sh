@@ -8,5 +8,5 @@ kubectl -n lili  create secret  generic  lili-project-ceph-rbd-in-lilirbd-user-k
    --type=Opaque \
    --from-file=key=$ScriptDir/ceph.client.lilirbd.secret \
    --dry-run=client \
-   -o yaml >./secrets_lili-project-ceph-rbd-in-lilirbd-user-key.yaml 
+   -o yaml >$ScriptDir/secrets_lili-project-ceph-rbd-in-lilirbd-user-key.yaml 
 
