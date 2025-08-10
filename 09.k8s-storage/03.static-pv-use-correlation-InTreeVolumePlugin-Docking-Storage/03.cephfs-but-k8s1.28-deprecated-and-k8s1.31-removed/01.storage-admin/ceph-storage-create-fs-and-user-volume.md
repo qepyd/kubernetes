@@ -29,18 +29,18 @@ ceph fs volume ls | grep -w binbin
 ```
 
 # 2 创建用户并授权
-# 2.1 创建binbinfs用户
+## 2.1 创建binbinfs用户
 ```
 ceph auth add client.binbinfs
 ceph auth get client.binbinfs
 ``` 
 
-# 2.2 为其binbinfs用户授权
+## 2.2 为其binbinfs用户授权
 ```
 ceph auth caps client.binbinfs  mon 'allow r'  mds 'allow rw'  osd 'allow rwx pool=cephfs-binbin-project-data'
 ```
 
-# 2.3 导出binbinfs用户的secret
+## 2.3 导出binbinfs用户的secret
 将导出的secret给到binbin项目其维护
 ```
 ## 输出至屏幕
