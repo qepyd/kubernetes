@@ -16,18 +16,18 @@ ceph osd pool ls detail | grep   rbd-binbin-project-data | grep  snaps
 ```
 
 # 2 创建binbinrbd用户并授权
-# 2.1 创建binbinrbd用户
+## 2.1 创建binbinrbd用户
 ```
 ceph auth add client.binbinrbd
 ceph auth get client.binbinrbd
 ```
 
-# 2.2 为其binbinrbd用户授权
+## 2.2 为其binbinrbd用户授权
 ```
 ceph auth caps  client.binbinrbd  mon 'allow r' osd 'allow rwx pool=rbd-binbin-project-data'
 ```
 
-# 2.2 导出binbinrbd用户的secret和keyring
+## 2.3 导出binbinrbd用户的secret和keyring
 导出secret，给到binbin项目的应用维护人员
 ```
 ceph auth print-key client.binbinrbd   # 屏幕上打印
@@ -58,6 +58,7 @@ admin@ceph-mon01:~$ cat /tmp/ceph.client.binbinrbd.keyring
   172.31.8.202:6789
   172.31.8.203:6789
 ```
+
 
 # 3 为binbin项目相关应用创建image
 ## 3.1 app41
