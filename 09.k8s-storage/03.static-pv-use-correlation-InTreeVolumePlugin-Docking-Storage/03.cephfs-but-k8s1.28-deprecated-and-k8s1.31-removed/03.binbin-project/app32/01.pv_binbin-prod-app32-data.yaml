@@ -18,7 +18,8 @@ spec:
     path: "/volumes/app32/data/ae1afebb-7f83-4809-9109-47a1bf1c5e52"      # 根据存储管理员所提供
     user: "binbinfs"                                                      # 根据存储管理员所提供
     secretRef: 
-      name: "binbin-project-cephfs-in-binbinfs-user-key"        # 所引用的secrets资源对象,此资源对象所在namespace中得存在
+      name: "binbin-project-ceph-fs-in-binbinfs-user-key"                 # 所引用的secrets资源对象,此资源对象所在namespace中得存在
+      namespace: "binbin"
     readOnly: false
    
   # 卷模式，pvc来匹配时是第一顺序
@@ -37,5 +38,17 @@ spec:
     storage: 10Gi
  
   # pv的回收策略
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain 
+
+  # 指定被挂载时的参数
+  # 若不指定：Pod所在worker node无法挂载，pod、kubelet会有如下信息输出
+  #    Mounting arguments: --description=Kubernetes transient mount for /var/lib/kubelet/pods/75ed6fa4-9adc-444c-a288-8006c8b9d039/volumes/kubernetes.io~cephfs/binbin-prod-app32-data --scope \
+  #    -- mount -t ceph -o <masked>,<masked> 172.31.8.201:6789,172.31.8.202:6789,172.31.8.203:6789:/volumes/app32/data/ae1afebb-7f83-4809-9109-47a1bf1c5e52
+  #    #
+  #    # -o name=binbinfs,fs=binbin,secretfile=/etc/ceph/ceph.client.binbinfs.secret 可正常挂载
+  #    # 这里就只添加 fs 这个参数，其name为pv.spec.cephfs.user，其secretfile为pv.spec.cephfs.secretFile
+  #    #
+  #
+  mountOptions:
+  - "fs=binbin"
 --- 

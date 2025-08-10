@@ -54,5 +54,5 @@ spec:
     storage: 5Gi
    
   # pv的回收策略
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain 
 --- 

@@ -12,7 +12,7 @@ spec:
   volumes:
   - name: rbd-volume-data
     persistentVolumeClaim:
-      claimName: app41
+      claimName: app41-data
       readOnly: false
 
   containers:

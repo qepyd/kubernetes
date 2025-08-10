@@ -25,7 +25,7 @@ spec:
       volumes:
       - name: data-volume
         persistentVolumeClaim:
-          claimName: "app31"
+          claimName: "app31-data"
           readOnly: false
 
       # 容器级别之主容器
