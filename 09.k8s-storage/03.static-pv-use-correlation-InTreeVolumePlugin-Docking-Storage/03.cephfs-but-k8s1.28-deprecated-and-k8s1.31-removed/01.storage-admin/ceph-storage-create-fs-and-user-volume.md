@@ -63,7 +63,7 @@ ceph集群的monitors信息为
   172.31.8.203:6789
 ```
 
-# 3 为binbin项目相关应用在ceph的binbin fs中创建volume
+# 3 为binbin项目相关应用创建volume
 ## 3.1 app31
 ```
 ## 在binbin文件系统下创建subvolumegroup(以应用程序的name来命名)
