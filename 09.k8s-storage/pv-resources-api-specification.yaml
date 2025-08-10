@@ -65,5 +65,10 @@ spec:
 
   ## 节点新和性
   #  例如：使用local这个树内卷插件时就得用到它
-  nodeAffinity	<Object>
+  nodeAffinity: <Object>
 
+ 
+  ## 挂载选项
+  #  并非所有卷类型(树内卷插件)都支持
+  #  像nfs、cephfs、iscsi是支持的
+  mountOptions: <[]string>
