@@ -37,7 +37,7 @@ spec:
           # 需要将Ceph存储系统中的client.lili用户的secret文件拷贝至相应的worker node上(得事先与k8s管理员沟通)
           # user: "client.lilifs"
           user: "lilifs"                                                      # 根据存储管理员所提供的信息
-          secretFile: "/etc/ceph/ceph.client.lilifs.secret"                   # 根据k8s管理员所提供的信息,lili项目的各worker node上得存在
+          secretFile: "/etc/ceph/ceph.client.lilifs.secret"                   # k8s集群其lili项目的各worker node上得存在
 
           # 在Pod级别加载volume后,在这一层面,允许其读写
           readOnly: false

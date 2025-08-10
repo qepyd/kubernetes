@@ -18,7 +18,8 @@ spec:
     path: "/volumes/app32/data/ae1afebb-7f83-4809-9109-47a1bf1c5e52"      # 根据存储管理员所提供
     user: "binbinfs"                                                      # 根据存储管理员所提供
     secretRef: 
-      name: "binbin-project-ceph-fs-in-binbinfs-user-key"                 # 所引用的secrets资源对象,此资源对象所在namespace中得存在
+      name: "binbin-project-ceph-fs-in-binbinfs-user-key"                 # 所引用的secrets资源对象
+      namespace: "binbin"
     readOnly: false
    
   # 卷模式，pvc来匹配时是第一顺序

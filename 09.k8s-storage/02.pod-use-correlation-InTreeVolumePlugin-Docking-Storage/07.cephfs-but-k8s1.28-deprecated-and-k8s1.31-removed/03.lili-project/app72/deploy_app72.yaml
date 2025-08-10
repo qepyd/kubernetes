@@ -37,7 +37,8 @@ spec:
             # user: "client.lilifs"
             user: "lilifs"                                          # 根据存储管理员所提供的信息
             secretRef: 
-              name: "lili-project-cephfs-in-lilifs-user-key"        # 所引用的secrets资源对象,此资源对象所在namespace中得存在
+              name: "lili-project-cephfs-in-lilifs-user-key"        # 所引用的secrets资源对象
+              namespace: "lili"
 
             # 在Pod级别加载volume后,在这一层面,允许其读写
             readOnly: false

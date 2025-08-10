@@ -27,7 +27,8 @@ spec:
     # 认证信息
     user: "binbinrbd"
     secretRef:
-      name: "binbin-project-ceph-rbd-in-binbinrbd-user-key"  # 此资源对象所在ns中得存在secrets/binbin-project-ceph-rbd-in-binbinrbd-user-key对象
+      name: "binbin-project-ceph-rbd-in-binbinrbd-user-key"
+      namespace: "binbin"
 
     # 是否只读，默认为false
     readOnly: false

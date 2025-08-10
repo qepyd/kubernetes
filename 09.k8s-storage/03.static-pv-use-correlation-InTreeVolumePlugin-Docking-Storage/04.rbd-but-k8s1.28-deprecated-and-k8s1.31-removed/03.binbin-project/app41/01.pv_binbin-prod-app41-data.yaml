@@ -26,7 +26,7 @@ spec:
 
     # 认证信息
     user: "binbinrbd"
-    keyring: "/etc/ceph/ceph.client.binbinrbd.keyring"   # binbin项目相关worker node得存在此文件
+    keyring: "/etc/ceph/ceph.client.binbinrbd.keyring"   # k8s集群其binbin项目相关worker node得存在此文件
 
     # 是否只读，默认为false
     readOnly: false
