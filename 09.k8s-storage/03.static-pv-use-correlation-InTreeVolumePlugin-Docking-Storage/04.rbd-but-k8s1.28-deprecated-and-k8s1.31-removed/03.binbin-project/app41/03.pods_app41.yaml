@@ -28,5 +28,17 @@ spec:
     args: 
     - "-c"
     - "sleep 10000000000"
+  - name: sidecar
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    imagePullPolicy: Always
+    volumeMounts:
+    - name: rbd-volume-data
+      mountPath: /data/
+      readOnly: false
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 10000000000"
 ---
 
