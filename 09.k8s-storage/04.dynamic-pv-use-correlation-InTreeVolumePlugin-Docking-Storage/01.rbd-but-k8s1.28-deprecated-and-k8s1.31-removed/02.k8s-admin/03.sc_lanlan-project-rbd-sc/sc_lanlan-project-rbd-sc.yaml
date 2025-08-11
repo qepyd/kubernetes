@@ -5,13 +5,16 @@ metadata:
   ## 其storageclasses资源是"非namespae"级别的资源  
   name: lanlan-project-rbd-sc
 
-# 制备器,kubernetes内置(1.28版本已弃用),我的k8s是1.24版本
+# 制备器,必须字段
+# 这里指定的制备器是k8s的内置制备器,
+# kubernetes内置(1.28版本已弃用，1.31已删除)
+# 我的k8s是1.24版本
 provisioner: kubernetes.io/rbd
 
 # 参数
 parameters:
-  # ceph集群的mon实例前面的代理,我这就指定某个mon实例
-  # k8s控制平面要能够与ceph集群通信,因为制备器k8s控制平面的kube-controller-manager组件中
+  # ceph集群的mon实例的连接地址,多个时用逗号分隔。
+  # k8s控制平面要需要能够与ceph集群mon实例通信,因为制备器在k8s控制平面的kube-controller-manager组件中
   monitors: "172.31.8.201:6789,172.31.8.202:6789,172.31.8.203:6789"
 
   # 使用相关用户与ceph集群进行认证,成功后在相关pool中创建image。
@@ -22,7 +25,7 @@ parameters:
   # ceph集群中用于存放后续自动创建image的pool,得让ceph集群管理员事先创建，默认为rbd
   pool: rbd-lanlan-project-data
 
-  # 映射image时的相关用户
+  # 映射image时的相关用户,ceph集群中得存在且有进行相应授权
   userId: "lanlanrbd"                    # Ceph 客户端 ID，用于映射 RBD 镜像。默认为admin
   userSecretName: "lanlan-project-ceph-rbd-in-lanlanrbd-user-key"  # 其secrets的类型得为kubernetes.io/rbd
   userSecretNamespace: "lanlan"          # secrets资源对象所在namespace,必须与后面引用此资源对象的pv在同一namespace中
@@ -35,4 +38,11 @@ parameters:
 
   # 这个参数是可选的，只能在你将 imageFormat 设置为 "2" 才使用。 目前支持的功能只是 layering。默认是 ""，没有功能打开。
   imageFeatures: "layering"
+
+  # 动态pv的回收策略，默认为Delete
+  # 当pv的回收策略为Delete时
+  #    当pvc被删除后,pv也会被删除
+  #    pv被删除后,至于存储系统中的数据是否要被删除,这个取决于制备器(而k8s中内置的kubernetes.io/rbd是会删除storage中的数据的,image会被删除)
+  reclaimPolicy: Delete
 ---
+
