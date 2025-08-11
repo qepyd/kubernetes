@@ -11,6 +11,7 @@ provisioner: kubernetes.io/rbd
 # 参数
 parameters:
   # ceph集群的mon实例前面的代理,我这就指定某个mon实例
+  # k8s控制平面要能够与ceph集群通信,因为制备器k8s控制平面的kube-controller-manager组件中
   monitors: "172.31.8.201:6789,172.31.8.202:6789,172.31.8.203:6789"
 
   # 使用相关用户与ceph集群进行认证,成功后在相关pool中创建image。
