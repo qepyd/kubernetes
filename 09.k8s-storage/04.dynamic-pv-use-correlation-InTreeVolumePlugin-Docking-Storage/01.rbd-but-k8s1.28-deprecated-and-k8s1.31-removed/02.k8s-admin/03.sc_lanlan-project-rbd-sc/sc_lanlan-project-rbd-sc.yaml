@@ -1,0 +1,37 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  ## 其storageclasses资源是"非namespae"级别的资源  
+  name: lanlan-project-rbd-sc
+
+# 制备器,kubernetes内置(1.28版本已弃用),我的k8s是1.24版本
+provisioner: kubernetes.io/rbd
+
+# 参数
+parameters:
+  # ceph集群的mon实例前面的代理,我这就指定某个mon实例
+  monitors: "172.31.8.201:6789,172.31.8.202:6789,172.31.8.203:6789"
+
+  # 使用相关用户与ceph集群进行认证,成功后在相关pool中创建image。
+  adminId: "admin"                       # 默认为admin
+  adminSecretName: "ceph-cluster-admin"  # 其secrets的类型得为kubernetes.io/rbd
+  adminSecretNamespace: "kube-system"    # 其secrets资源对象所在的namespace,默认为default
+
+  # ceph集群中用于存放后续自动创建image的pool,得让ceph集群管理员事先创建，默认为rbd
+  pool: rbd-lanlan-project-data
+
+  # 映射image时的相关用户
+  userId: "lanlanrbd"                    # Ceph 客户端 ID，用于映射 RBD 镜像。默认为admin
+  userSecretName: "lanlan-project-ceph-rbd-in-lanlanrbd-user-key"  # 其secrets的类型得为kubernetes.io/rbd
+  userSecretNamespace: "lanlan"          # secrets资源对象所在namespace,必须与后面引用此资源对象的pv在同一namespace中
+
+  # 要格式成的文件系统,默认为ext4
+  fsType: ext4
+
+  # Ceph RBD 镜像格式，"1" 或者 "2"。默认值是 "1"
+  imageFormat: "2"
+
+  # 这个参数是可选的，只能在你将 imageFormat 设置为 "2" 才使用。 目前支持的功能只是 layering。默认是 ""，没有功能打开。
+  imageFeatures: "layering"
+---

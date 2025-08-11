@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: lanlan
+  name: app11
+spec:
+  # 这里指定的storageclass是个sc资源对象(sc资源是非namespace级别的)
+  storageClassName: "lanlan-project-rbd-sc"
+
+  # 卷模式
+  volumeMode: Filesystem
+
+  # 访问模式
+  accessModes: 
+  - ReadWriteOnce 
+  
+  # 资源大小
+  resources: 
+    requests:
+      storage: 5Gi 
+---
+
