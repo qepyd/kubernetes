@@ -1,33 +1,39 @@
 # 1 存储系统ceph中的准备
 参考 ./01.storage-admin/ceph-storage-create-rbd-and-user-and-rbdimage.md
 
-# 2 k8s中创建sc/lanlan-project-rbd-sc对象
+# 2 k8s-admin相关
+参考 ./02.k8s-admin/k8s-control-plane-and-worker-node-install-ceph-common.md
+
+# 3 实践
 相关目录
 ```
-root@master01:~# tree 02.k8s-admin/
-02.k8s-admin/
-├── 01.secrets_ceph-cluster-admin
-│   ├── ceph.client.admin.secret
-│   ├── command.sh
-│   └── secrets_ceph-cluster-admin.yaml
-├── 02.secrets_lanlan-project-ceph-rbd-in-lanlanrbd-user-key
-│   ├── ceph.client.lanlanrbd.secret
-│   ├── command.sh
-│   └── secrets_lanlan-project-ceph-rbd-in-lanlanrbd-user-key.yaml
-├── 03.sc_lanlan-project-rbd-sc
+root@node01:~# tree 03.lanlan-project/
+03.lanlan-project/
+├── app11
+│   ├── 01.pvc_app11.yaml
+│   └── 02.pods_app11.yaml
+├── app12
+│   ├── 01.pvc_app12.yaml
+│   └── 02.pods_app12.yaml
+├── sc_lanlan-project-rbd-sc
 │   └── sc_lanlan-project-rbd-sc.yaml
-└── k8s-control-plane-and-worker-node-install-ceph-common.md
+└── secrets_lanlan-project-ceph-rbd-in-lanlanrbd-user-key
+    ├── ceph.client.lanlanrbd.secret
+    ├── command.sh
+    └── secrets_lanlan-project-ceph-rbd-in-lanlanrbd-user-key.yaml
+
+4 directories, 8 files
+```
+
+创建sc/lanlan-project-ceph-rbd-in-lanlanrbd-user-key对象,会被sc/lanlan-project-rbd-sc引用
+```
+root@master01:~# kubectl apply -f 03.lanlan-project/secrets_lanlan-project-ceph-rbd-in-lanlanrbd-user-key/
+secret/lanlan-project-ceph-rbd-in-lanlanrbd-user-key created
 ```
 
 创建sc/lanlan-project-rbd-sc对象
 ```
-root@master01:~# kubectl apply -f 02.k8s-admin/01.secrets_ceph-cluster-admin/
-secret/ceph-cluster-admin created
-root@master01:~# 
-root@master01:~# kubectl apply -f 02.k8s-admin/02.secrets_lanlan-project-ceph-rbd-in-lanlanrbd-user-key/
-secret/lanlan-project-ceph-rbd-in-lanlanrbd-user-key created
-root@master01:~#
-root@master01:~# kubectl apply -f 02.k8s-admin/03.sc_lanlan-project-rbd-sc/
+root@master01:~# kubectl apply -f 03.lanlan-project/sc_lanlan-project-rbd-sc/
 storageclass.storage.k8s.io/lanlan-project-rbd-sc created
 root@master01:~# 
 root@master01:~# kubectl get sc/lanlan-project-rbd-sc
@@ -42,7 +48,7 @@ lanlan-project-rbd-sc   kubernetes.io/rbd   Delete          Immediate           
   #
 ```
 
-# 3 lanlan项目的app11应用
+# 4 lanlan项目的app11应用
 相关目录
 ```
 root@master01:~# tree 03.lanlan-project/app11/
@@ -124,5 +130,5 @@ admin@ceph-mon01:~$ rbd ls -l --pool rbd-lanlan-project-data
 admin@ceph-mon01:~$ 
 ```
 
-# 4 lanlan项目的app12应用
+# 5 lanlan项目的app12应用
 参考 2 app11 

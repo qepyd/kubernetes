@@ -18,9 +18,9 @@ parameters:
   monitors: "172.31.8.201:6789,172.31.8.202:6789,172.31.8.203:6789"
 
   # 使用相关用户与ceph集群进行认证,成功后在相关pool中创建image。
-  adminId: "admin"                       # 默认为admin
-  adminSecretName: "ceph-cluster-admin"  # 其secrets的类型得为kubernetes.io/rbd
-  adminSecretNamespace: "kube-system"    # 其secrets资源对象所在的namespace,默认为default
+  adminId: "lanlanrbd"                                              # 默认为admin
+  adminSecretName: "lanlan-project-ceph-rbd-in-lanlanrbd-user-key"  # 其secrets的类型得为kubernetes.io/rbd
+  adminSecretNamespace: "lanlan"                                    # 其secrets资源对象所在的namespace,默认为default
 
   # ceph集群中用于存放后续自动创建image的pool,得让ceph集群管理员事先创建，默认为rbd
   pool: rbd-lanlan-project-data

@@ -1,0 +1,44 @@
+---
+#
+# 参考： https://github.com/ceph/ceph-csi/blob/v3.14.2/examples/cephfs/storageclass.yaml
+#
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: jmsco-ceph-csi-cephfs 
+
+# 制作器，即ceph-csi之cephfs的csidriver资源对象
+provisioner: "cephfs.csi.ceph.com"
+
+# 参数
+parameters:
+  # Ceph存储系统其集群ID
+  clusterID: "2004f705-b556-4d05-9e73-7884379e07bb"
+
+  # Ceph存储集群中其jmsco项目的fs(得事先存在)
+  fsName: "jmsco"
+
+  # Ceph存储集群中其jmsco项目的fs之data存储池(得事先存在)
+  pool: "cephfs-jmsco-project-data"
+
+  # 认证要用到有信息
+  #
+  # <-- 动态制备要用到信息,其用户jmscofs可以在相关fs volume中创建subvolume的
+  csi.storage.k8s.io/provisioner-secret-name: "jmsco-project-ceph-fs-in-jmscofs-user-key"
+  csi.storage.k8s.io/provisioner-secret-namespace: "jmsco"
+  csi.storage.k8s.io/controller-expand-secret-name: "jmsco-project-ceph-fs-in-jmscofs-user-key"
+  csi.storage.k8s.io/controller-expand-secret-namespace: "jmsco"
+  #
+  # <-- fs在worker node处挂载所要用到的信息 
+  #
+  csi.storage.k8s.io/node-stage-secret-name: "jmsco-project-ceph-fs-in-jmscofs-user-key"
+  csi.storage.k8s.io/node-stage-secret-namespace: "jmsco"
+
+# 回收策略,动态pv会继承
+reclaimPolicy: Delete
+
+allowVolumeExpansion: true
+
+mountOptions:
+  - debug
+---

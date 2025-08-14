@@ -47,13 +47,3 @@ AQCNsZlojdw0MxAAyeyOoErUwqzZYRKuGp+o+A==
 ```
 
 # 3 这里不为lanlan项目相关应用创建image,因为后面实践的是动态pv
-
-# 4 导出ceph集群其admin用户的secret
-导出secret，给到k8s管理员。
-```
-ceph auth print-key client.admin   # 屏幕上打印
-ceph auth print-key client.admin -o /tmp/ceph.client.admin.secret
-ls -l /tmp/ceph.client.admin.secret
-```
-
-
