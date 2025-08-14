@@ -5,7 +5,7 @@
 参考 ./02.k8s-admin/k8s-control-plane-and-worker-node-install-ceph-common.md
 
 # 3 实践
-相关目录
+## 3.1 相关目录
 ```
 root@node01:~# tree 03.lanlan-project/
 03.lanlan-project/
@@ -24,14 +24,14 @@ root@node01:~# tree 03.lanlan-project/
 
 4 directories, 8 files
 ```
-
-创建sc/lanlan-project-ceph-rbd-in-lanlanrbd-user-key对象,会被sc/lanlan-project-rbd-sc引用
+## 3.2 创建sc/lanlan-project-ceph-rbd-in-lanlanrbd-user-key对象
+会被sc/lanlan-project-rbd-sc引用
 ```
 root@master01:~# kubectl apply -f 03.lanlan-project/secrets_lanlan-project-ceph-rbd-in-lanlanrbd-user-key/
 secret/lanlan-project-ceph-rbd-in-lanlanrbd-user-key created
 ```
 
-创建sc/lanlan-project-rbd-sc对象
+## 3.3 创建sc/lanlan-project-rbd-sc对象
 ```
 root@master01:~# kubectl apply -f 03.lanlan-project/sc_lanlan-project-rbd-sc/
 storageclass.storage.k8s.io/lanlan-project-rbd-sc created
@@ -48,15 +48,7 @@ lanlan-project-rbd-sc   kubernetes.io/rbd   Delete          Immediate           
   #
 ```
 
-# 4 lanlan项目的app11应用
-相关目录
-```
-root@master01:~# tree 03.lanlan-project/app11/
-03.lanlan-project/app11/
-├── 01.pvc_app11.yaml
-└── 02.pods_app11.yaml
-```
-
+## 3.4 app11应用
 创建pvc/app11对象，会创建出pv资源对象,会在存储系统中创建相关pool中创建image
 ```
 ## 创建pvc/app11对象
@@ -130,5 +122,6 @@ admin@ceph-mon01:~$ rbd ls -l --pool rbd-lanlan-project-data
 admin@ceph-mon01:~$ 
 ```
 
-# 5 lanlan项目的app12应用
-参考 2 app11 
+## 3.5 app12应用
+参考 3.4 app11应用 
+
