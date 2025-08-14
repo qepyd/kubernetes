@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: jmsco 
+  name: app63-data
+  labels:
+    project: jmsco
+    env: prod
+    app: app63
+    rbdimage: app63-data
+spec:
+  # 准备集群级别pv的顺序为
+  # volumeMode--->labels--->storageClassName--->accessModes-->capacity
+  
+  volumeMode: Filesystem 
+
+  selector:
+    matchLabels:
+      project: jmsco
+      env: prod
+      app: app63
+      rbdimage: app63-data
+ 
+  storageClassName: "jmsco-project-prod-static-pv"
+  
+  accessModes: 
+  - ReadWriteOnce 
+  
+  resources: 
+    limits:
+      storage: 5Gi 
+    requests:
+      storage: 5Gi 
+---

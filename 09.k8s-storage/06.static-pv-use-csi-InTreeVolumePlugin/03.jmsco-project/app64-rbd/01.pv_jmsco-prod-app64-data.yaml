@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: jmsco
+  name: jmsco-prod-app64-data
+  labels:
+    project: jmsco
+    env: prod
+    app: app64
+    rbdimage: app64-data
+spec:
+  ## 使用树内卷类型之csi对接ceph rbd的csidrivers，且指定ceph集群中已存在的pool和image
+  #  参考：https://github.com/ceph/ceph-csi/blob/v3.14.2/docs/static-pvc.md 
+  csi:
+    # ceph-csi其rbd的csidriver
+    driver: rbd.csi.ceph.com 
+       
+    # 卷的属性
+    volumeAttributes:
+      # 必选字段,Ceph存储系统其集群id
+      clusterID: "2004f705-b556-4d05-9e73-7884379e07bb"
+    
+      # 必选字段,jmsco项目其rbd存储的data pool
+      pool: "rbd-jmsco-project-data"
+    
+      # 必选字段，是否是静态volume
+      staticVolume: "true"
+    
+      # 必选字段，image特性
+      imageFeatures: "layering"
+   
+    # ceph集群中其pool中已存在的image
+    volumeHandle: "app64-data"
+    
+    # 文件系统,rbd的image将被格式化成什么文件系统(支持ext4、xfs)
+    #   当不指定时,其ceph-csi的rbd会默认设置成ext4
+    #fsType: ext4
+       # 我这注释掉了,默认就会将rbd image格式化成ext4
+       # 若我后面的Pod已经成功运行了一次
+       # 我又这儿取消注释了,且改成了xfs
+       # 那么你的Pod再创建时,就会报错,说挂载不上
+    
+    # 认证信息
+    #   Pod--->pvc---（绑定）-->此pv
+    #   Pod被调度至某worker node后,其Kubelet会做mount操作,要用到user和用户的secret
+    #   所以这里指定的secrets资源对象中,得包含user（用userID标识）和secret（用userKey标识）
+    nodeStageSecretRef:
+      namespace: jmsco
+      name: jmsco-project-ceph-rbd-in-jmscorbd-user-key 
+    
+  ## 卷的模式,pvc来匹配时是第一顺序
+  #  此字段只支持：Filesystem(默认)和Block
+  volumeMode: Filesystem
+
+  ## 所属的storageClass, pvc来匹配时是第三顺序(第二顺序是pv的标签)
+  #  静态pv也可属于某个storageClass，只不过这个storageClass并非storagesclasses资源对象
+  storageClassName: "jmsco-project-prod-static-pv"
+
+  ## 访问模式,pvc来匹配时第四顺序
+  accessModes:
+    - "ReadWriteOnce" 
+
+  ## 卷大小,pvc来匹配时第五顺序
+  capacity:
+    storage: 5Gi
+
+  ## pv的回收策略
+  #  注意：
+  #    ceph-csi 不支持静态 PV 的 RBD 映像删除。 
+  #    persistentVolumeReclaimPolicy在 PV 规范中必须设置为，Retain以避免在 csi-provisioner 中尝试删除 PV
+  persistentVolumeReclaimPolicy: "Retain"
+---

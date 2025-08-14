@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: jmsco 
+  name: app62
+  labels:
+    deploy: app62
+spec:
+  # Pod副本数
+  replicas: 2
+  selector:
+    matchLabels:
+      project: jmsco
+      env: prod
+      app: app62
+  template:
+    metadata:
+      labels:
+        project: jmsco
+        env: prod
+        app: app62
+    spec:
+      # Pod级别
+      volumes:
+      - name: fsvolume-app62-data
+        persistentVolumeClaim:
+          claimName: "app62-data"
+          readOnly: false
+
+      # 容器级别之主容器
+      containers:
+      - name: app62
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: fsvolume-app62-data 
+          mountPath: /data/
+          readOnly: false
+        command:
+        - "/bin/sh"
+        args: 
+        - "-c"
+        - "sleep 10000000000"
+      - name: sidecar
+        image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: fsvolume-app62-data
+          mountPath: /data/
+          readOnly: false
+        command:
+        - "/bin/sh"
+        args:
+        - "-c"
+        - "sleep 10000000000"
+---

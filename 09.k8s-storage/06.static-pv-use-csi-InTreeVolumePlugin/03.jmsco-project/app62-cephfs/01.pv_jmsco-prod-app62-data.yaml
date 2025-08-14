@@ -1,0 +1,70 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: jmsco
+  name: jmsco-prod-app62-data 
+  labels:
+    project: jmsco
+    env: prod
+    app: app62
+    fsvolume: data
+spec:
+  ## 使用树内卷插件之csi对存储系统
+  #  参考 https://github.com/ceph/ceph-csi/blob/v3.14.2/docs/static-pvc.md#cephfs-static-pvc
+  csi:
+    # 指定csidrivers资源对象
+    driver: cephfs.csi.ceph.com
+
+    # 文件系统类型
+    fsType: cephfs
+
+    # 卷属性
+    volumeAttributes:
+      # 必选字段，ceph存储集群的集群ID
+      clusterID: "2004f705-b556-4d05-9e73-7884379e07bb"
+
+      # 必选字段，ceph存储集群中其cephfs的某个fs 
+      fsName: "jmsco"
+
+      # 必选字段，某个volume的路径
+      rootPath: "/volumes/app62/data/aea61d5a-b915-4b6d-b0e1-314d97fc910f"
+
+      # 必选字段，是否是静态volume
+      staticVolume: "true"
+
+
+    # 必选字段，卷的唯一标识，
+    #   使用pv资源对象的name即可,因为pv是k8s集群级别的,不会冲突
+    #   以下就使用pv资源对象的name作为前缀
+    volumeHandle: jmsco-prod-app62-data-aea61d5a-b915-4b6d-b0e1-314d97fc910f
+   
+    # 认证的secrets
+    # Pod被调度至某worker node后,其Kubelet会做mount操作,要用到user和用户的secret
+    # 所以这里指定的secrets资源对象中,得包含user（用userID标识）和secret（用userKey标识）
+    nodeStageSecretRef:
+      namespace: jmsco
+      name: jmsco-project-ceph-fs-in-jmscofs-user-key 
+
+
+  ## 卷模式，pvc来匹配时是第一顺序
+  volumeMode: "Filesystem"
+  
+  ## 所属的storageClass, pvc来匹配时是第三顺序(第二顺序是pv的标签)
+  ## 静态pv也可属于某个storageClass，只不过这个storageClass并非storagesclasses资源对象
+  storageClassName: "jmsco-project-prod-static-pv"
+  
+  ## 访问模式，pvc来匹配时第四顺序
+  accessModes: 
+  - ReadWriteMany
+  
+  ## 能力(大小),pvc来匹配时第五顺序
+  capacity: 
+    storage: 10Gi
+   
+  ## pv的回收策略
+  #  注意：
+  #     ceph-csi 不支持静态 PV 的 CephFS 子卷删除。
+  #     persistentVolumeReclaimPolicy在 PV 规范中必须设置为Retain避免在 csi-provisioner 中尝试删除 PV
+  persistentVolumeReclaimPolicy: Retain
+---
