@@ -1,7 +1,7 @@
 ceph-csi仅需要部署
 ```
 ceph-csi其cephfs的NodePlugin部分和csidriver。
-ceph-csi其rbd的NodePlugin、CsiController(要用到其attacher)部分和csidriver。
+ceph-csi其rbd的NodePlugin、CsiController(要用到其attacher)和csidriver。
    
 即：
  ../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/01.currency/
