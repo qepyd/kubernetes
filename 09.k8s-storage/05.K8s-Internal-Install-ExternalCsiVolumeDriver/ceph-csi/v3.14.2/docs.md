@@ -58,7 +58,7 @@ metadata:
 EOF
 ```
 
-# 3 部署cephfs的NodePlugin和CsiController
+# 3 准备cephfs的NodePlugin和CsiController
 创建目录
 ```
 mkdir 02.cephfs
@@ -176,6 +176,54 @@ grep "image:" ./02.cephfs/02-2.csi-cephfsplugin-provisioner.yaml | sort
    其manifests有Pod亲和性，会导致有一个Pod副本处于Pending状态
    所以我将副本数修改成1,当然我也可以修改成2.
 ```
+
+下载cephfs的csidriver/cephfs.csi.ceph.com对象的manifests
+```
+## 来源
+# https://github.com/ceph/ceph-csi/blob/v3.14.2/deploy/cephfs/kubernetes/csidriver.yaml
+
+## 下载
+wget https://raw.githubusercontent.com/ceph/ceph-csi/refs/tags/v3.14.2/deploy/cephfs/kubernetes/csidriver.yaml  -O ./02.cephfs/csidriver.yaml
+ls -l ./02.cephfs/csidriver.yaml
+cat   ./02.cephfs/csidriver.yaml
+```
+
+
+# 4 准备rbd的NodePlugin和CsiController
+创建目录
+```
+mkdir  03.rbd
+ls -ld 03.rbd
+```
+
+下载NodePlugin相关的manifests并修改
+```
+## 下载NodePlugin其rbac相关的manifests
+#   
+
+## 修改NodePlugin其rbac相关的manifests
+
+## 下载NodePlugin的manifests
+
+## 修改NodePlugin的manifests
+
+
+```
+
+下载CsiController相关manifests并修改
+```
+## 下载CsiController其rbac相关的manifests
+
+## 修改CsiController其rbac相关的manifests
+
+## 下载CsiController的manifests
+
+## 修改CsiController的manifests
+
+```
+
+
+
 
 
 
