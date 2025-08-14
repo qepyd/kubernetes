@@ -14,4 +14,4 @@ spec:
   attachRequired: false
   podInfoOnMount: false
   fsGroupPolicy: File
-  seLinuxMount: true
+  #seLinuxMount: true

@@ -1,6 +1,0 @@
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  namespace: csi-ceph-csi
-  name: cephfs-csi-nodeplugin

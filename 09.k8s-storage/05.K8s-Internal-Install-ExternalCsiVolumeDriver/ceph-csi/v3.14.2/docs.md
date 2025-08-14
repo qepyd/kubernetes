@@ -179,15 +179,16 @@ grep "image:" ./02.cephfs/02-2.csi-cephfsplugin-provisioner.yaml | sort
 
 下载cephfs的csidriver/cephfs.csi.ceph.com对象的manifests
 ```
-## 来源
-# https://github.com/ceph/ceph-csi/blob/v3.14.2/deploy/cephfs/kubernetes/csidriver.yaml
-
 ## 下载
+# https://github.com/ceph/ceph-csi/blob/v3.14.2/deploy/cephfs/kubernetes/csidriver.yaml
 wget https://raw.githubusercontent.com/ceph/ceph-csi/refs/tags/v3.14.2/deploy/cephfs/kubernetes/csidriver.yaml  -O ./02.cephfs/csidriver.yaml
 ls -l ./02.cephfs/csidriver.yaml
 cat   ./02.cephfs/csidriver.yaml
-```
 
+## 修改
+sed    's/seLinuxMount: true/#seLinuxMount: true/g'  ./02.cephfs/csidriver.yaml
+sed -i 's/seLinuxMount: true/#seLinuxMount: true/g'  ./02.cephfs/csidriver.yaml
+```
 
 # 4 准备rbd的NodePlugin和CsiController
 创建目录
@@ -316,14 +317,65 @@ sed -i 's#registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0#swr.cn-north-1.myhu
    所以我将副本数修改成1,当然我也可以修改成2.
 ```
 
+下载rbd的csidriver/rbd.csi.ceph.com对象的manifests
+```
+## 下载
+#   https://github.com/ceph/ceph-csi/blob/v3.14.2/deploy/rbd/kubernetes/csidriver.yaml
+wget https://raw.githubusercontent.com/ceph/ceph-csi/refs/tags/v3.14.2/deploy/rbd/kubernetes/csidriver.yaml  -O  03.rbd/csidriver.yaml
+ls -l 03.rbd/csidriver.yaml
+cat   03.rbd/csidriver.yaml
 
+## 修改
+sed    's/seLinuxMount: true/#seLinuxMount: true/g' 03.rbd/csidriver.yaml
+sed -i 's/seLinuxMount: true/#seLinuxMount: true/g' 03.rbd/csidriver.yaml
+```
 
+# 5 部署ceph的cephfs、rbd的csi
+相关目录
+```
+root@master01:~# tree ./
+./
+├── 01.currency
+│   ├── cm_ceph-conf.yaml
+│   └── cm_ceph-csi-config.yaml
+├── 02.cephfs
+│   ├── 01-1.rbac-cephfs-csi-nodeplugin.yaml
+│   ├── 01-2.csi-cephfsplugin.yaml
+│   ├── 02-1.rbac-csi-provisioner.yaml
+│   ├── 02-2.csi-cephfsplugin-provisioner.yaml
+│   └── csidriver.yaml
+├── 03.rbd
+│   ├── 01-1.rbac-csi-nodeplugin.yaml
+│   ├── 01-2.csi-rbdplugin.yaml
+│   ├── 02-1.rbac-csi-provisioner.yaml
+│   ├── 02-2.csi-rbdplugin-provisioner.yaml
+│   └── csidriver.yaml
+├── docs.md
+└── ns_ceph-csi.yaml
 
+3 directories, 14 files
+```
 
+创建ns/ceph-csi对象
+```
+kubectl apply -f ./ns_ceph-csi.yaml
+kubectl get ns ceph-csi
+```
 
+部署currency的相关资源对象
+```
+kubectl apply -f 01.currency/ --dry-run=client
+kubectl apply -f 01.currency/
+```
 
+部署cephfs的NodePlugin和CsiController
+```
+kubectl apply -f 02.cephfs/ --dry-run=client
+kubectl apply -f 02.cephfs/
+```
 
-
-
-
-
+部署rbd的NodePlugin和CsiController
+```
+kubectl apply -f 03.rbd/  --dry-run=client
+kubectl apply -f 03.rbd/
+```
