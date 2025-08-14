@@ -168,8 +168,13 @@ grep "image:" ./02.cephfs/02-2.csi-cephfsplugin-provisioner.yaml | sort
 
 
 ## 修改deploy/csi-cephfsplugin-provisioner对象
-将Pod级别的ceph-csi-encryption-kms-config 卷给注释掉
+将Pod级别的 ceph-csi-encryption-kms-config 卷给注释掉
 将容器级别引用 ceph-csi-encryption-kms-config 卷的挂载给注释掉
+我将其副本数修改成1，它默认是3(表示可以多副本)。
+   我的k8s其woker node有3个(1个是master01,上面有污点，另2个是运行业务的worker node)
+   其manifests没有容忍master的污点。
+   其manifests有Pod亲和性，会导致有一个Pod副本处于Pending状态
+   所以我将副本数修改成1,当然我也可以修改成2.
 ```
 
 
