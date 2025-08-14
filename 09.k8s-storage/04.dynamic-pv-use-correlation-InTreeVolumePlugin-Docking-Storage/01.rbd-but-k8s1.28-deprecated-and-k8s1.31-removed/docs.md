@@ -1,4 +1,7 @@
-# 1 创建sc/lanlan-project-rbd-sc对象
+# 1 存储系统ceph中的准备
+参考 ./01.storage-admin/ceph-storage-create-rbd-and-user-and-rbdimage.md
+
+# 2 k8s中创建sc/lanlan-project-rbd-sc对象
 相关目录
 ```
 root@master01:~# tree 02.k8s-admin/
@@ -39,7 +42,7 @@ lanlan-project-rbd-sc   kubernetes.io/rbd   Delete          Immediate           
   #
 ```
 
-# 2 app11
+# 3 lanlan项目的app11应用
 相关目录
 ```
 root@master01:~# tree 03.lanlan-project/app11/
@@ -119,5 +122,5 @@ admin@ceph-mon01:~$ rbd ls -l --pool rbd-lanlan-project-data
 admin@ceph-mon01:~$ 
 ```
 
-# 3 app12
+# 4 lanlan项目的app12应用
 参考 2 app11 
