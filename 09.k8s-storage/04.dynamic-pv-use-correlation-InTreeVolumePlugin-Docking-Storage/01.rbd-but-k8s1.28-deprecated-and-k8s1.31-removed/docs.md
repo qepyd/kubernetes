@@ -117,7 +117,9 @@ persistentvolumeclaim "app11" deleted
 root@master01:~# kubect get pv/pvc-3cab03ed-3e8b-40bc-a376-814f28ca8eb4
 Error from server (NotFound): persistentvolumes "pvc-3cab03ed-3e8b-40bc-a376-814f28ca8eb4" not foundlumes "pvc-3cab03ed-3e8b-40bc-a376-814f28ca8eb4对" not found
 
-## ceph集群中其rbd-lanlan-project-data存储池中的kubernetes-dynamic-pvc-c61a99bb-c63e-4ea4-98d6-e2294460cc48镜像也不存了
+## 列出ceph集群中其rbd-lanlan-project-data存储池中所有的image，
+#  可看到 kubernetes-dynamic-pvc-c61a99bb-c63e-4ea4-98d6-e2294460cc48 image不存在了
+#  数据丢失了
 admin@ceph-mon01:~$ rbd ls -l --pool rbd-lanlan-project-data
 admin@ceph-mon01:~$ 
 ```
