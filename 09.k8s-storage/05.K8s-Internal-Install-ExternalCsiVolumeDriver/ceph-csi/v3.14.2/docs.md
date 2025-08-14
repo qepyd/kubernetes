@@ -199,16 +199,52 @@ ls -ld 03.rbd
 下载NodePlugin相关的manifests并修改
 ```
 ## 下载NodePlugin其rbac相关的manifests
-#   
+#   https://github.com/ceph/ceph-csi/blob/v3.14.2/deploy/rbd/kubernetes/csi-nodeplugin-rbac.yaml
+wget https://raw.githubusercontent.com/ceph/ceph-csi/refs/tags/v3.14.2/deploy/rbd/kubernetes/csi-nodeplugin-rbac.yaml  -O ./03.rbd/01-1.rbac-csi-nodeplugin.yaml
+ls -l ./03.rbd/01-1.rbac-csi-nodeplugin.yaml
+cat   ./03.rbd/01-1.rbac-csi-nodeplugin.yaml
 
 ## 修改NodePlugin其rbac相关的manifests
+grep "namespace: default"  ./03.rbd/01-1.rbac-csi-nodeplugin.yaml
+sed    's#namespace: default#namespace: ceph-csi#g'   ./03.rbd/01-1.rbac-csi-nodeplugin.yaml  | grep "namespace: ceph-csi"
+sed -i 's#namespace: default#namespace: ceph-csi#g'   ./03.rbd/01-1.rbac-csi-nodeplugin.yaml
 
 ## 下载NodePlugin的manifests
+#  https://github.com/ceph/ceph-csi/blob/v3.14.2/deploy/rbd/kubernetes/csi-rbdplugin.yaml
+wget https://raw.githubusercontent.com/ceph/ceph-csi/refs/tags/v3.14.2/deploy/rbd/kubernetes/csi-rbdplugin.yaml  -O ./03.rbd/01-2.csi-rbdplugin.yaml
+ls -l ./03.rbd/01-2.csi-rbdplugin.yaml
+cat   ./03.rbd/01-2.csi-rbdplugin.yaml
 
 ## 修改NodePlugin的manifests
+# <-- 为ds/csi-rbdplugin和svc/csi-metrics-rbdplugin指定namespace为ceph-csi
+root@master01:~#  grep "namespace:" 03.rbd/01-2.csi-rbdplugin.yaml 
+  namespace: default
+  namespace: default
+
+sed    's#namespace: default#namespace: ceph-csi#g' 03.rbd/01-2.csi-rbdplugin.yaml  | grep "namespace:
+sed -i 's#namespace: default#namespace: ceph-csi#g' 03.rbd/01-2.csi-rbdplugin.yaml  | grep "namespace:
+ 
+# <-- 查看用到了哪些image
+root@master01:~# grep "image:" 03.rbd/01-2.csi-rbdplugin.yaml  | sort
+          image: quay.io/cephcsi/cephcsi:v3.14.2
+          image: quay.io/cephcsi/cephcsi:v3.14.2
+          image: registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0
+
+# <-- 替换镜像
+sed    's#quay.io/cephcsi/cephcsi:v3.14.2#swr.cn-north-1.myhuaweicloud.com/qepyd/cephcsi-cephcsi:v3.14.2#g'  03.rbd/01-2.csi-rbdplugin.yaml
+sed -i 's#quay.io/cephcsi/cephcsi:v3.14.2#swr.cn-north-1.myhuaweicloud.com/qepyd/cephcsi-cephcsi:v3.14.2#g'  03.rbd/01-2.csi-rbdplugin.yaml
+
+sed    's#registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0#swr.cn-north-1.myhuaweicloud.com/qepyd/sig-storage-csi-node-driver-registrar:v2.13.0#g'  03.rbd/01-2.csi-rbdplugin.yaml
+sed -i 's#registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0#swr.cn-north-1.myhuaweicloud.com/qepyd/sig-storage-csi-node-driver-registrar:v2.13.0#g'  03.rbd/01-2.csi-rbdplugin.yaml
+
+grep "image:" 03.rbd/01-2.csi-rbdplugin.yaml  | sort
 
 
+# <-- 修改ds/csi-rbdplugin对象的manifests
+将Pod级别的ceph-csi-encryption-kms-config 卷给注释掉
+将容器级别引用 ceph-csi-encryption-kms-config 卷的挂载给注释掉
 ```
+
 
 下载CsiController相关manifests并修改
 ```
