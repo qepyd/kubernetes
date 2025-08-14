@@ -330,7 +330,7 @@ sed    's/seLinuxMount: true/#seLinuxMount: true/g' 03.rbd/csidriver.yaml
 sed -i 's/seLinuxMount: true/#seLinuxMount: true/g' 03.rbd/csidriver.yaml
 ```
 
-# 5 部署ceph的cephfs、rbd的csi
+# 5 k8s中部署ceph其cephfs、rbd的CSI
 相关目录
 ```
 root@master01:~# tree ./
