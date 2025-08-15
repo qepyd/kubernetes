@@ -30,7 +30,6 @@ parameters:
   csi.storage.k8s.io/controller-expand-secret-namespace: "jmsco"
   #
   # <-- fs在worker node处挂载所要用到的信息 
-  #
   csi.storage.k8s.io/node-stage-secret-name: "jmsco-project-ceph-fs-in-jmscofs-user-key"
   csi.storage.k8s.io/node-stage-secret-namespace: "jmsco"
 

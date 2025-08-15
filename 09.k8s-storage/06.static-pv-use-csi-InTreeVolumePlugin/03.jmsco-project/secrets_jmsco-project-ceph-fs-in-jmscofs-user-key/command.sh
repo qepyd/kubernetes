@@ -9,6 +9,8 @@ kubectl -n jmsco  create secret  generic jmsco-project-ceph-fs-in-jmscofs-user-k
    --type=Opaque \
    --from-literal=userID=jmscofs \
    --from-file=userKey=$ScriptDir/ceph.client.jmscofs.secret  \
+   --from-literal=adminID=jmscofs \
+   --from-file=adminKey=$ScriptDir/ceph.client.jmscofs.secret  \
    --dry-run=client \
    -o yaml >$ScriptDir/secrets_jmsco-project-ceph-fs-in-jmscofs-user-key.yaml
 
