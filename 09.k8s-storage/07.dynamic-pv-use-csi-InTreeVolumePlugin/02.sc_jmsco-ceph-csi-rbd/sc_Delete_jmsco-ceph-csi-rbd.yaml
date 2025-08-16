@@ -1,0 +1,58 @@
+---
+#
+# 参考：https://github.com/ceph/ceph-csi/blob/v3.14.2/examples/rbd/storageclass.yaml
+# 
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: jmsco-ceph-csi-rbd
+
+# 制备器,即ceph-csi之rbd的csidriver资源对象
+provisioner: rbd.csi.ceph.com
+
+# 参数,不允许在线更新
+parameters:
+   # Ceph集群的id
+   clusterID: "2004f705-b556-4d05-9e73-7884379e07bb" 
+
+   # Ceph集群中其jmsco生产环境rbd存储的data存储池,事先得存在
+   pool: "rbd-jmsco-project-data"
+
+   # 其在pool中创建出来的image之特性
+   imageFeatures: layering
+
+   # 认证相关的信息
+   # 
+   # <-- 动态制备要用到的,其用户jmscorbd是可以在相关pool中创建、删除image的
+   csi.storage.k8s.io/provisioner-secret-name: "jmsco-project-ceph-rbd-in-jmscorbd-user-key"
+   csi.storage.k8s.io/provisioner-secret-namespace: "jmsco"
+   csi.storage.k8s.io/controller-expand-secret-name: "jmsco-project-ceph-rbd-in-jmscorbd-user-key"
+   csi.storage.k8s.io/controller-expand-secret-namespace: "jmsco"
+   #
+   # <-- 各worker node在挂载时要用到的
+   csi.storage.k8s.io/node-stage-secret-name: "jmsco-project-ceph-rbd-in-jmscorbd-user-key"
+   csi.storage.k8s.io/node-stage-secret-namespace: "jmsco"
+    
+   # 其iamge在挂载前被格式化成什么文件系统
+   csi.storage.k8s.io/fstype: ext4
+
+# 其动态pv的回收策略,不允许在线更新
+#  默认为Delete：
+#    与动态pv建立绑定的pvc被删除后,动态pv删除。
+#      其pv在ceph存储系统其相关pool中的image也会被删除，数据丢失。
+#  设置为Retain：
+#    与动态pv建立绑定关系的pvc被删除后,动态pv保留。
+#      当之前同一个pvc再被创建时,又连接到此资源对象,此资源又会自动在ceph存储系统中相关pool中创建new image。
+#      无法复用。
+#    保留的动态pv是可以人为删除的
+#      当人为删除保留的动态pv后,其pv在ceph存储系统其相关pool中的image还在，很验证快速确认某个image是某个应用(Pod)的。
+#      且当之前同一个pvc再被创建时,又连接到此资源对象,此资源又会自动在ceph存储系统中相关pool中创建new image。无法复用ceph存储系统中还存在的image。
+#
+reclaimPolicy: Delete
+#reclaimPolicy: Retain
+
+allowVolumeExpansion: true
+
+mountOptions:
+   - discard
+---

@@ -1,4 +1,4 @@
-在k8s的各worker node或jmsco项目相关的worker node上安装ceph-common软件包。# 不需要在k8s的各control-plane上安装。
+在k8s的各worker node或jmsco项目相关的worker node上安装ceph-common软件包，不需要在k8s的各control-plane上安装。
 ```
 #### 添加ceph源，根据ceph集群的版本、worker node的版本
 #<-- 安装基本工具

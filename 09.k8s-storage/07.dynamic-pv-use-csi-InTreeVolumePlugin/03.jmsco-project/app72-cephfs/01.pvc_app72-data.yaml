@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  namespace: jmsco
+  name: app72-data
+  labels:
+    pvc: app72-data 
+spec:
+  # <== 持久卷声明之第一条件(声明)
+  #     PS：不是必须的
+  volumeMode: Filesystem
+
+  # <== 持久卷声明之第三条件(声明)
+  #     其值是个storageclasses资源对象
+  storageClassName: "jmsco-ceph-csi-cephfs" 
+
+  # <== 第四匹配条件
+  #     PS：必须的
+  accessModes:
+    - ReadWriteMany
+
+  # <== 第五匹配条件
+  #     PS: 必须指定
+  #     因为：pv资源对象在创建时必须指定容量大小(capacity)
+  #           不然pv资源对象不让创建
+  resources:
+    requests:
+      storage: 5Gi
+---

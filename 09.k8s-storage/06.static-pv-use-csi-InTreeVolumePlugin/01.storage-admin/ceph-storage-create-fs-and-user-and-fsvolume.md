@@ -36,9 +36,13 @@ ceph auth get client.jmscofs
 ```
 
 ## 2.2 为其jmscofs用户授权
+此用户具备在jmsco fs中创建、删除subvolumegroup和在某subvolumegroup中创建subvolume的能力(**为了动态pv**)
 ```
-ceph auth caps client.jmscofs  mon 'allow r'  mds 'allow rw'  osd 'allow rwx pool=cephfs-jmsco-project-data'
-ceph auth get client.jmscofs
+ceph auth caps client.jmscofs   \
+  mon 'allow r   fsname=jmsco'   \
+  mds 'allow r   fsname=jmsco'    \
+  osd 'allow rw  pool=cephfs-jmsco-project-metadata,  allow rw pool=cephfs-jmsco-project-data'  \
+  mgr 'allow rw'
 ```
 
 ## 2.2 导出jmscofs用户的secret
@@ -64,14 +68,20 @@ ceph集群的monitors信息为
   172.31.8.203:6789
 ```
 
+# 3 为jmsco项目相关应用创建csi subvolumegroup，为动态pv使用
+ceph-csi其cephfs的CsiController其provsionar不会在相关fs中创建subvolumegroup，而是引用csi subvolumegroup。
+所以这里我们人为先创建好。
+```
+ceph fs subvolumegroup create  jmsco  csi
+ceph fs subvolumegroup ls      jmsco
+```
 
-# 3 为jmsco项目相关应用创建volume
-
-## 3.1 app61
+# 4 为jmsco项目相关应用创建volume，为静态pv使用
+## 4.1 app61
 ```
 ## 在jmsco文件系统下创建subvolumegroup(以应用程序的name来命名)
 ceph fs subvolumegroup create  jmsco  app61
-ceph fs subvolumegroup ls  jmsco
+ceph fs subvolumegroup ls      jmsco
 
 ## 在jmsco文件系统下的subvolumegroup下创建subvolume(以某应用程序的实践应用场景命名)
 ceph fs subvolume create jmsco  data   app61
@@ -85,7 +95,7 @@ ceph fs subvolume info jmsco data app61 | grep path
   #
 ```
 
-## 3.2 app62
+## 4.2 app62
 ```
 ## 在jmsco文件系统下创建subvolumegroup(以应用程序的name来命名)
 ceph fs subvolumegroup create  jmsco  app62

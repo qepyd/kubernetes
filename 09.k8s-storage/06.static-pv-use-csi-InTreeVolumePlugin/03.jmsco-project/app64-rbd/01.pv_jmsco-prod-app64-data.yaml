@@ -59,7 +59,7 @@ spec:
 
   ## 访问模式,pvc来匹配时第四顺序
   accessModes:
-    - "ReadWriteOnce" 
+  - "ReadWriteOnce" 
 
   ## 卷大小,pvc来匹配时第五顺序
   capacity:

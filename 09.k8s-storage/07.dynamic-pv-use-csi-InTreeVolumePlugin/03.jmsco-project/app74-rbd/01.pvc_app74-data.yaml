@@ -3,7 +3,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   namespace: jmsco 
-  name: app73-data
+  name: app74-data
 spec:
   # 这里指定的storageclass是个sc资源对象(sc资源是非namespace级别的)
   storageClassName: "jmsco-ceph-csi-rbd"

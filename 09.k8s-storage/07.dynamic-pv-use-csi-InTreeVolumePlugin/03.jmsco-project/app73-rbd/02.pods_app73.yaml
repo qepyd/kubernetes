@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: jmsco
+  name: app73
+  labels:
+    project: jmsco 
+    env: prod
+    app: app73
+spec:
+  volumes:
+  - name: dynamic-rbd
+    persistentVolumeClaim:
+      claimName: app73-data
+      readOnly: false
+
+  containers:
+  - name: app73
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    imagePullPolicy: Always
+    volumeMounts:
+    - name: dynamic-rbd 
+      mountPath: /data/
+      readOnly: false
+    command:
+    - "/bin/sh"
+    args: 
+    - "-c"
+    - "sleep 10000000000"
+  - name: sidecar
+    image: swr.cn-north-1.myhuaweicloud.com/library/busybox:1.31
+    imagePullPolicy: Always
+    volumeMounts:
+    - name: dynamic-rbd 
+      mountPath: /data/
+      readOnly: false
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "sleep 10000000000"
+---

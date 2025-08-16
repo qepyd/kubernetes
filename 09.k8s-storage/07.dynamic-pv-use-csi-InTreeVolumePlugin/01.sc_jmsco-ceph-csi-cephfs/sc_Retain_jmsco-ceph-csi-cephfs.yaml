@@ -33,11 +33,25 @@ parameters:
   csi.storage.k8s.io/node-stage-secret-name: "jmsco-project-ceph-fs-in-jmscofs-user-key"
   csi.storage.k8s.io/node-stage-secret-namespace: "jmsco"
 
-# 回收策略,动态pv会继承
-reclaimPolicy: Delete
+# 其动态pv的回收策略,不允许在线更新
+#  默认为Delete：
+#    与动态pv建立绑定的pvc被删除后,动态pv删除。
+#      其pv在ceph存储系统其相关fs中csi subvolumegroup的subvolume也会被删除，数据丢失。
+#  设置为Retain：
+#    与动态pv建立绑定关系的pvc被删除后,动态pv保留。
+#      当之前同一个pvc再被创建时,又连接到此资源对象,此资源又会自动在ceph存储系统中相关fs中的csi subvolumegroup创建new subvolume 。
+#      无法复用。
+#    保留的动态pv是可以人为删除的
+#      当人为删除保留的动态pv后,其pv在ceph存储系统其相关fs的csi subvolumegroup中的subvolume还在，很难快速确认某个subvolume是某个应用(Pod)的。
+#      且当之前同一个pvc再被创建时,又连接到此资源对象,此资源又会自动在ceph存储系统中相关fs的csi subvolumegroup中创建new subvolume。无法复用。
+#reclaimPolicy: Delete
+reclaimPolicy: Retain
 
 allowVolumeExpansion: true
 
+# 挂载选项
 mountOptions:
-  - debug
+  #- debug
+  # 其fs表示cephfs，这里指定的是jmsco的fs，即jmsco
+  - "fs=jmsco"
 ---
