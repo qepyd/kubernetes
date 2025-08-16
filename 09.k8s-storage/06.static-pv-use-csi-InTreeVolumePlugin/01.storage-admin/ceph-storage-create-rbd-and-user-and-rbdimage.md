@@ -23,6 +23,7 @@ ceph auth get client.jmscorbd
 ```
 
 ## 2.2 为其jmscorbd用户授权
+此用户具备在rbd-jmsco-project-data存储池中创建image的能力(**为了动态pv**)
 ```
 ceph auth caps  client.jmscorbd  mon 'allow r' osd 'allow rwx pool=rbd-jmsco-project-data'
 ceph auth get   client.jmscorbd
