@@ -37,7 +37,7 @@ ceph auth print-key client.jmscorbd -o /tmp/ceph.client.jmscorbd.secret
 ls -l /tmp/ceph.client.jmscorbd.secret
 
 admin@ceph-mon01:~$ cat /tmp/ceph.client.jmscorbd.secret
-QDv3J1oFWA2BhAA18FJBmSt9WKHY7NXqzHuAg==
+AQDv3J1oFWA2BhAA18FJBmSt9WKHY7NXqzHuAg==
 ```
 
 把ceph集群其monitors的连接地址告诉jmsco项目的应用维护人员
