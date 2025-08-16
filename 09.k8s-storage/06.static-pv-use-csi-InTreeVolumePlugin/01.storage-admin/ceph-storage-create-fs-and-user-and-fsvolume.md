@@ -53,7 +53,7 @@ ls -l /tmp/ceph.client.jmscofs.secret
 
 ## 我这里的信息为（为了后面的文档）
 admin@ceph-mon01:~$ cat /tmp/ceph.client.jmscofs.secret
-AQDfF5RoeEUEHhAA1rQ+oVfTbMXD8nvI6lZ4WQ==
+AQBl2Z1o2MJULBAAPD1xQjPsj1Fjm4V5LhZJQg==
 ```
 
 将以下信息给到binbin项目其维护人员
