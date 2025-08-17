@@ -45,9 +45,9 @@ ls -l /tmp/ceph.client.lilirbd.keyring
 
 admin@ceph-mon01:~$ cat /tmp/ceph.client.lilirbd.keyring 
 [client.lilirbd]
-    key = AQAiK5BoegbUCBAAAHS8rJmnML0XuJSCOJ250Q==
-    caps mon = "allow r"
-    caps osd = "allow rwx pool=rbd-lili-project-data"
+	key = AQD3pqFoX2eKOBAA5sb4PYZDqz44svspFtwdzQ==
+	caps mon = "allow r"
+	caps osd = "allow rwx pool=rbd-lili-project-data"
 ```
 
 把ceph集群其monitors的连接地址告诉lili项目的应用维护人员
