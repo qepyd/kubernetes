@@ -133,7 +133,7 @@ root@master01:~# tree 03.lili-project/app72/
 创建secrets/lili-project-ceph-fs-in-lilifs-user-key对象
 ```
 ## 快速编写其manifests
-bash 03.lili-project/command.sh
+bash 03.lili-project/secrets_lili-project-ceph-fs-in-lilifs-user-key/command.sh
 
 ## 应用manifests
 kubectl apply -f 03.lili-project/secrets_lili-project-ceph-fs-in-lilifs-user-key/secrets_lili-project-ceph-fs-in-lilifs-user-key.yaml  --dry-run=client

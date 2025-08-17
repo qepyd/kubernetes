@@ -261,7 +261,7 @@ drwx------    2 root     root         16384 Aug 17 10:21 lost+found
 -rw-r--r--    1 root     root             0 Aug 17 10:24 sidecar-container.txt
 ```
 
-# 4 清理环境
+# 5 清理环境
 ```
 kubectl delete -f 03.lili-project/app81/
 
