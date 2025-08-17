@@ -6,7 +6,7 @@ ls -ld /data/binbin/
 
 ## 暴露
 编辑/etc/exports文件，添加如下信息保存并退出
-/data/binbin *(rw,sync,no_subtree_check,no_root_squash
+/data/binbin *(rw,sync,no_subtree_check,no_root_squash)
 
 ## 验证暴露
 root@master01:~# exportfs -arv | grep /data/binbin
