@@ -10,9 +10,9 @@ ubuntu20.04  172.31.7.203  master01
 ```
 apt update
 apt install nfs-server -y
-systemctl status      status nfs-server.service 
-systemctl enable      status nfs-server.service
-systemctl is-enabled  status nfs-server.service
+systemctl status     nfs-server.service 
+systemctl enable     nfs-server.service
+systemctl is-enabled nfs-server.service
 ```
 
 # 3 expose相关目录的方式(这里正好做一下测试)
