@@ -31,7 +31,7 @@ spec:
             - "172.31.8.201:6789"
             - "172.31.8.202:6789"
             - "172.31.8.203:6789"
-            path:  "/volumes/app72/data/450d8c88-4bc6-4ed1-b369-4fddcf68ef35"  # 根据存储管理员所提供的信息
+            path:  "/volumes/app72/data/b36d80c4-ea26-4706-afd3-95e742c665f4"  # 根据存储管理员所提供的信息
 
             # 认证的用户和secret(不是keyring哈)
             # user: "client.lilifs"
@@ -66,4 +66,4 @@ spec:
         args:
         - "-c"
         - "sleep 10000000000"
---- 
+---

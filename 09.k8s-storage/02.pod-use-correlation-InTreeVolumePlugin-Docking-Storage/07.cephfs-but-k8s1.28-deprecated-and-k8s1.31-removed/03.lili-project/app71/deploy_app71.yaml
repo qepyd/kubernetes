@@ -31,7 +31,7 @@ spec:
           - "172.31.8.201:6789"
           - "172.31.8.202:6789"
           - "172.31.8.203:6789"
-          path:  "/volumes/app71/data/bd10274b-8792-496a-a1d9-b0f6dc11c8c3"   # 根据存储管理员所提供的信息
+          path:  "/volumes/app71/data/91775ac5-bbb9-4e35-8536-01a5ef677697"   # 根据存储管理员所提供的信息
 
           # 认证的用户和secret(不是keyring哈)
           # 需要将Ceph存储系统中的client.lili用户的secret文件拷贝至相应的worker node上(得事先与k8s管理员沟通)

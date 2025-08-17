@@ -30,10 +30,10 @@ ceph fs volume ls | grep -w lili
 # 2 创建用户并授权
 ## 2.1 创建lilifs用户
 ```
-ceph auth add client.binbinfs
-ceph auth get client.binbinfs
+ceph auth add client.lilifs
+ceph auth get client.lilifs
 ```
-
+	
 ## 2.2 为其lilifs用户授权
 ```
 ceph auth caps client.lilifs  mon 'allow r'  mds 'allow rw'  osd 'allow rwx pool=cephfs-lili-project-data'
@@ -51,7 +51,7 @@ ls -l /tmp/ceph.client.lilifs.secret
 
 ## 我这里的信息为（为了后面的文档）
 admin@ceph-mon01:~$ cat /tmp/ceph.client.lilifs.secret
-AQBIGpBoUc9wDxAAja9EUaF611r72Fj2zF7IwA==
+AQB9fqFo1tQLKBAAjayi0VKa33WL/nQD6wzLXg==
 ```
 
 将以下信息给到binbin项目其维护人员
@@ -84,7 +84,7 @@ ceph fs subvolume ls     lili         app71
 ceph fs subvolume info lili data app71
 ceph fs subvolume info lili data app71 | grep path
   #
-  # 我这的结果是："/volumes/app71/data/bd10274b-8792-496a-a1d9-b0f6dc11c8c3"
+  # 我这的结果是："path": "/volumes/app71/data/91775ac5-bbb9-4e35-8536-01a5ef677697"
   # 将这的结果告诉lili项目的运维人员：
   #
 ```
@@ -109,7 +109,7 @@ ceph fs subvolume ls     lili  app72
 ceph fs subvolume info lili data app72
 ceph fs subvolume info lili data app72 | grep path
   #
-  # 我这的结果是："path": "/volumes/app72/data/450d8c88-4bc6-4ed1-b369-4fddcf68ef35"
+  # 我这的结果是："path": "/volumes/app72/data/b36d80c4-ea26-4706-afd3-95e742c665f4"
   # 将这的结果告诉lili项目的运维人员：
   #
 ```
