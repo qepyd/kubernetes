@@ -1,26 +1,37 @@
-==============================Pod使用相关树内(in tree)卷插件对接存储系统==============================
+==============================Pod使用相关树内(in tree)卷插件直接对接存储系统==============================
+
+在Pod的Pod级别使用相关卷类型(树内卷插件，不涉及persistentVolumeClaim)直接与相关卷类型的后端存储打交道。
+对于kubernetes的用户来说，将一个应用以Pod方式交付到k8s中，若涉及文件/共享存储(使用nfs、cephfs卷类型)、
+块存储(使用rbd卷类型)时，还得了解相关存储系统的结构、配置，加大了其难度。
+
+kubernetes给出的方案就是在Pod级别使用 persistentVolumeClaim 卷类型对接Pod所在namespace中已存在的pvc资源
+对象（前提是与k8s集群级别的某pv已是绑定关系），这样Pod就是间接的对接到存储系统中。
+
+对于kubernetes的用户来说，使用相关卷类型直接对接存储系统是要掌握的。
 ```
-01:不会涉及 pv.spec 下的相关树内卷插件，因为涉及到pv资源。
-02:主要涉及 pods.spec.volumes 下的相关树内卷插件（不会使用persistentVolumeClaim 这个树内卷插件，困为涉及到pvc、pv相关资源）。
-03:作为kuernetes的用户
-   特殊卷类型(得掌握,因为简单,不涉及到复杂的存储系统)
-      configMap
-      secret
-      downwardAPI
-      projected
+## 特殊卷类型
+configMap    # pods.spec.volumes.configMap
+secret       # pods.spec.volumes.secret
+downwardAPI  # pods.spec.volumes.downwardAPI
+emptyDir     # pods.spec.volumes.emptyDir
 
-   临时卷类型(得掌握,因为简单,不涉及到复杂的存储系统)
-      emptyDir
+## 本地卷类型
+hostPath     # pods.spec.volumes.hostPath   和  pv.spec.hostPath
+```
 
-   本地卷类型(得掌握,因为简单,不涉及到复杂的存储系统)
-      hostPath
-      local     # 此外不会涉及,在pv.spec下
+对于kubernetes的管理员来说，使用相关卷类型直接对接存储系统是要掌握的。
+```
+## 特殊卷类型
+configMap    # pods.spec.volumes.configMap
+secret       # pods.spec.volumes.secret
+downwardAPI  # pods.spec.volumes.downwardAPI
+emptyDir     # pods.spec.volumes.emptyDir
 
-   网络存储卷(得了解,因为复杂,在创建Pod时其要对接存储
-              系统，还得了解相关的存储系统。k8s给出的
-              方案是使用persistentVolumeClaim这个树内
-              卷插件去对接pvc资源对象，pvc资源对象匹配
-              pv资源对象,pv资源对象才是真正对接存储系统的)
-      文件系统：nfs、cephfs
-      块 存 储：rbd
+## 本地卷类型
+hostPath     # pods.spec.volumes.hostPath   和  pv.spec.hostPath
+
+## 网络存储（了解即可）
+nfs          # pods.spec.volumes.nfs        和  pv.spec.nfs
+cephfs       # pods.spec.volumes.cephfs     和  pv.spec.cephfs
+rbd          # pods.spec.volumes.rbd        和  pv.spec.rbd
 ```
