@@ -34,7 +34,7 @@ ceph auth print-key client.lilirbd -o /tmp/ceph.client.lilirbd.secret
 ls -l /tmp/ceph.client.lilirbd.secret
 
 admin@ceph-mon01:~$ cat /tmp/ceph.client.lilirbd.secret
-AQAiK5BoegbUCBAAAHS8rJmnML0XuJSCOJ250Q==
+AQD3pqFoX2eKOBAA5sb4PYZDqz44svspFtwdzQ==
 ```
 
 导出keyring，给到lili项目的应用维护人员
