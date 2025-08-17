@@ -117,13 +117,13 @@ total 0
 -rw-r--r--    1 root     root             0 Aug 17 05:53 sidecar-container.txt
 ```
 
-清理环境,即销毁deploy/app61
-```
-kubectl delete -f 03.lili-project/app61/deploy_app61.yaml
-```
-
-
 # 4 lili项目的app62项目
 ```
 参考 lili 项目的app61项目
+```
+
+# 5 清理环境
+```
+kubectl delete -f 03.lili-project/app61/
+kubectl delete -f 03.lili-project/app62/
 ```
