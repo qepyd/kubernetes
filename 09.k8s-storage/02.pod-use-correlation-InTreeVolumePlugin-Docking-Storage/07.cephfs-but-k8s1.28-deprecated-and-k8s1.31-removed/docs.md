@@ -13,10 +13,9 @@
 ```
 root@master01:~# tree 03.lili-project/app71/
 03.lili-project/app71/
-├── deploy_app71.yaml
-└── docs.md
+└── deploy_app71.yaml
 
-0 directories, 2 files
+0 directories, 1 file
 ```
 
 注意：
@@ -126,10 +125,9 @@ root@master01:~#
 root@master01:~#
 root@master01:~# tree 03.lili-project/app72/
 03.lili-project/app72/
-├── deploy_app72.yaml
-└── docs.md
+└── deploy_app72.yaml
 
-0 directories, 2 files
+0 directories, 1 file
 ```
 
 创建secrets/lili-project-ceph-fs-in-lilifs-user-key对象
