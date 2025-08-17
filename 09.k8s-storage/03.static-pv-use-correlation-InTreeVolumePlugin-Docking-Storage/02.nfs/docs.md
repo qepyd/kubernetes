@@ -11,7 +11,7 @@
 # 3 binbin项目的app21应用
 相关目录
 ```
-tree 03.binbin-project/app21/
+root@master01:~# tree 03.binbin-project/app21/
 03.binbin-project/app21/
 ├── 01.pv_binbin-prod-app21.yaml
 ├── 02.pvc_app21.yaml
