@@ -6,7 +6,7 @@ ls -ld /data/lili/
 
 ## 暴露
 编辑/etc/exports文件，添加如下信息保存并退出
-/data/lili *(rw,sync,no_subtree_check,no_root_squash
+/data/lili *(rw,sync,no_subtree_check,no_root_squash)
 
 ## 验证暴露
 root@master01:~# exportfs -arv | grep /data/lili
