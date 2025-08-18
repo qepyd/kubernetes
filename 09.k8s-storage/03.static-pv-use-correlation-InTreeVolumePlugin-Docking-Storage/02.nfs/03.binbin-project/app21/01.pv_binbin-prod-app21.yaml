@@ -30,7 +30,8 @@ spec:
   capacity: 
     storage: 10Gi
  
-  # pv的回收策略
+  # pv的回收策略，默认为Delete
+  #   
   persistentVolumeReclaimPolicy: Delete 
 ---
 
