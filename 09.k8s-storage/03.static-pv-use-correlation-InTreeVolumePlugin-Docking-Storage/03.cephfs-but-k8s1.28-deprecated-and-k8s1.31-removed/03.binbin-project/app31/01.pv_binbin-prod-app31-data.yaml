@@ -35,8 +35,9 @@ spec:
   capacity: 
     storage: 10Gi
    
-  # pv的回收策略
-  persistentVolumeReclaimPolicy: Delete 
+  # pv的回收策略，默认为Delete
+  #   当卷类型为cephfs的静态pv，删除与之绑定的pvc后，不会自动回收pv，需要人为回收pv，人为回收pv是不会删除存储系统中之前的数据的。
+  persistentVolumeReclaimPolicy: "Delete"
 
   # 指定被挂载时的参数
   # 若不指定：Pod所在worker node无法挂载，pod、kubelet会有如下信息输出

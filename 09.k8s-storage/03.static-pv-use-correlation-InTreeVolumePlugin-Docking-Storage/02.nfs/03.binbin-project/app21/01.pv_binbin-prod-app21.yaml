@@ -31,7 +31,7 @@ spec:
     storage: 10Gi
  
   # pv的回收策略，默认为Delete
-  #   
-  persistentVolumeReclaimPolicy: Delete 
+  #   当卷类型为nfs的静态pv，删除与之绑定的pvc后，不会自动回收pv，需要人为回收pv，人为回收pv是不会删除存储系统中之前的数据的。
+  persistentVolumeReclaimPolicy: "Delete"
 ---
 
