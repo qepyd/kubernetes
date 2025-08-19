@@ -15,7 +15,7 @@ spec:
     - "172.31.8.201:6789"
     - "172.31.8.202:6789"
     - "172.31.8.203:6789"
-    path: "/volumes/app31/data/a05e623d-60ea-4ef2-9167-fcd944225fe0"      # 根据存储管理员所提供 
+    path: "/volumes/app31/data/157116e2-83b8-430b-a167-af886ec00e1a"      # 根据存储管理员所提供 
     user: "binbinfs"                                                      # 根据存储管理员所提供
     secretFile: "/etc/ceph/ceph.client.binbinfs.secret"                   # k8s集群其binbin项目相关worker node上得存在
     readOnly: false
@@ -36,7 +36,7 @@ spec:
     storage: 10Gi
    
   # pv的回收策略
-  persistentVolumeReclaimPolicy: Retain 
+  persistentVolumeReclaimPolicy: Delete 
 
   # 指定被挂载时的参数
   # 若不指定：Pod所在worker node无法挂载，pod、kubelet会有如下信息输出

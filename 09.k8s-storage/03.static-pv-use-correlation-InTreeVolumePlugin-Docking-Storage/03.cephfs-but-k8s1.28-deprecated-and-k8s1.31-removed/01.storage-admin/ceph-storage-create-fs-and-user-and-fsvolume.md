@@ -52,7 +52,7 @@ ls -l /tmp/ceph.client.binbinfs.secret
 
 ## 我这里的信息为（为了后面的文档）
 admin@ceph-mon01:~$ cat /tmp/ceph.client.binbinfs.secret
-AQDfF5RoeEUEHhAA1rQ+oVfTbMXD8nvI6lZ4WQ==
+AQCnIaRosGViFRAAWRwEbJ7Dt7h0s8PPTmuMdg==
 ```
 
 将以下信息给到binbin项目其维护人员
@@ -77,7 +77,7 @@ ceph fs subvolume ls     binbin  app31
 ceph fs subvolume info binbin data app31
 ceph fs subvolume info binbin data app31 | grep path
   #
-  # 我这的结果是： "path": "/volumes/app31/data/a05e623d-60ea-4ef2-9167-fcd944225fe0"
+  # 我这的结果是："path": "/volumes/app31/data/157116e2-83b8-430b-a167-af886ec00e1a" 
   # 将这的结果告诉binbin项目的运维人员：
   #
 ```
@@ -96,7 +96,7 @@ ceph fs subvolume ls     binbin  app32
 ceph fs subvolume info binbin data app32
 ceph fs subvolume info binbin data app32 | grep path
   #
-  # 我这的结果是："path": "/volumes/app32/data/ae1afebb-7f83-4809-9109-47a1bf1c5e52"
+  # 我这的结果是："path": "/volumes/app32/data/1ec4eb74-8733-409e-9812-07274170dfab"
   # 将这的结果告诉binbin项目的运维人员：
   #
 ```
