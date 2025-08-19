@@ -210,13 +210,91 @@ total 0
 ```
 
 # 4 binbin项目其app32应用
-
 相关文件
 ```
+root@master01:~# tree 03.binbin-project/secrets_binbin-project-ceph-fs-in-binbinfs-user-key/
+03.binbin-project/secrets_binbin-project-ceph-fs-in-binbinfs-user-key/
+├── ceph.client.binbinfs.secret
+├── command.sh
+└── secrets_binbin-project-ceph-fs-in-binbinfs-user-key.yaml
 
+0 directories, 3 files
+root@master01:~#
+root@master01:~#  tree 03.binbin-project/app32/
+03.binbin-project/app32/
+├── 01.pv_binbin-prod-app32-data.yaml
+├── 02.pvc_app32-data.yaml
+└── 03.deploy_app32.yaml
+
+0 directories, 3 files
 ```
 
+创建secrets/binbin-project-ceph-fs-in-binbinfs-user-key对象
+```
+## 快速编写其manifests
+bash 03.binbin-project/secrets_binbin-project-ceph-fs-in-binbinfs-user-key/command.sh
 
+## 应用manifests
+kubectl apply -f 03.binbin-project/secrets_binbin-project-ceph-fs-in-binbinfs-user-key/secrets_binbin-project-ceph-fs-in-binbinfs-user-key.yaml --dry-run=client
+kubectl apply -f 03.binbin-project/secrets_binbin-project-ceph-fs-in-binbinfs-user-key/secrets_binbin-project-ceph-fs-in-binbinfs-user-key.yaml
+
+## 列出对象
+root@master01:~# kubectl -n binbin get secrets/binbin-project-ceph-fs-in-binbinfs-user-key
+NAME                                          TYPE     DATA   AGE
+binbin-project-ceph-fs-in-binbinfs-user-key   Opaque   1      15s
+```
+
+创建pv/binbin-prod-app32-data、pvc/app32-data、deploy/app32对象
+```
+## 创建
+root@master01:~# kubectl apply -f 03.binbin-project/app32/
+persistentvolume/binbin-prod-app32-data created
+persistentvolumeclaim/app32-data created
+deployment.apps/app32 created
+
+## 列出相平面资源对象
+kubectl get -f 03.binbin-project/app32/
+NAME                                      CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM               STORAGECLASS                    REASON   AGE
+persistentvolume/binbin-prod-app32-data   10Gi       RWX            Delete           Bound    binbin/app32-data   binbin-project-prod-static-pv            44s
+
+NAME                               STATUS   VOLUME                   CAPACITY   ACCESS MODES   STORAGECLASS                    AGE
+persistentvolumeclaim/app32-data   Bound    binbin-prod-app32-data   10Gi       RWX            binbin-project-prod-static-pv   44s
+
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/app32   2/2     2            2           44s
+
+## 列出相关pods资源对象
+root@master01:~# kubectl -n binbin get pods -o wide | grep $(kubectl -n binbin describe deploy/app32 | grep "NewReplicaSet:" | cut -d " " -f 4)
+app32-749ffb974c-5xtzd   2/2     Running   0          69s   10.0.3.28   node01   <none>           <none>
+app32-749ffb974c-7lp9r   2/2     Running   0          69s   10.0.4.31   node02   <none>           <none>
+```
+
+以worker node之node01上的pod/app32-749ffb974c-5xtzd为例查看其挂载信息
+```
+## 查看pods/app32-749ffb974c-5xtzd对象的uid
+root@master01:~# kubectl -n binbin get pods/app32-749ffb974c-5xtzd -o json  | jq ".metadata.uid"
+"acf9eaa9-ea6c-4349-b76a-43308072c6f5"
+
+## 到worker node之node01上面查看挂载信息
+root@node01:~# df -h | grep acf9eaa9-ea6c-4349-b76a-43308072c6f5
+tmpfs                                                                                                           7.7G   12K  7.7G   1% /var/lib/kubelet/pods/acf9eaa9-ea6c-4349-b76a-43308072c6f5/volumes/kubernetes.io~projected/kube-api-access-bvkvg
+172.31.8.201:6789,172.31.8.202:6789,172.31.8.203:6789:/volumes/app32/data/1ec4eb74-8733-409e-9812-07274170dfab  474G     0  474G   0% /var/lib/kubelet/pods/acf9eaa9-ea6c-4349-b76a-43308072c6f5/volumes/kubernetes.io~cephfs/binbin-prod-app32-data
+```
+
+会实现，多个Pod副本间的数据共享、各Pod副本中容器的数据共享
+```
+参考 "3 binbin项目其app31应用"
+```
+
+依次删除deploy/app31、pvc/app31-data、pv/binbin-prod-app31-data对象
+```
+参考 "3 binbin项目其app31应用"
+```
+
+重建pv/binbin-prod-app32-data、pvc/app32-data、deploy/app32对象，以某个Pod副本查看之前的数据是否还在，数据是在的
+```
+参考 "3 binbin项目其app31应用"
+```
 
 # 5 清理环境
 ```
