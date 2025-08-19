@@ -35,7 +35,7 @@ ceph auth print-key client.binbinrbd -o /tmp/ceph.client.binbinrbd.secret
 ls -l /tmp/ceph.client.binbinrbd.secret
 
 admin@ceph-mon01:~$ cat /tmp/ceph.client.binbinrbd.secret
-AQA9/ZNoqB5eChAAVZIW9/bSGQK+uQQ5nwnU9A==
+AQBYU6RoK9tUHhAAYE2lxF/uzzPj6SA+PB3YmA==
 ```
 
 导出keyring，给到binbin项目的应用维护人员
@@ -46,7 +46,7 @@ ls -l /tmp/ceph.client.binbinrbd.keyring
 
 admin@ceph-mon01:~$ cat /tmp/ceph.client.binbinrbd.keyring
 [client.binbinrbd]
-        key = AQA9/ZNoqB5eChAAVZIW9/bSGQK+uQQ5nwnU9A==
+        key = AQBYU6RoK9tUHhAAYE2lxF/uzzPj6SA+PB3YmA== 
         caps mon = "allow r"
         caps osd = "allow rwx pool=rbd-binbin-project-data"
 ```
