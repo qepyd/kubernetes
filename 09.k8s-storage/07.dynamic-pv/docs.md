@@ -26,7 +26,7 @@ root@master01:~# ./
 7 directories, 14 files
 ```
 
-# 2 动态pv在ceph集群中相关fs的csi subvolumegroup中创建subvolume,配合app71应用实践
+# 2 回收策略为Delete的动态pv在ceph集群中相关fs的csi subvolumegroup中创建subvolume,配合app71应用实践
 创建sc/jmsco-ceph-csi-cephfs资源对象，其回收策略为Delete(不支持在线更改)
 ```
 ## 创建
@@ -178,7 +178,7 @@ kubectl delete -f 01.sc_jmsco-ceph-csi-cephfs/sc_Delete_jmsco-ceph-csi-cephfs.ya
 ```
 
 
-# 3 动态pv在ceph集群中相关fs的csi subvolumegroup中创建subvolume,配合app72应用实践
+# 3 回收策略为Retain的动态pv在ceph集群中相关fs的csi subvolumegroup中创建subvolume,配合app72应用实践
 创建sc/jmsco-ceph-csi-cephfs资源,其回收策略为Retain(不支持在线更改)
 ```
 ## 创建
@@ -201,7 +201,189 @@ jmsco-ceph-csi-cephfs   cephfs.csi.ceph.com   Retain          Immediate         
    #  
 ```
 
+创建app71应用的pvc/app72-data
+```
+## 创建pvc/app72-data对象
+root@master01:~# kubectl apply -f 03.jmsco-project/app72-cephfs/01.pvc_app72-data.yaml  --dry-run=client
+persistentvolumeclaim/app72-data created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 03.jmsco-project/app72-cephfs/01.pvc_app72-data.yaml  
+persistentvolumeclaim/app72-data created
+
+## 列出pvc/app72-data对象
+root@master01:~# kubectl -n jmsco get pvc/app72-data
+NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS            AGE
+app72-data   Bound    pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410   5Gi        RWX            jmsco-ceph-csi-cephfs   44s
+  #
+  # 可看出其已经和动态pv/pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410进行了绑定。
+  # 为什么说是动态pv呢，因为STORAGECLASS字段处的jmsco-ceph-csi-cephfs是我们前面创建的一个sc资源对象
+  #
+
+## 查看其动态pv/pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410
+# <-- 列出
+root@master01:~# kubectl get pv/pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM              STORAGECLASS            REASON   AGE
+pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410   5Gi        RWX            Retain           Bound    jmsco/app72-data   jmsco-ceph-csi-cephfs            2m11s
+
+# <-- 查看描述信息，其source.VolumeAttributes.subvolumePath就是动态pv在ceph集群相关pool中创建的subvolume
+root@master01:~# kubectl describe pv/pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410
+Name:            pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410
+Labels:          <none>
+Annotations:     pv.kubernetes.io/provisioned-by: cephfs.csi.ceph.com
+                 volume.kubernetes.io/provisioner-deletion-secret-name: jmsco-project-ceph-fs-in-jmscofs-user-key
+                 volume.kubernetes.io/provisioner-deletion-secret-namespace: jmsco
+Finalizers:      [kubernetes.io/pv-protection]
+StorageClass:    jmsco-ceph-csi-cephfs
+Status:          Bound
+Claim:           jmsco/app72-data
+Reclaim Policy:  Retain
+Access Modes:    RWX
+VolumeMode:      Filesystem
+Capacity:        5Gi
+Node Affinity:   <none>
+Message:         
+Source:
+    Type:              CSI (a Container Storage Interface (CSI) volume source)
+    Driver:            cephfs.csi.ceph.com
+    FSType:            
+    VolumeHandle:      0001-0024-2004f705-b556-4d05-9e73-7884379e07bb-0000000000000003-117cb34e-a9be-4c43-9861-1867269dc4ac
+    ReadOnly:          false
+    VolumeAttributes:      clusterID=2004f705-b556-4d05-9e73-7884379e07bb                                                                # 看这
+                           fsName=jmsco                                                                                                  # 看这
+                           pool=cephfs-jmsco-project-data                                                                                # 看这
+                           storage.kubernetes.io/csiProvisionerIdentity=1755685977281-7282-cephfs.csi.ceph.com  
+                           subvolumeName=csi-vol-117cb34e-a9be-4c43-9861-1867269dc4ac                                                    # 看这
+                           subvolumePath=/volumes/csi/csi-vol-117cb34e-a9be-4c43-9861-1867269dc4ac/042bc86f-a070-4228-822c-5600af8426c1  # 看这
+Events:                <none>
+```
+
+到ceph集群中其jmsco fs的csi subvolumegroup中查看subvolume
+```
+root@ceph-mon01:~# ceph fs subvolume ls  jmsco  csi
+[
+    {
+        "name": "csi-vol-117cb34e-a9be-4c43-9861-1867269dc4ac"
+    }
+]
+```
+
+删除pvc/app72-data资源对象，不会自动回收其绑定的动态pv资源对象。人为回收，不会删除动态pv在ceph集群中创建的fs subvolume。数据不丢失。
+```
+## 删除pvc/app72-data资源对象
+root@master01:~# kubectl -n jmsco get pvc/app72-data
+NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS            AGE
+app72-data   Bound    pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410   5Gi        RWX            jmsco-ceph-csi-cephfs   5m23s
+root@master01:~# 
+root@master01:~# kubectl -n jmsco delete pvc/app72-data
+persistentvolumeclaim "app72-data" deleted
+
+## 查看pvc/app72-data资源对象其之前绑定的动态pv是否还在,是还在的
+root@master01:~# kubectl get pv/pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM              STORAGECLASS            REASON   AGE
+pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410   5Gi        RWX            Retain           Released   jmsco/app72-data   jmsco-ceph-csi-cephfs            6m6s
+  #
+  # 若此时重建创建pvc/app72-data，会绑定new 动态pv，而不是此处的这个pv资源对象。
+  #
+
+## 人为回收pv/pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410
+root@master01:~# kubectl delete pv/pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410
+persistentvolume "pvc-07e3c8f1-8d93-45e4-924e-3b7905dfa410" deleted
 
 
+## 到ceph集群中其jmsco fs的csi subvolumegroup中查看相应subvolume是否还在，结果是还在的
+root@ceph-mon01:~# ceph fs subvolume ls  jmsco  csi
+[
+    {
+        "name": "csi-vol-117cb34e-a9be-4c43-9861-1867269dc4ac"
+    }
+]
+```
+
+重新创建pvc/app72-data对象，会绑定new 动态pv(又会在ceph中创建new subvolume)，之前的数据得不到复用。
+```
+## 创建pvc/app72-data对象，并列出
+root@master01:~# kubectl apply -f 03.jmsco-project/app72-cephfs/01.pvc_app72-data.yaml 
+persistentvolumeclaim/app72-data created
+root@master01:~#
+root@master01:~# kubectl -n jmsco get pvc/app72-data
+NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS            AGE
+app72-data   Bound    pvc-32336363-4911-4e28-9e98-16e622c59694   5Gi        RWX            jmsco-ceph-csi-cephfs   31s
+
+## 查看其绑定的动态pv/pvc-32336363-4911-4e28-9e98-16e622c59694其详细信息
+root@master01:~# kubectl describe pv/pvc-32336363-4911-4e28-9e98-16e622c59694
+Name:            pvc-32336363-4911-4e28-9e98-16e622c59694
+Labels:          <none>
+Annotations:     pv.kubernetes.io/provisioned-by: cephfs.csi.ceph.com
+                 volume.kubernetes.io/provisioner-deletion-secret-name: jmsco-project-ceph-fs-in-jmscofs-user-key
+                 volume.kubernetes.io/provisioner-deletion-secret-namespace: jmsco
+Finalizers:      [kubernetes.io/pv-protection]
+StorageClass:    jmsco-ceph-csi-cephfs
+Status:          Bound
+Claim:           jmsco/app72-data
+Reclaim Policy:  Retain
+Access Modes:    RWX
+VolumeMode:      Filesystem
+Capacity:        5Gi
+Node Affinity:   <none>
+Message:         
+Source:
+    Type:              CSI (a Container Storage Interface (CSI) volume source)
+    Driver:            cephfs.csi.ceph.com
+    FSType:            
+    VolumeHandle:      0001-0024-2004f705-b556-4d05-9e73-7884379e07bb-0000000000000003-f54c4141-dcdc-471d-8080-dc33ed6c3e95
+    ReadOnly:          false
+    VolumeAttributes:      clusterID=2004f705-b556-4d05-9e73-7884379e07bb                                                                # 看这
+                           fsName=jmsco                                                                                                  # 看这
+                           pool=cephfs-jmsco-project-data                                                                                # 看这
+                           storage.kubernetes.io/csiProvisionerIdentity=1755685977281-7282-cephfs.csi.ceph.com
+                           subvolumeName=csi-vol-f54c4141-dcdc-471d-8080-dc33ed6c3e95                                                    # 看这
+                           subvolumePath=/volumes/csi/csi-vol-f54c4141-dcdc-471d-8080-dc33ed6c3e95/79aeb770-b271-4def-a699-b7b23f2b0512  # 看这
+Events:                <none>
+
+## 到ceph集群中查看相关的subvolume
+root@ceph-mon01:~# ceph fs subvolume ls  jmsco  csi
+[
+    {
+        "name": "csi-vol-117cb34e-a9be-4c43-9861-1867269dc4ac"                # 这是之前的
+    },
+    {
+        "name": "csi-vol-f54c4141-dcdc-471d-8080-dc33ed6c3e95"                # 这是刚刚的
+    }
+]
+```
+
+前面已知的是数据是不会丢失，但无法复用。这里把app72应用部署起来(就差创建deploy/app72对象了)
+```
+## 创建deploy/app72
+root@ceph-mon01:~# kubectl apply -f 03.jmsco-project/app72-cephfs/ --dry-run=client
+persistentvolumeclaim/app72-data configured (dry run)
+deployment.apps/app72 created (dry run)
+root@ceph-mon01:~#
+root@ceph-mon01:~# kubectl apply -f 03.jmsco-project/app72-cephfs/
+persistentvolumeclaim/app72-data unchanged
+deployment.apps/app72 created
+
+## 列出相关资源对象
+root@ceph-mon01:~# kubectl get -f 03.jmsco-project/app72-cephfs/
+NAME                               STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS            AGE
+persistentvolumeclaim/app72-data   Bound    pvc-32336363-4911-4e28-9e98-16e622c59694   5Gi        RWX            jmsco-ceph-csi-cephfs   8m41s
+
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/app72   2/2     2            2           36s
 
 
+## 列出相关pod资源对象
+root@master01:~# kubectl -n jmsco get pods -o wide | grep $(kubectl -n jmsco describe deploy/app72 | grep "NewReplicaSet:" | cut -d " " -f 4)
+app72-7b658bb866-f6dpr   2/2     Running   0          69s   10.0.3.39   node01   <none>           <none>
+app72-7b658bb866-fl9hn   2/2     Running   0          69s   10.0.4.37   node02   <none>           <none>
+
+## 到某Pod副本所在worker node上查看其相关的挂载
+# <-- 查看uid
+root@master01:~# kubectl -n jmsco get pods/app72-7b658bb866-f6dpr -o json | jq ".metadata.uid"
+"68859545-e45d-48a4-b9cf-5f075d73f355"
+
+# <-- 到所在worker node查看其相关的挂载
+root@node01:~# df -h | grep 68859545-e45d-48a4-b9cf-5f075d73f355
+tmpfs                                                                                                                                                 7.7G   12K  7.7G   1% /var/lib/kubelet/pods/68859545-e45d-48a4-b9cf-5f075d73f355/volumes/kubernetes.io~projected/kube-api-access-t7r76
+172.31.8.201:6789,172.31.8.202:6789,172.31.8.203:6789:/volumes/csi/csi-vol-f54c4141-dcdc-471d-8080-dc33ed6c3e95/79aeb770-b271-4def-a699-b7b23f2b0512  5.0G     0  5.0G   0% /var/lib/kubelet/pods/68859545-e45d-48a4-b9cf-5f075d73f355/volumes/kubernetes.io~csi/pvc-32336363-4911-4e28-9e98-16e622c59694/mount
+```
