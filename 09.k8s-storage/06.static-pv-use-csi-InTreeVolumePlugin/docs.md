@@ -15,7 +15,7 @@ kubectl apply -f ns_jmsco.yaml
 kubectl get  ns/jmsco 
 ```
 
-## 3.3 相关应用的manifests
+## 3.2 相关应用的manifests
 ```
 root@master01:~# tree 03.jmsco-project/
 03.jmsco-project/
@@ -108,7 +108,23 @@ tmpfs                                                                           
 172.31.8.201:6789,172.31.8.202:6789,172.31.8.203:6789:/volumes/app61/data/4521a3d7-d683-44f1-90c9-c18cfe4a2809  474G     0  474G   0% /var/lib/kubelet/pods/05fd98f1-d205-418e-b4e8-dd14a3f47593/volumes/kubernetes.io~csi/jmsco-prod-app61-data/mount
 ```
 
-## 3.3 涉及rbd的应用实践(以app63为例)
+相关Pod副本中的主容器在其自身的/data/目录下产生数据
+```
+...................
+```
+
+销毁deploy/app61、pvc/app61-data、pv/jmsco-prod-app61-data
+```
+kubectl delete -f ./03.jmsco-project/app61-cephfs/ 
+```
+
+重建pv/jmsco-prod-app61-data、pvc/app61-data、deploy/app61后，到相关Pod副本中其相关主容器的/data/目录下查看之前的数据，看是否还在，结果是数据还在的哈。
+```
+...................
+```
+
+
+## 3.4 涉及rbd的应用实践(以app63为例)
 创建secrets/jmsco-project-ceph-rbd-in-jmscorbd-user-key对象
 ```
 ## 快速编写manifests
@@ -165,6 +181,22 @@ root@node01:~# df -h | grep 93b5ebe8-6285-472d-aadd-e7c0c92e0590
 tmpfs                                                                                                           7.7G   12K  7.7G   1% /var/lib/kubelet/pods/93b5ebe8-6285-472d-aadd-e7c0c92e0590/volumes/kubernetes.io~projected/kube-api-access-v6cbr
 /dev/rbd0                                                                                                       4.9G   24K  4.9G   1% /var/lib/kubelet/pods/93b5ebe8-6285-472d-aadd-e7c0c92e0590/volumes/kubernetes.io~csi/jmsco-prod-app63-data/mount
 ```
+
+在pod/app63其相关主容器的/data/目录下产生数据
+```
+...................
+```
+
+销毁pod/app63、pvc/app63-data、pv/jmsco-prod-app63-data
+```
+kubectl delete -f ./03.jmsco-project/app63-rbd/
+```
+
+重建pv/jmsco-prod-app63-data、pvc/app63-data、pods/app63后，到pods/app63对象其相关主容器的/data/目录下查看之前的数据，看是否还在，结果是数据还在的哈。
+```
+...................
+```
+
 
 
 
