@@ -1,21 +1,20 @@
-ceph-csi仅需要部署
+01：此阶段实践"使用csi卷类型(树内卷插件)的静态pv"，对接的存储系统是ceph集群的cephfs和rbd。
 ```
-ceph-csi其cephfs的NodePlugin部分和csidriver。
-ceph-csi其rbd的NodePlugin、CsiController(要用到其attacher)和csidriver。
-   
-即：
- ../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/01.currency/
-
- ../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/02.cephfs/01-1.rbac-cephfs-csi-nodeplugin.yaml
- ../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/02.cephfs/01-2.csi-cephfsplugin.yaml
- ../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/02.cephfs/csidriver.yaml
-
- ../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/03.rbd/
+因是静态pv，就得事先在ceph集群中准备好fs volume和image。当然还得指定ceph集群的连接地址、认证信息、fs volume和image。
+因使用csi卷类型，就得指定csidrivers资源对象(人为部署ceph-csi之cephfs和rbd的对应csidrivers资源对象)
 ```
 
-此阶段实践"静态pv通过csi卷类型"对接ceph存储系统中的fs、rbd
+02：其 ../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/ 处的必要部署有。
 ```
-ceph存储系统中要准备好相应的fs volume、rbd image。创建好用户并授权。
-静态pv需要指定ceph-csi其cephfs的csidriver、ceph-csi其rbd的csidriver。
-静态pv需要指定ceph集群的uid、fs volume、rbd image等。
+## 通用配置
+../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/01.currency/
+
+## ceph-csi其cephfs的NodePlugin和csidrivers资源对象
+../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/02.cephfs/01-1.rbac-cephfs-csi-nodeplugin.yaml
+../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/02.cephfs/01-2.csi-cephfsplugin.yaml
+../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/02.cephfs/csidriver.yaml
+
+## ceph-csi其rbd的NodePlugin、CsiController（要用到其attach）和csidrivers资源对象
+../05.K8s-Internal-Install-ExternalCsiVolumeDriver/ceph-csi/v3.14.2/03.rbd/
 ```
+
