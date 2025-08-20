@@ -57,7 +57,7 @@ ls -l /tmp/ceph.client.jmscofs.secret
 
 ## 我这里的信息为（为了后面的文档）
 admin@ceph-mon01:~$ cat /tmp/ceph.client.jmscofs.secret
-AQBl2Z1o2MJULBAAPD1xQjPsj1Fjm4V5LhZJQg==
+AQCnIaRosGViFRAAWRwEbJ7Dt7h0s8PPTmuMdg==
 ```
 
 将以下信息给到binbin项目其维护人员
@@ -90,7 +90,7 @@ ceph fs subvolume ls     jmsco  app61
 ceph fs subvolume info jmsco data app61
 ceph fs subvolume info jmsco data app61 | grep path
   #
-  # 我这的结果是： "path": "/volumes/app61/data/6e3a1b46-3cd9-40ab-92a9-f2ddb27093e4" 
+  # 我这的结果是："path": "/volumes/app61/data/4521a3d7-d683-44f1-90c9-c18cfe4a2809" 
   # 将这的结果告诉jmsco项目的运维人员：
   #
 ```
@@ -108,7 +108,7 @@ ceph fs subvolume ls     jmsco  app62
 ceph fs subvolume info jmsco data app62
 ceph fs subvolume info jmsco data app62 | grep path
   #
-  # 我这的结果是： "path": "/volumes/app62/data/aea61d5a-b915-4b6d-b0e1-314d97fc910f" 
+  # 我这的结果是："path": "/volumes/app62/data/2a8d4cf7-e8a4-40cf-b061-9d32e357efd9" 
   # 将这的结果告诉jmsco项目的运维人员：
   #
 ```
