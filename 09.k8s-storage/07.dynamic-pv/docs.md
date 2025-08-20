@@ -537,10 +537,185 @@ jmsco-ceph-csi-rbd   rbd.csi.ceph.com   Retain          Immediate           true
 
 创建app74应用的pvc/app74-data
 ```
+## 创建
+root@master01:~# kubectl apply -f 03.jmsco-project/app74-rbd/01.pvc_app74-data.yaml 
+persistentvolumeclaim/app74-data created
+root@master01:~#
+root@master01:~# kubectl get -f 03.jmsco-project/app74-rbd/01.pvc_app74-data.yaml 
+NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE
+app74-data   Bound    pvc-64278043-520d-4056-9684-77e292cac07e   5Gi        RWO            jmsco-ceph-csi-rbd   37s
 
+## 查看其绑定动态pv的详细信息
+root@master01:~# kubectl get pv/pvc-64278043-520d-4056-9684-77e292cac07e 
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM              STORAGECLASS         REASON   AGE
+pvc-64278043-520d-4056-9684-77e292cac07e   5Gi        RWO            Retain           Bound    jmsco/app74-data   jmsco-ceph-csi-rbd            61s
+root@master01:~# 
+root@master01:~# kubectl describe pv/pvc-64278043-520d-4056-9684-77e292cac07e 
+Name:            pvc-64278043-520d-4056-9684-77e292cac07e
+Labels:          <none>
+Annotations:     pv.kubernetes.io/provisioned-by: rbd.csi.ceph.com
+                 volume.kubernetes.io/provisioner-deletion-secret-name: jmsco-project-ceph-rbd-in-jmscorbd-user-key
+                 volume.kubernetes.io/provisioner-deletion-secret-namespace: jmsco
+Finalizers:      [kubernetes.io/pv-protection]
+StorageClass:    jmsco-ceph-csi-rbd
+Status:          Bound
+Claim:           jmsco/app74-data
+Reclaim Policy:  Retain
+Access Modes:    RWO
+VolumeMode:      Filesystem
+Capacity:        5Gi
+Node Affinity:   <none>
+Message:         
+Source:
+    Type:              CSI (a Container Storage Interface (CSI) volume source)
+    Driver:            rbd.csi.ceph.com
+    FSType:            ext4
+    VolumeHandle:      0001-0024-2004f705-b556-4d05-9e73-7884379e07bb-000000000000000e-3df93240-7561-436e-a738-54d952fc96c9
+    ReadOnly:          false
+    VolumeAttributes:      clusterID=2004f705-b556-4d05-9e73-7884379e07bb
+                           imageFeatures=layering
+                           imageName=csi-vol-3df93240-7561-436e-a738-54d952fc96c9
+                           journalPool=rbd-jmsco-project-data
+                           pool=rbd-jmsco-project-data
+                           storage.kubernetes.io/csiProvisionerIdentity=1755682037348-3201-rbd.csi.ceph.com
+Events:                <none>
 ```
 
+到ceph集群中列出 rbd-jmsco-project-data 存储池中所有image，过滤是否存在 csi-vol-3df93240-7561-436e-a738-54d952fc96c9 ，是有的
+```
+root@ceph-mon01:~# rbd --pool=rbd-jmsco-project-data  ls 
+app63-data
+app64-data
+csi-vol-3df93240-7561-436e-a738-54d952fc96c9
+root@ceph-mon01:~# 
+```
 
+删除pvc/app74-data资源对象，不会自动回收其绑定的动态pv资源对象，人为回收后是不会删除动态pv在ceph集群中相关pool中创建的image，数据不丢失。
+```
+## 删除pvc/app74-data资源对象
+root@master01:~# kubectl -n jmsco get pvc/app74-data
+NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE
+app74-data   Bound    pvc-64278043-520d-4056-9684-77e292cac07e   5Gi        RWO            jmsco-ceph-csi-rbd   4m40s
+root@master01:~# 
+root@master01:~# kubectl -n jmsco delete pvc/app74-data
+persistentvolumeclaim "app74-data" deleted
+
+## 查看pvc/app74-data资源对象其之前绑定的动态pv是否还在，是在的。
+root@master01:~# kubectl get pv/pvc-64278043-520d-4056-9684-77e292cac07e 
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM              STORAGECLASS         REASON   AGE
+pvc-64278043-520d-4056-9684-77e292cac07e   5Gi        RWO            Retain           Released   jmsco/app74-data   jmsco-ceph-csi-rbd            5m11s
+  #
+  # 若此时重建创建pvc/app74-data，会绑定new 动态pv，而不是此处的这个pv资源对象。
+  #
+
+## 人为回收动态pv
+root@master01:~# kubectl delete pv/pvc-64278043-520d-4056-9684-77e292cac07e
+persistentvolume "pvc-64278043-520d-4056-9684-77e292cac07e" deleted
+
+## 到ceph集群中查看其创建的image是否还在,是在的
+root@ceph-mon01:~# rbd --pool=rbd-jmsco-project-data  ls
+app63-data
+app64-data
+csi-vol-3df93240-7561-436e-a738-54d952fc96c9
+```
+
+重新创建pvc/app74-data对象，会绑定new 动态pv(又会在ceph中创建new subvolume)，之前的数据得不到复用。
+```
+## 创建pvc/app74-data对象，并列出
+root@ceph-mon01:~# kubectl apply -f 03.jmsco-project/app74-rbd/01.pvc_app74-data.yaml 
+persistentvolumeclaim/app74-data created
+root@ceph-mon01:~#
+root@ceph-mon01:~# kubectl get -f 03.jmsco-project/app74-rbd/01.pvc_app74-data.yaml 
+NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE
+app74-data   Bound    pvc-f74a6976-b29f-4b22-9bc4-36530d0ff44c   5Gi        RWO            jmsco-ceph-csi-rbd   5s
+
+## 查看其绑定的动态pv/pvc-f74a6976-b29f-4b22-9bc4-36530d0ff44c其详细信息
+root@master01:~# kubectl get pv/pvc-f74a6976-b29f-4b22-9bc4-36530d0ff44c
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM              STORAGECLASS         REASON   AGE
+pvc-f74a6976-b29f-4b22-9bc4-36530d0ff44c   5Gi        RWO            Retain           Bound    jmsco/app74-data   jmsco-ceph-csi-rbd            54s
+root@master01:~# 
+root@master01:~# kubectl describe pv/pvc-f74a6976-b29f-4b22-9bc4-36530d0ff44c
+Name:            pvc-f74a6976-b29f-4b22-9bc4-36530d0ff44c
+Labels:          <none>
+Annotations:     pv.kubernetes.io/provisioned-by: rbd.csi.ceph.com
+                 volume.kubernetes.io/provisioner-deletion-secret-name: jmsco-project-ceph-rbd-in-jmscorbd-user-key
+                 volume.kubernetes.io/provisioner-deletion-secret-namespace: jmsco
+Finalizers:      [kubernetes.io/pv-protection]
+StorageClass:    jmsco-ceph-csi-rbd
+Status:          Bound
+Claim:           jmsco/app74-data
+Reclaim Policy:  Retain
+Access Modes:    RWO
+VolumeMode:      Filesystem
+Capacity:        5Gi
+Node Affinity:   <none>
+Message:         
+Source:
+    Type:              CSI (a Container Storage Interface (CSI) volume source)
+    Driver:            rbd.csi.ceph.com
+    FSType:            ext4
+    VolumeHandle:      0001-0024-2004f705-b556-4d05-9e73-7884379e07bb-000000000000000e-0cb266b1-3b03-40e9-b236-16f2e44c0757
+    ReadOnly:          false
+    VolumeAttributes:      clusterID=2004f705-b556-4d05-9e73-7884379e07bb
+                           imageFeatures=layering
+                           imageName=csi-vol-0cb266b1-3b03-40e9-b236-16f2e44c0757
+                           journalPool=rbd-jmsco-project-data
+                           pool=rbd-jmsco-project-data
+                           storage.kubernetes.io/csiProvisionerIdentity=1755682037348-3201-rbd.csi.ceph.com
+Events:                <none>
+
+## 到ceph集群中 列出 rbd-jmsco-project-data 存储池中所有image，过滤是否存在 csi-vol-0cb266b1-3b03-40e9-b236-16f2e44c0757 image
+root@ceph-mon01:~# rbd --pool=rbd-jmsco-project-data  ls
+app63-data
+app64-data
+csi-vol-0cb266b1-3b03-40e9-b236-16f2e44c0757            # 这是刚刚的
+csi-vol-3df93240-7561-436e-a738-54d952fc96c9            # 这是之前的
+root@ceph-mon01:~# 
+```
+
+前面已知的是数据是不会丢失，但无法复用。这里把app74应用部署起来(就差创建pod/app74对象了)
+```
+## 部署deploy/app74
+root@ceph-mon01:~# kubectl apply -f 03.jmsco-project/app74-rbd/
+persistentvolumeclaim/app74-data unchanged
+pod/app74 created
+
+## 列出相关资源对象
+root@ceph-mon01:~# kubectl get -f 03.jmsco-project/app74-rbd/
+NAME                               STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE
+persistentvolumeclaim/app74-data   Bound    pvc-f74a6976-b29f-4b22-9bc4-36530d0ff44c   5Gi        RWO            jmsco-ceph-csi-rbd   3m25s
+
+NAME        READY   STATUS    RESTARTS   AGE
+pod/app74   2/2     Running   0          35s
+
+
+## 查看pod/app74其所在worker node上的挂载
+# <-- 查看其所在worker node和uid
+root@master01:~# kubectl -n jmsco get pods/app74 -o wide
+NAME    READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+app74   2/2     Running   0          83s   10.0.3.41   node01   <none>           <none>
+root@master01:~# 
+root@master01:~# kubectl -n jmsco get pods/app74 -o json | jq ".metadata.uid"
+"de157c6a-cd57-407f-be87-3c542e1e13e2"
+
+# <-- 到所在worker node查看其挂载信息
+root@node01:~# df -h | grep de157c6a-cd57-407f-be87-3c542e1e13e2
+tmpfs           7.7G   12K  7.7G   1% /var/lib/kubelet/pods/de157c6a-cd57-407f-be87-3c542e1e13e2/volumes/kubernetes.io~projected/kube-api-access-vjshv
+/dev/rbd0       4.9G   24K  4.9G   1% /var/lib/kubelet/pods/de157c6a-cd57-407f-be87-3c542e1e13e2/volumes/kubernetes.io~csi/pvc-f74a6976-b29f-4b22-9bc4-36530d0ff44c/mount
+```
+
+清理环境
+```
+kubectl get    -f 03.jmsco-project/app74-rbd/
+kubectl delete -f 03.jmsco-project/app74-rbd/
+
+kubectl get    pv/pvc-f74a6976-b29f-4b22-9bc4-36530d0ff44c
+kubectl delete pv/pvc-f74a6976-b29f-4b22-9bc4-36530d0ff44c
+
+
+kubectl get    -f 02.sc_jmsco-ceph-csi-rbd/
+kubectl delete -f 02.sc_jmsco-ceph-csi-rbd/
+```
 
 
 # 6 综上所实践
