@@ -25,7 +25,7 @@ spec:
       fsName: "jmsco"
 
       # 必选字段，某个volume的路径
-      rootPath: "/volumes/app61/data/6e3a1b46-3cd9-40ab-92a9-f2ddb27093e4"
+      rootPath: "/volumes/app61/data/4521a3d7-d683-44f1-90c9-c18cfe4a2809"
 
       # 必选字段，是否是静态volume
       staticVolume: "true"
@@ -34,7 +34,7 @@ spec:
     # 必选字段，卷的唯一标识，
     #   使用pv资源对象的name即可,因为pv是k8s集群级别的,不会冲突
     #   以下就使用pv资源对象的name作为前缀
-    volumeHandle: jmsco-prod-app61-data-6e3a1b46-3cd9-40ab-92a9-f2ddb27093e4
+    volumeHandle: jmsco-prod-app61-data-4521a3d7-d683-44f1-90c9-c18cfe4a2809
    
     # 认证的secrets
     # Pod被调度至某worker node后,其Kubelet会做mount操作,要用到user和用户的secret
