@@ -26,8 +26,8 @@ root@master01:~# ./
 7 directories, 14 files
 ```
 
-# 2 动态pv在ceph集群中创建cephfs,配合app71应用实践
-创建sc/jmsco-ceph-csi-cephfs资源对象
+# 2 动态pv在ceph集群中相关fs的csi subvolumegroup中创建subvolume,配合app71应用实践
+创建sc/jmsco-ceph-csi-cephfs资源对象，其回收策略为Delete(不支持在线更改)
 ```
 ## 创建
 root@master01:~# kubectl apply -f 01.sc_jmsco-ceph-csi-cephfs/sc_Delete_jmsco-ceph-csi-cephfs.yaml --dry-run=client
@@ -171,5 +171,37 @@ tmpfs                                                                           
 172.31.8.201:6789,172.31.8.202:6789,172.31.8.203:6789:/volumes/csi/csi-vol-cfba37a0-4b52-4665-aca5-0dacc11cd859/36a4bfdd-b5a2-4f89-bbac-883a48143b64  5.0G     0  5.0G   0% /var/lib/kubelet/pods/da2bfbab-49f5-49a5-97f9-c7d274cda818/volumes/kubernetes.io~csi/pvc-ab7e0a76-08b0-4cfc-9506-8eed5f46c56a/mount
 ```
 
-# 3 动态cephfs之Retain回收策略配置app71应用实践
+清理环境
+```
+kubectl delete -f 03.jmsco-project/app71-cephfs/
+kubectl delete -f 01.sc_jmsco-ceph-csi-cephfs/sc_Delete_jmsco-ceph-csi-cephfs.yaml
+```
+
+
+# 3 动态pv在ceph集群中相关fs的csi subvolumegroup中创建subvolume,配合app72应用实践
+创建sc/jmsco-ceph-csi-cephfs资源,其回收策略为Retain(不支持在线更改)
+```
+## 创建
+root@node01:~# kubectl apply -f 01.sc_jmsco-ceph-csi-cephfs/sc_Retain_jmsco-ceph-csi-cephfs.yaml --dry-run=client
+storageclass.storage.k8s.io/jmsco-ceph-csi-cephfs created (dry run)
+root@node01:~#
+root@node01:~# kubectl apply -f 01.sc_jmsco-ceph-csi-cephfs/sc_Retain_jmsco-ceph-csi-cephfs.yaml
+storageclass.storage.k8s.io/jmsco-ceph-csi-cephfs created
+
+## 列出
+root@master01:~# kubectl -n jmsco get sc/jmsco-ceph-csi-cephfs
+NAME                    PROVISIONER           RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+jmsco-ceph-csi-cephfs   cephfs.csi.ceph.com   Retain          Immediate           true                   46s
+   #
+   # 其回收策略是Retain，动态pv会继承
+   # 当删除与动态pv绑定的pvc后，不会自动回收动态pv。
+   # 当人为回收动态pv，是不会删除动态pv在ceph中相关fs volume的csi subvolumegroup中所创建的subvolume
+   # 
+   # 但是：当再重新创建pvc资源对象后，又会产生new 动态pv(又会在ceph中相关fs volume的csi subvolumegroup中创建new subvolume)
+   #  
+```
+
+
+
+
 
