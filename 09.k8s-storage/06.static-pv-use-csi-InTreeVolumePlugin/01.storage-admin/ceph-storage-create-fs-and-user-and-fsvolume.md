@@ -52,12 +52,12 @@ ceph auth caps client.jmscofs   \
 ceph auth print-key client.jmscofs
 
 ## 保存至文件
-ceph auth print-key client.binbinfs -o /tmp/ceph.client.jmscofs.secret
+ceph auth print-key client.jmscofs -o /tmp/ceph.client.jmscofs.secret
 ls -l /tmp/ceph.client.jmscofs.secret
 
 ## 我这里的信息为（为了后面的文档）
 admin@ceph-mon01:~$ cat /tmp/ceph.client.jmscofs.secret
-AQCnIaRosGViFRAAWRwEbJ7Dt7h0s8PPTmuMdg==
+AQBWkqVo+PIaGxAAmC0QpAjYksu0zBTWa+fAgQ==
 ```
 
 将以下信息给到binbin项目其维护人员

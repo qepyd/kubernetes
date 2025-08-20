@@ -12,7 +12,7 @@
 ## 3.1 创建ns/jmsco对象
 ```
 kubectl apply -f ns_jmsco.yaml
-kubectl get   -f ns_jmsco.yaml
+kubectl get  ns/jmsco 
 ```
 
 ## 3.3 相关应用的manifests
@@ -54,15 +54,33 @@ root@master01:/qepyd/kubernetes/09.k8s-storage/06.static-pv-use-csi-InTreeVolume
 bash 03.jmsco-project/secrets_jmsco-project-ceph-fs-in-jmscofs-user-key/command.sh
 
 ## 应用manifests
-kubectl apply -f 03.jmsco-project/secrets_jmsco-project-ceph-fs-in-jmscofs-user-key/secrets_jmsco-project-ceph-rbd-in-jmscorbd-user-key.yaml --dry-run=client
-kubectl apply -f 03.jmsco-project/secrets_jmsco-project-ceph-fs-in-jmscofs-user-key/secrets_jmsco-project-ceph-rbd-in-jmscorbd-user-key.yaml
+root@master01:~# kubectl apply -f 03.jmsco-project/secrets_jmsco-project-ceph-fs-in-jmscofs-user-key/secrets_jmsco-project-ceph-fs-in-jmscofs-user-key.yaml --dry-run=client
+secret/jmsco-project-ceph-fs-in-jmscofs-user-key configured (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f 03.jmsco-project/secrets_jmsco-project-ceph-fs-in-jmscofs-user-key/secrets_jmsco-project-ceph-fs-in-jmscofs-user-key.yaml
+secret/jmsco-project-ceph-fs-in-jmscofs-user-key configured
+
+## 列出资源对象
+root@master01:~# kubectl -n jmsco get secret/jmsco-project-ceph-fs-in-jmscofs-user-key 
+NAME                                        TYPE     DATA   AGE
+jmsco-project-ceph-fs-in-jmscofs-user-key   Opaque   2      4d2h
 ```
 
 创建deploy/app61对象
 ```
 ## 应用manifests
-kubectl apply -f  ./03.jmsco-project/app61-cephfs/ --dry-run=client
-kubectl apply -f  ./03.jmsco-project/app61-cephfs/
+root@master01:~# kubectl apply -f  ./03.jmsco-project/app61-cephfs/ --dry-run=client
+persistentvolume/jmsco-prod-app61-data created (dry run)
+persistentvolumeclaim/app61-data created (dry run)
+deployment.apps/app61 created (dry run)
+root@master01:~#
+root@master01:~# kubectl apply -f  ./03.jmsco-project/app61-cephfs/ 
+persistentvolume/jmsco-prod-app61-data created
+persistentvolumeclaim/app61-data created
+deployment.apps/app61 created
+
+## 列出相关资源对象
+
 
 
 ```
