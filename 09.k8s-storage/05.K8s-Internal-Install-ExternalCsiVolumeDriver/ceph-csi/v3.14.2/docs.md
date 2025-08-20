@@ -377,3 +377,22 @@ kubectl apply -f 02.cephfs/
 kubectl apply -f 03.rbd/  --dry-run=client
 kubectl apply -f 03.rbd/
 ```
+
+部署后的相关pods资源对象
+```
+root@master01:~# kubectl -n ceph-csi get pods -o wide
+NAME                                            READY   STATUS    RESTARTS   AGE   IP             NODE     NOMINATED NODE   READINESS GATES
+csi-cephfsplugin-7qp7k                          3/3     Running   0          86s   172.31.7.207   node02   <none>           <none>
+csi-cephfsplugin-jmvnk                          3/3     Running   0          86s   172.31.7.206   node01   <none>           <none>
+csi-cephfsplugin-provisioner-84fdc456c4-g26pc   5/5     Running   0          86s   10.0.3.32      node01   <none>           <none>
+csi-rbdplugin-66v76                             3/3     Running   0          83s   172.31.7.206   node01   <none>           <none>
+csi-rbdplugin-dsjw6                             3/3     Running   0          83s   172.31.7.207   node02   <none>           <none>
+csi-rbdplugin-provisioner-55b99bddf7-97dcq      7/7     Running   0          83s   10.0.4.34      node02   <none>           <none>
+```
+
+部署后的相关csidrivers资源对象
+```
+root@master01:~# kubectl get csidrivers | grep ceph
+cephfs.csi.ceph.com   false            false            false             <unset>         false               Persistent   2m18s
+rbd.csi.ceph.com      true             false            false             <unset>         false               Persistent   2m15s
+```
