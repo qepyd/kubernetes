@@ -198,8 +198,7 @@ kubectl delete -f ./03.jmsco-project/app63-rbd/
 ```
 
 # 4 清理环境（注意）
-我这里不清理相关的secrets资源对象，因为在 ../07.dynamic-pv-use-csi-InTreeVolumePlugin/ 处还会用到。
-我这里只清理相关的应用(app61、app63)
+我这里不清理相关的secrets资源对象，因为在 ../07.dynamic-pv-use-csi-InTreeVolumePlugin/ 处还会用到。只清理相关的应用(app61、app63)
 ```
 kubectl get    -f ./03.jmsco-project/app61-cephfs/
 kubectl delete -f ./03.jmsco-project/app61-cephfs/
