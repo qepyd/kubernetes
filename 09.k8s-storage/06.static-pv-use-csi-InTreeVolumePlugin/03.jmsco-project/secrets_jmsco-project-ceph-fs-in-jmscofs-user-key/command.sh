@@ -12,8 +12,6 @@ kubectl -n jmsco  create secret  generic jmsco-project-ceph-fs-in-jmscofs-user-k
    --dry-run=client \
    -o yaml >$ScriptDir/secrets_jmsco-project-ceph-fs-in-jmscofs-user-key.yaml
 
-   #--from-literal=adminID=jmscofs \
-   #--from-file=adminKey=$ScriptDir/ceph.client.jmscofs.secret  \
    #
    # 静态和动态pv所需要的
    # userID：不能包含"client."前缀
