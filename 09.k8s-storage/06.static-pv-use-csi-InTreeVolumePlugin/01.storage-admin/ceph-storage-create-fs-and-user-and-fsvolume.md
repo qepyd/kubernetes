@@ -60,7 +60,7 @@ admin@ceph-mon01:~$ cat /tmp/ceph.client.jmscofs.secret
 AQBWkqVo+PIaGxAAmC0QpAjYksu0zBTWa+fAgQ==
 ```
 
-将以下信息给到binbin项目其维护人员
+将以下信息给到jmsco项目其维护人员
 ```
 ceph集群的monitors信息为
   172.31.8.201:6789
