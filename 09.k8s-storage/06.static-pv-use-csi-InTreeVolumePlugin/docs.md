@@ -17,7 +17,7 @@ kubectl get  ns/jmsco
 
 ## 3.3 相关应用的manifests
 ```
-root@master01:/qepyd/kubernetes/09.k8s-storage/06.static-pv-use-csi-InTreeVolumePlugin# tree 03.jmsco-project/
+root@master01:~# tree 03.jmsco-project/
 03.jmsco-project/
 ├── app61-cephfs
 │   ├── 01.pv_jmsco-prod-app61-data.yaml
